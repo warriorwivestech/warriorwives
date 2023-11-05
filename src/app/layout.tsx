@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Box } from "@chakra-ui/react";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import Providers from "./providers/provider";
 import NavBar from "./components/header/header";
 import Footer from "./components/footer/footer";
 import { ChakraProviders } from "./providers/chakraProvider";
@@ -24,11 +23,9 @@ export default function RootLayout({
       <body className={inter.className}>
         <ChakraProviders>
           <NavBar />
-          <Providers>
             <Box minH={"70vh"} bg="#FAFCFF">
               {children}
             </Box>
-          </Providers>
           <Footer />
         </ChakraProviders>
       </body>

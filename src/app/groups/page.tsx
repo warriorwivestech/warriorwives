@@ -1,11 +1,5 @@
-"use client";
-
-import React, { useState } from "react";
-import { useAppSelector } from "../redux/hooks/hooks";
-import { userState } from "../redux/slices/userSlice";
+import React from "react";
 
 export default function GroupPage() {
-  const user = useAppSelector(userState);
-
-  return <div>{user.name}</div>;
+  return <div>events</div>;
 }
