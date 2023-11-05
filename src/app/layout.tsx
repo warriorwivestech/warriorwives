@@ -1,7 +1,11 @@
 import type { Metadata } from "next";
-import { ChakraProvider } from "@chakra-ui/react";
+import { Box } from "@chakra-ui/react";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import Providers from "./providers/provider";
+import NavBar from "./components/header/header";
+import Footer from "./components/footer/footer";
+import { ChakraProviders } from "./providers/chakraProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -16,9 +20,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning suppressContentEditableWarning>
       <body className={inter.className}>
-        <ChakraProvider>{children}</ChakraProvider>
+        <ChakraProviders>
+          <NavBar />
+          <Providers>
+            <Box minH={"70vh"} bg="#FAFCFF">
+              {children}
+            </Box>
+          </Providers>
+          <Footer />
+        </ChakraProviders>
       </body>
     </html>
   );
