@@ -6,6 +6,112 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("POSTGRES_PRISMA_URL") // uses connection pooling
+  directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
+}
+
+model User {
+  id        Int                @id @default(autoincrement())
+  email     String             @unique
+  name      String
+  superUser Boolean            @default(false)
+  branch    userArmyBranch     @default(ARMY)
+  interests InterestsOnUsers[]
+  groups    MembersOnGroups[]
+  createdAt DateTime           @default(now())
+  updatedAt DateTime           @updatedAt
+}
+
+model Interest {
+  id        Int                @id @default(autoincrement())
+  name      String             @unique
+  users     InterestsOnUsers[]
+  groups    TagsOnGroups[]
+  createdAt DateTime           @default(now())
+  updatedAt DateTime           @updatedAt
+}
+
+model Group {
+  id              Int               @id @default(autoincrement())
+  name            String            @unique
+  description     String
+  displayPhoto    String
+  branchOfService groupArmyBranch   @default(ANY)
+  location        String
+  online          Boolean           @default(false)
+  members         MembersOnGroups[]
+  tags            TagsOnGroups[]
+  events          Event[]
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+}
+
+model Event {
+  id           Int      @id @default(autoincrement())
+  name         String
+  description  String
+  displayPhoto String
+  location     String
+  online       Boolean  @default(false)
+  dateTime     DateTime
+  group        Group    @relation(fields: [groupId], references: [id])
+  groupId      Int
+  // photos       Photo[]
+  // materials    Material[]
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model InterestsOnUsers {
+  user       User     @relation(fields: [userId], references: [id])
+  userId     Int
+  interest   Interest @relation(fields: [interestId], references: [id])
+  interestId Int
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@id([userId, interestId])
+}
+
+model TagsOnGroups {
+  group      Group    @relation(fields: [groupId], references: [id])
+  groupId    Int
+  interest   Interest @relation(fields: [interestId], references: [id])
+  interestId Int
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@id([groupId, interestId])
+}
+
+model MembersOnGroups {
+  group     Group    @relation(fields: [groupId], references: [id])
+  groupId   Int
+  user      User     @relation(fields: [userId], references: [id])
+  userId    Int
+  admin     Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@id([groupId, userId])
+}
+
+enum userArmyBranch {
+  ARMY
+  NAVY
+  AIR_FORCE
+  COAST_GUARD
+  MARINE_CORPS
+  SPACE_FORCE
+}
+
+enum groupArmyBranch {
+  ANY
+  ARMY
+  NAVY
+  AIR_FORCE
+  COAST_GUARD
+  MARINE_CORPS
+  SPACE_FORCE
 }
