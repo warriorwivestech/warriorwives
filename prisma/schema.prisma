@@ -48,19 +48,19 @@ model Group {
 }
 
 model Event {
-  id           Int      @id @default(autoincrement())
+  id           Int             @id @default(autoincrement())
   name         String
   description  String
   displayPhoto String
   location     String
-  online       Boolean  @default(false)
+  online       Boolean         @default(false)
   dateTime     DateTime
-  group        Group    @relation(fields: [groupId], references: [id])
+  group        Group           @relation(fields: [groupId], references: [id])
   groupId      Int
-  // photos       Photo[]
-  // materials    Material[]
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  photos       EventPhoto[]
+  materials    EventMaterial[]
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
 }
 
 model InterestsOnUsers {
@@ -95,6 +95,24 @@ model MembersOnGroups {
   updatedAt DateTime @updatedAt
 
   @@id([groupId, userId])
+}
+
+model EventPhoto {
+  id        Int      @id @default(autoincrement())
+  event     Event    @relation(fields: [eventId], references: [id])
+  eventId   Int
+  photo     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model EventMaterial {
+  id        Int      @id @default(autoincrement())
+  event     Event    @relation(fields: [eventId], references: [id])
+  eventId   Int
+  material  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 enum userArmyBranch {
