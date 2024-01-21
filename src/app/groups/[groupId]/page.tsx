@@ -1,5 +1,6 @@
 import EventCards from "@/app/components/EventCards";
-import { SimpleGrid } from "@chakra-ui/react";
+import { Button, SimpleGrid } from "@chakra-ui/react";
+import Link from "next/link";
 import React from "react";
 
 export default function EventsPage({
@@ -22,7 +23,12 @@ export default function EventsPage({
   return (
     <div>
       <div className="flex flex-col gap-6">
-        <p className="text-heading4">Events from {params?.groupId}</p>
+        <div className="flex flex-row gap-4 align-middle">
+          <Button>
+            <Link href={"/groups"}>Back </Link>
+          </Button>
+          <p className="text-heading4">Events from {params?.groupId}</p>
+        </div>
         <SimpleGrid columns={[1, 2, 3]} spacing={8}>
           {eventData.map((event, index) => (
             <EventCards key={index} {...event} />
