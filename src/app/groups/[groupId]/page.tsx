@@ -1,7 +1,18 @@
+"use client";
+
 import EventCards from "@/app/components/EventCards";
-import { Button, SimpleGrid } from "@chakra-ui/react";
+import {
+  Button,
+  Flex,
+  HStack,
+  Icon,
+  SimpleGrid,
+  Tag,
+  Text,
+} from "@chakra-ui/react";
 import Link from "next/link";
 import React from "react";
+import { FaChevronLeft } from "react-icons/fa";
 
 export default function EventsPage({
   params,
@@ -23,12 +34,53 @@ export default function EventsPage({
   return (
     <div>
       <div className="flex flex-col gap-6">
-        <div className="flex flex-row gap-4 align-middle">
-          <Button>
-            <Link href={"/groups"}>Back </Link>
+        <div className="flex flex-col gap-4 align-left w-auto">
+          <Button
+            w={"min-content"}
+            leftIcon={<Icon fontSize={16} as={FaChevronLeft} />}
+            variant="solid"
+          >
+            <Link
+              href={"/groups"}
+              className="flex flex-row gap-2 align-middle justify-center"
+            >
+              Back{" "}
+            </Link>
           </Button>
+
+          <HStack spacing={2}>
+            {/* tags */}
+            <Tag w={"auto"}>tags</Tag>
+            <Tag w={"auto"}>tags</Tag>
+          </HStack>
           <p className="text-heading4">Events from {params?.groupId}</p>
         </div>
+
+        {/* group description */}
+        <Flex flexDirection="column" gap={2}>
+          <Text>
+            <span className="font-bold">Description: </span>
+            Join us for an open-air screening of classic and contemporary films.
+          </Text>
+
+          {/* branchOfService */}
+          <Text>
+            <span className="font-bold">Branch Of Service: </span>
+            testing data
+          </Text>
+
+          {/* number of members */}
+          <Text>
+            <span className="font-bold">Number of members: </span>
+            testing data
+          </Text>
+
+          {/* location */}
+          <Text>
+            <span className="font-bold">Location: </span>
+            testing data
+          </Text>
+        </Flex>
         <SimpleGrid columns={[1, 2, 3]} spacing={8}>
           {eventData.map((event, index) => (
             <EventCards key={index} {...event} />

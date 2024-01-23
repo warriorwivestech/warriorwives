@@ -1,6 +1,10 @@
-import { Button } from "@chakra-ui/react";
+"use client";
+
+import EventDetails from "@/app/components/EventDetails";
+import { Button, Icon } from "@chakra-ui/react";
 import Link from "next/link";
 import React from "react";
+import { FaChevronLeft } from "react-icons/fa";
 
 export default function EventPage({
   params,
@@ -9,14 +13,21 @@ export default function EventPage({
 }) {
   return (
     <div>
-      <div className="flex flex-row gap-4 align-middle">
-        <Button>
-          <Link href={`/groups/${params?.groupId}`}>Back</Link>
+      <div className="flex flex-col align-left w-auto">
+        <Button
+          w={"min-content"}
+          leftIcon={<Icon fontSize={16} as={FaChevronLeft} />}
+          variant="solid"
+        >
+          <Link
+            href={`/groups/${params?.groupId}`}
+            className="flex flex-row gap-2 align-middle justify-center"
+          >
+            Back{" "}
+          </Link>
         </Button>
-        <p className="text-heading4">
-          {params?.groupId}/{params?.eventId}
-        </p>
       </div>
+      <EventDetails />
     </div>
   );
 }
