@@ -23,7 +23,8 @@ export default function EventsPage({
     id: `${index}`,
     group: `${params?.groupId}`,
     title: `Event Title ${index + 1}`,
-    description: "This is a sample description for the event.",
+    description:
+      "This is a sample description for the event., This is a sample description for the event., This is a sample description for the event.,This is a sample description for the event., This is a sample description for the event.",
     imageUrl: "https://images.unsplash.com/photo-1515378791036-0648a3ef77b2",
     date: `Feb ${index + 1}, 2024`,
     readTime: `${index + 1}min read`,

@@ -8,6 +8,7 @@ import {
   Stack,
   Avatar,
   useColorModeValue,
+  Flex,
 } from "@chakra-ui/react";
 import Link from "next/link";
 
@@ -67,20 +68,23 @@ export default function EventCards({
               fontSize={"sm"}
               letterSpacing={1.1}
             >
-              Blog
+              Online
             </Text>
             <Heading fontSize={"2xl"} fontFamily={"body"}>
               {title}
             </Heading>
-            <Text color={"gray.500"}>{description}</Text>
+            <Flex>
+              <Text color={"gray.500"} textOverflow="ellipsis" noOfLines={3}>
+                {description}
+              </Text>
+            </Flex>
           </Stack>
           <Stack mt={6} direction={"row"} spacing={4} align={"center"}>
-            <Avatar src={authorImageUrl} />
+            {/* <Avatar src={authorImageUrl} /> */}
             <Stack direction={"column"} spacing={0} fontSize={"sm"}>
-              <Text fontWeight={600}>{author}</Text>
-              <Text color={"gray.500"}>
-                {date} · {readTime}
-              </Text>
+              <Text fontWeight={600}>location</Text>
+              {/* date time */}
+              <Text color={"gray.500"}>{date}</Text>
             </Stack>
           </Stack>
         </Box>

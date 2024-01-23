@@ -27,7 +27,7 @@ export default function EventPage({
           </Link>
         </Button>
       </div>
-      <EventDetails />
+      <EventDetails title={""} location={""} timing={""} description={""} materials={[]} images={[]} eventType={""} />
     </div>
   );
 }

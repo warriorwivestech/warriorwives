@@ -50,7 +50,9 @@ export default function GroupCard({
             {/* name */}
             <Heading size="md">{title}</Heading>
             {/* description */}
-            <Text>{description}</Text>
+            <Flex textOverflow="ellipsis" noOfLines={3}>
+              <Text>{description}</Text>
+            </Flex>
           </Stack>
         </CardBody>
         {/* <Divider />
