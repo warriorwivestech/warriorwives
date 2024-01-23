@@ -140,9 +140,7 @@ export default function EventDetails(props: EventDetailsProps) {
             w={"full"}
             mt={4}
             size={"lg"}
-            bg="black"
-            color="white"
-            _hover={{ bg: "white", color: "black" }}
+            className="bg-black text-white hover:text-black"
           >
             Join Event
           </Button>
