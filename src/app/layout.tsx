@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 import { Box } from "@chakra-ui/react";
-import { Inter, Montserrat } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
 import NavBar from "./components/header/header";
 import Footer from "./components/footer/footer";
 import { ChakraProviders } from "./providers/chakraProvider";
 
-const montserrat = Montserrat({ subsets: ["latin"] });
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Warrior Wives",
@@ -24,7 +24,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning suppressContentEditableWarning>
-      <body className={montserrat.className}>
+    <body className={inter.className}>
         <ChakraProviders>
           <NavBar />
           <Box className="min-h-[70vh] bg-[#FAFCFF] pt-10 pb-10 w-[100%]">
