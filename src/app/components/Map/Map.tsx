@@ -3,10 +3,9 @@
 import React, { useRef, useEffect, useState } from "react";
 import * as maptilersdk from "@maptiler/sdk";
 import "@maptiler/sdk/dist/maptiler-sdk.css";
-import axios, { AxiosResponse } from "axios";
+import axios from "axios";
 
-import "./Map.css";
-import { Box, Checkbox, Select } from "@chakra-ui/react";
+import { Box, Checkbox } from "@chakra-ui/react";
 
 const COUNTY_GEOJSON_URL =
   "https://gist.githubusercontent.com/sdwfrost/d1c73f91dd9d175998ed166eb216994a/raw/e89c35f308cee7e2e5a784e1d3afc5d449e9e4bb/counties.geojson";
