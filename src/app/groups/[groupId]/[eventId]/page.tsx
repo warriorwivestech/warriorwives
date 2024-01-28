@@ -1,10 +1,10 @@
 "use client";
 
 import EventDetails from "@/app/components/EventDetails";
-import { Button, Icon } from "@chakra-ui/react";
+import { Avatar, Button, Icon } from "@chakra-ui/react";
 import Link from "next/link";
 import React from "react";
-import { FaChevronLeft } from "react-icons/fa";
+import { FaChevronLeft, FaRegClock } from "react-icons/fa";
 
 export default function EventPage({
   params,
@@ -12,9 +12,9 @@ export default function EventPage({
   params: { groupId: string; eventId: string };
 }) {
   return (
-    <div>
-      <div className="flex flex-col align-left w-auto">
-        <Button
+    <div className="flex flex-col gap-12">
+      <div className="flex flex-col w-[100%]">
+        {/* <Button
           w={"min-content"}
           leftIcon={<Icon fontSize={16} as={FaChevronLeft} />}
           variant="solid"
@@ -25,9 +25,38 @@ export default function EventPage({
           >
             Back{" "}
           </Link>
-        </Button>
+        </Button> */}
+        {/* Header */}
+        <div className="bg-white py-[24px] w-[100%] absolute left-0 top-[73px]">
+          <div className="max-w-[1440px] m-auto flex gap-4 flex-col px-[24px] md:px-[48px]">
+            <p className="text-heading4 font-bold">
+              Cultivate a Positive Mindset with Positive Psychology
+            </p>
+
+            <div className="flex flex-row gap-4">
+              <Avatar name="Host" src={""} />
+              <div className="flex flex-col">
+                <p>Hosted by</p>
+
+                {/* groupname */}
+                <p className="font-bold">groupname</p>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-      <EventDetails title={""} location={""} timing={""} description={""} materials={[]} images={[]} eventType={""} />
+      <div className="w-100% pt-[100px]">
+        <EventDetails
+          title={""}
+          location={""}
+          timing={""}
+          description={""}
+          materials={[]}
+          images={[]}
+          eventType={""}
+          groupId={params?.groupId}
+        />
+      </div>
     </div>
   );
 }
