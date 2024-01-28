@@ -1,3 +1,5 @@
+// https://www.prisma.io/docs/orm/prisma-client/queries refer here for the documentation
+
 import prisma from "../prisma"
 
 export async function getUserByEmail(email: string) {
@@ -67,6 +69,18 @@ export async function getGroupsByInterestName(name: string) {
     },
   })
 }
+
+// includes groups where the branches is ANY
+// export async function getGroupsByBranch(branch: string) {
+//   return await prisma.group.findMany({
+//     where: {
+//       branchOfService: branch,
+//     },
+//     include: {
+//       tags: true,
+//     },
+//   })
+// }
 
 export async function getEventsByGroupId(groupId: number) {
   return await prisma.event.findMany({
