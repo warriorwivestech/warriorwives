@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Box, Flex, Heading } from "@chakra-ui/react";
+import React from "react";
+import { Box, Divider, Flex, Heading, Input } from "@chakra-ui/react";
 import Carousel from "./components/Carousel/carousel";
 import { RECOMMENDED_GROUPS } from "./sample/groups";
 import Map from "./components/Map";
@@ -7,9 +7,11 @@ import Map from "./components/Map";
 export default async function Home() {
   return (
     <>
-      <Flex className='flex-col gap-4 px-28 mb-4'>
-        <p className='text-heading4'>Groups for you</p>
+      <Flex className='flex-col gap-10 px-28 mb-4'>
+        <Input className='w-full' placeholder='Search for groups...' />
+        <Divider />
         <Carousel groups={RECOMMENDED_GROUPS} />
+        <Divider />
         <Map />
       </Flex>
     </>

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useRef, useEffect, useState } from "react";
-import { Flex, SimpleGrid } from "@chakra-ui/react";
+import { Card, Flex, SimpleGrid } from "@chakra-ui/react";
 import * as maptilersdk from "@maptiler/sdk";
 import "@maptiler/sdk/dist/maptiler-sdk.css";
 import axios from "axios";
@@ -98,6 +98,8 @@ const sampleGroupData = [
     buttonText: "Buy Tickets",
   },
 ];
+
+const SAMPLE_LOCATION = [-98, 39];
 
 const COUNTY_GEOJSON_URL =
   "https://gist.githubusercontent.com/sdwfrost/d1c73f91dd9d175998ed166eb216994a/raw/e89c35f308cee7e2e5a784e1d3afc5d449e9e4bb/counties.geojson";
@@ -207,10 +209,22 @@ const Map = () => {
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
           function (position) {
-            map.current!.setCenter([
-              position.coords.longitude,
-              position.coords.latitude,
-            ]);
+            // TODO: uncomment once done
+            // const { latitude, longitude } = position.coords;
+
+            // sample data
+            const [longitude, latitude] = SAMPLE_LOCATION;
+
+            const marker = new maptilersdk.Marker()
+              .setLngLat([longitude, latitude])
+              .addTo(map.current!);
+            const popup = new maptilersdk.Popup()
+              .setLngLat([longitude, latitude])
+              .setHTML("You are here!")
+              .addTo(map.current!);
+            marker.setPopup(popup);
+
+            map.current!.setCenter([longitude, latitude]);
             map.current!.setZoom(5);
           },
           function (error) {
@@ -274,8 +288,6 @@ const Map = () => {
 
   const [selectedString, setSelectedString] = useState("");
 
-  const onSearch = () => {};
-
   useEffect(() => {
     /* 
     if NO STATE SELECTED (havent chosen before)
@@ -299,9 +311,9 @@ const Map = () => {
   }, [selectedState, selectedCounty]);
 
   return (
-    <>
+    <Flex className='flex-col gap-2'>
       <Flex className='items-end justify-between'>
-        <p className='text-heading4'>Search for Groups</p>
+        <p className='text-heading5'>Search by Location</p>
         <Checkbox
           onChange={(e) => setByCounty(e.target.checked)}
           disabled={loading}
@@ -320,11 +332,11 @@ const Map = () => {
         }`}
       >
         <Box className='relative w-full h-[60vh] min-h-[500px]'>
-          <Box ref={mapContainer} className='absolute w-full h-full' />
+          <Card ref={mapContainer} className='absolute w-full h-full' />
         </Box>
         {selectedString ? (
           <Flex className='flex-col gap-4'>
-            <p className='text-heading5 text-lg'>{selectedString}</p>
+            <p className='text-base font-semibold'>{selectedString}</p>
             <SimpleGrid columns={[1, 2, 3, 4]} spacing={5}>
               {sampleGroupData.map((group, index) => {
                 return <GroupCard key={index} {...group} />;
@@ -337,7 +349,7 @@ const Map = () => {
           </p>
         )}
       </Flex>
-    </>
+    </Flex>
   );
 };
 

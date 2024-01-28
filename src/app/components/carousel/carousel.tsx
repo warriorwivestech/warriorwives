@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useCallback, useEffect, useRef } from "react";
-import { Box, Flex, Tag, Text, Badge, Button } from "@chakra-ui/react";
+import { Box, Flex, Tag, Text, Badge, Button, Card } from "@chakra-ui/react";
 import { GroupTypes } from "@/app/types/groups";
 import useEmblaCarousel from "embla-carousel-react";
 
@@ -22,8 +22,9 @@ export default function Carousel({ groups }: { groups: GroupTypes[] }) {
   }, [embla, onScroll]);
 
   return (
-    <>
-      <Box overflow={"hidden"} ref={emblaRef}>
+    <Flex className='flex-col gap-2'>
+      <p className='text-heading5'>Recommended groups</p>
+      <Card overflow={"hidden"} ref={emblaRef}>
         <Flex h={"30rem"}>
           {groups.map((group) => (
             <Box
@@ -68,7 +69,7 @@ export default function Carousel({ groups }: { groups: GroupTypes[] }) {
           ))}
         </Flex>
       </Flex> */}
-      </Box>
+      </Card>
       <Flex className='justify-center'>
         <Box className='h-4 max-w-xl relative rounded-sm w-72 bg-gray-200 overflow-hidden'>
           <Box
@@ -77,6 +78,6 @@ export default function Carousel({ groups }: { groups: GroupTypes[] }) {
           />
         </Box>
       </Flex>
-    </>
+    </Flex>
   );
 }
