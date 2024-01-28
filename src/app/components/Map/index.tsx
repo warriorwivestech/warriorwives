@@ -7,6 +7,7 @@ import "@maptiler/sdk/dist/maptiler-sdk.css";
 import axios from "axios";
 
 import { Box, Button, Checkbox, Heading, Spinner } from "@chakra-ui/react";
+import { FaMapMarkedAlt } from "react-icons/fa";
 import GroupCard from "../GroupCards";
 const sampleGroupData = [
   {
@@ -313,7 +314,10 @@ const Map = () => {
   return (
     <Flex className='flex-col gap-2'>
       <Flex className='items-end justify-between'>
-        <p className='text-heading5'>Search by Location</p>
+        <p className='flex gap-2 items-center text-heading5'>
+          <FaMapMarkedAlt />
+          Search by Location
+        </p>
         <Checkbox
           onChange={(e) => setByCounty(e.target.checked)}
           disabled={loading}
@@ -322,9 +326,9 @@ const Map = () => {
         </Checkbox>
       </Flex>
       {loading && (
-        <Flex className='w-full h-[60vh] min-h-[500px] justify-center items-center'>
+        <Card className='flex w-full h-[60vh] min-h-[500px] justify-center items-center'>
           <Spinner />
-        </Flex>
+        </Card>
       )}
       <Flex
         className={`${loading ? "hidden" : ""} flex-col ${

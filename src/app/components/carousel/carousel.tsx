@@ -4,6 +4,7 @@ import React, { useState, useCallback, useEffect, useRef } from "react";
 import { Box, Flex, Tag, Text, Badge, Button, Card } from "@chakra-ui/react";
 import { GroupTypes } from "@/app/types/groups";
 import useEmblaCarousel from "embla-carousel-react";
+import { StarIcon } from "@chakra-ui/icons";
 
 export default function Carousel({ groups }: { groups: GroupTypes[] }) {
   const [emblaRef, embla] = useEmblaCarousel({ loop: true });
@@ -23,7 +24,10 @@ export default function Carousel({ groups }: { groups: GroupTypes[] }) {
 
   return (
     <Flex className='flex-col gap-2'>
-      <p className='text-heading5'>Recommended groups</p>
+      <p className='flex gap-2 items-center text-heading5'>
+        <StarIcon boxSize={3} />
+        Recommended Groups
+      </p>
       <Card overflow={"hidden"} ref={emblaRef}>
         <Flex h={"30rem"}>
           {groups.map((group) => (
@@ -70,7 +74,7 @@ export default function Carousel({ groups }: { groups: GroupTypes[] }) {
         </Flex>
       </Flex> */}
       </Card>
-      <Flex className='justify-center'>
+      <Flex className='justify-center mt-2'>
         <Box className='h-4 max-w-xl relative rounded-sm w-72 bg-gray-200 overflow-hidden'>
           <Box
             className='absolute bg-cyan-300 w-full top-0 bottom-0 left-[-100%]'

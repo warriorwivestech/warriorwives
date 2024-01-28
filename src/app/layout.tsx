@@ -28,7 +28,7 @@ export default function RootLayout({
         <ChakraProviders>
           <NavBar />
           <Box className="min-h-[70vh] bg-[#FAFCFF] pt-10 pb-10 w-[100%]">
-            <div className="max-w-[1440px] m-auto px-[24px] py-[12px]">{children}</div>
+            <div className="max-w-[1440px] m-auto px-[10rem] py-[12px]">{children}</div>
           </Box>
           <Footer />
         </ChakraProviders>
