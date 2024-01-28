@@ -305,9 +305,7 @@ const Map = () => {
     }
 
     setSelectedString(
-      `Groups in ${
-        selectedCounty ? `${selectedCounty}, ` : ""
-      } ${selectedState}`
+      `${selectedCounty ? `${selectedCounty}, ` : ""} ${selectedState}`
     );
   }, [selectedState, selectedCounty]);
 
@@ -325,22 +323,25 @@ const Map = () => {
           Search by county
         </Checkbox>
       </Flex>
-      {loading && (
-        <Card className='flex w-full h-[60vh] min-h-[500px] justify-center items-center'>
-          <Spinner />
-        </Card>
-      )}
-      <Flex
-        className={`${loading ? "hidden" : ""} flex-col ${
-          selectedString ? "gap-8" : "gap-2"
-        }`}
-      >
+      <Flex className={`flex-col ${selectedState ? "gap-8" : "gap-2"}`}>
         <Box className='relative w-full h-[60vh] min-h-[500px]'>
-          <Card ref={mapContainer} className='absolute w-full h-full' />
+          <Card ref={mapContainer} className='absolute w-full h-full'>
+            {loading && (
+              <Flex className='h-full justify-center items-center'>
+                <Spinner />
+              </Flex>
+            )}
+          </Card>
         </Box>
-        {selectedString ? (
+        {selectedState ? (
           <Flex className='flex-col gap-4'>
-            <p className='text-base font-semibold'>{selectedString}</p>
+            <p className='text-base font-semibold'>
+              Groups in {selectedCounty && `${selectedCounty}, `}
+              {selectedState}
+              {/* <Tag color={generateColorFromString(selectedState)}>
+                {selectedState}
+              </Tag> */}
+            </p>
             <SimpleGrid columns={[1, 2, 3, 4]} spacing={5}>
               {sampleGroupData.map((group, index) => {
                 return <GroupCard key={index} {...group} />;
@@ -348,9 +349,11 @@ const Map = () => {
             </SimpleGrid>
           </Flex>
         ) : (
-          <p className='text-sm font-normal text-gray-500'>
-            Click on a state/county to get started.
-          </p>
+          !loading && (
+            <p className='text-sm font-normal text-gray-500'>
+              Click on a state/county to get started.
+            </p>
+          )
         )}
       </Flex>
     </Flex>
