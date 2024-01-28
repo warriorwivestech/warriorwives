@@ -89,6 +89,28 @@ CREATE TABLE "MembersOnGroups" (
     CONSTRAINT "MembersOnGroups_pkey" PRIMARY KEY ("groupId","userId")
 );
 
+-- CreateTable
+CREATE TABLE "EventPhoto" (
+    "id" SERIAL NOT NULL,
+    "eventId" INTEGER NOT NULL,
+    "photo" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "EventPhoto_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "EventMaterial" (
+    "id" SERIAL NOT NULL,
+    "eventId" INTEGER NOT NULL,
+    "material" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "EventMaterial_pkey" PRIMARY KEY ("id")
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
@@ -118,3 +140,9 @@ ALTER TABLE "MembersOnGroups" ADD CONSTRAINT "MembersOnGroups_groupId_fkey" FORE
 
 -- AddForeignKey
 ALTER TABLE "MembersOnGroups" ADD CONSTRAINT "MembersOnGroups_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "EventPhoto" ADD CONSTRAINT "EventPhoto_eventId_fkey" FOREIGN KEY ("eventId") REFERENCES "Event"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "EventMaterial" ADD CONSTRAINT "EventMaterial_eventId_fkey" FOREIGN KEY ("eventId") REFERENCES "Event"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
