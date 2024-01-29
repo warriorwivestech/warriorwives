@@ -24,4 +24,5 @@ export interface EventType {
   materials: EventMaterialType[] | null;
   group: GroupTypes | null;
   groupId: string;
+  meetingLink?: string;
 }

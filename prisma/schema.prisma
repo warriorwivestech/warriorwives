@@ -50,7 +50,7 @@ model Group {
 model Event {
   id           Int             @id @default(autoincrement())
   name         String
-  description  String
+  description  String 
   displayPhoto String
   location     String
   online       Boolean         @default(false)

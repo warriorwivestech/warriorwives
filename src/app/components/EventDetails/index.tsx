@@ -33,6 +33,7 @@ export default function EventDetails(props: EventType) {
     materials,
     photos,
     groupId,
+    meetingLink,
   } = props;
 
   const joined = false;
@@ -153,17 +154,21 @@ export default function EventDetails(props: EventType) {
 
       <div className="flex flex-col gap-8 w-[100%] md:w-[65%]">
         {/* banner image */}
-        <Image
-          rounded={"xl"}
-          alt={"product image"}
-          src={
-            "https://images.unsplash.com/photo-1596516109370-29001ec8ec36?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyODE1MDl8MHwxfGFsbHx8fHx8fHx8fDE2Mzg5MzY2MzE&ixlib=rb-1.2.1&q=80&w=1080"
-          }
-          fit={"cover"}
-          align={"center"}
-          w={"100%"}
-          h={{ base: "100%", sm: "400px", lg: "500px" }}
-        />
+        {/* change back to without exclaimation mark when done*/}
+        {!displayPhoto && (
+          <Image
+            rounded={"xl"}
+            alt={"product image"}
+            src={
+              "https://images.unsplash.com/photo-1596516109370-29001ec8ec36?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyODE1MDl8MHwxfGFsbHx8fHx8fHx8fDE2Mzg5MzY2MzE&ixlib=rb-1.2.1&q=80&w=1080"
+            }
+            fit={"cover"}
+            align={"center"}
+            w={"100%"}
+            h={{ base: "100%", sm: "400px", lg: "500px" }}
+          />
+        )}
+
         {/* description */}
         <div className="flex flex-col gap-4">
           <p className="text-heading5">Description</p>
@@ -225,45 +230,49 @@ export default function EventDetails(props: EventType) {
         </div>
 
         {/* Attendees */}
-        <div className="flex flex-col gap-4">
-          <p className="text-heading5">Attendees {sampleAttendees?.length}</p>
-          <div className="bg-white rounded-xl w-[100%] flex flex-row p-6 gap-4 overflow-x-scroll">
-            {sampleAttendees.map((attendee) => {
-              return (
-                <div className="bg-white p-4 shadow-lg text-center flex flex-col justify-center items-center gap-4">
-                  <Avatar
-                    size="2xl"
-                    name={attendee?.name}
-                    src={attendee?.image}
-                  />
-                  <p className="font-bold">{attendee?.name}</p>
-                </div>
-              );
-            })}
+        {sampleAttendees && (
+          <div className="flex flex-col gap-4">
+            <p className="text-heading5">Attendees {sampleAttendees?.length}</p>
+            <div className="bg-white rounded-xl w-[100%] flex flex-row p-6 gap-4 overflow-x-scroll">
+              {sampleAttendees.map((attendee) => {
+                return (
+                  <div className="bg-white p-4 shadow-lg text-center flex flex-col justify-center items-center gap-4">
+                    <Avatar
+                      size="2xl"
+                      name={attendee?.name}
+                      src={attendee?.image}
+                    />
+                    <p className="font-bold">{attendee?.name}</p>
+                  </div>
+                );
+              })}
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Pictures */}
-        <div className="flex flex-col gap-4">
-          <p className="text-heading5">Pictures {samplePictures?.length}</p>
-          <div className="rounded-xl w-[100%] flex flex-row gap-4 overflow-x-scroll">
-            {samplePictures.map((picture) => {
-              return (
-                <div className="bg-white p-4 shadow-lg text-center flex flex-col justify-center items-center gap-4 rounded-xl w-[100%]">
-                  <Image
-                    rounded={"md"}
-                    alt={"product image"}
-                    src={picture}
-                    fit={"cover"}
-                    align={"center"}
-                    minW={"300px"}
-                    h={{ base: "100%", sm: "200px", lg: "200px" }}
-                  />
-                </div>
-              );
-            })}
+        {samplePictures && (
+          <div className="flex flex-col gap-4">
+            <p className="text-heading5">Pictures {samplePictures?.length}</p>
+            <div className="rounded-xl w-[100%] flex flex-row gap-4 overflow-x-scroll">
+              {samplePictures.map((picture) => {
+                return (
+                  <div className="bg-white p-4 shadow-lg text-center flex flex-col justify-center items-center gap-4 rounded-xl w-[100%]">
+                    <Image
+                      rounded={"md"}
+                      alt={"product image"}
+                      src={picture}
+                      fit={"cover"}
+                      align={"center"}
+                      minW={"300px"}
+                      h={{ base: "100%", sm: "200px", lg: "200px" }}
+                    />
+                  </div>
+                );
+              })}
+            </div>
           </div>
-        </div>
+        )}
 
         <Divider h={4} />
 
@@ -304,14 +313,13 @@ export default function EventDetails(props: EventType) {
       {/* sticky tab */}
       <div className="md:sticky md:top-10 flex flex-col gap-4 w-[100%] md:w-[25%] h-[100%]">
         <div className="flex flex-col gap-4 bg-white rounded-xl p-4 w-[100%]">
-          <div className="gap-2 flex flex-row flex-wrap">
-            {/* tags */}
+          {/* <div className="gap-2 flex flex-row flex-wrap">
             <Tag w={"auto"}>tags</Tag>
             <Tag w={"auto"}>tags</Tag>
             <Tag w={"auto"}>tags</Tag>
             <Tag w={"auto"}>tags</Tag>
             <Tag w={"auto"}>tags</Tag>
-          </div>
+          </div> */}
 
           <div className="flex flex-row gap-4 items-start">
             <FaClock
@@ -323,7 +331,7 @@ export default function EventDetails(props: EventType) {
             </p>
           </div>
 
-          {online ? (
+          {!online ? (
             <div className="flex flex-row gap-4 items-start">
               <FaVideo
                 style={{
@@ -332,7 +340,17 @@ export default function EventDetails(props: EventType) {
                   marginTop: "4px",
                 }}
               />
-              <p>Online</p>
+
+              <div className="flex flex-col">
+                <p>Online</p>
+                <a
+                  href={meetingLink}
+                  target="_blank"
+                  className="cursor-pointer text-blue-500"
+                >
+                  Join Meeting
+                </a>
+              </div>
             </div>
           ) : (
             <div className="flex flex-row gap-4 items-start">
