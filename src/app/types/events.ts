@@ -25,4 +25,5 @@ export interface EventType {
   group: GroupTypes | null;
   groupId: string;
   meetingLink?: string;
+  longCard?: Boolean
 }

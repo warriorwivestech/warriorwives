@@ -29,6 +29,7 @@ export default function EventCards(props: EventType) {
     materials,
     photos,
     groupId,
+    longCard,
   } = props;
 
   const joinEventHandler = () => {};
@@ -82,7 +83,10 @@ export default function EventCards(props: EventType) {
   ];
 
   return (
-    <Link href={`${groupId}/${id}`} className="min-w-[340px]">
+    <Link
+      href={`${1}/${2}`}
+      className={`${longCard ? "min-w-[450px]" : "min-w-[340px]"} `}
+    >
       <div className="bg-white rounded-xl p-4 flex flex-col gap-6">
         <div className="flex flex-row justify-between gap-4 w-[100%]">
           {/* details */}
@@ -148,7 +152,7 @@ export default function EventCards(props: EventType) {
           <div className="flex flex-row justify-between items-center">
             <div className="flex flex-row items-center gap-2">
               <Avatar
-              size="sm"
+                size="sm"
                 name="Rajesh"
                 src="https://images.unsplash.com/photo-1596516109370-29001ec8ec36?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyODE1MDl8MHwxfGFsbHx8fHx8fHx8fDE2Mzg5MzY2MzE&ixlib=rb-1.2.1&q=80&w=1080"
               />

@@ -291,6 +291,7 @@ export default function EventDetails(props: EventType) {
             {samleEvents?.map((event, index) => {
               return (
                 <EventCards
+                  longCard={true}
                   name={event?.name}
                   displayPhoto={event?.displayPhoto}
                   location={event?.location}
