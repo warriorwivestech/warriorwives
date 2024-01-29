@@ -1,5 +1,5 @@
 // EventCards.tsx
-import Image from "next/image";
+
 import {
   Box,
   Center,
@@ -9,86 +9,164 @@ import {
   Avatar,
   useColorModeValue,
   Flex,
+  Image,
+  Button,
 } from "@chakra-ui/react";
 import Link from "next/link";
+import { EventType } from "@/app/types/events";
+import { FaLocationArrow } from "react-icons/fa";
 
-interface EventCardProps {
-  id: string;
-  group: string;
-  title: string;
-  description: string;
-  imageUrl: string;
-  date: string;
-  readTime: string;
-  author: string;
-  authorImageUrl: string;
-}
+export default function EventCards(props: EventType) {
+  const {
+    id,
+    name,
+    description,
+    displayPhoto,
+    location,
+    online,
+    dateTime,
+    group,
+    materials,
+    photos,
+    groupId,
+  } = props;
 
-export default function EventCards({
-  id,
-  group,
-  title,
-  description,
-  imageUrl,
-  date,
-  readTime,
-  author,
-  authorImageUrl,
-}: EventCardProps) {
+  const joinEventHandler = () => {};
+
+  const sampleAttendees = [
+    {
+      image:
+        "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?size=338&ext=jpg&ga=GA1.1.1448711260.1706400000&semt=ais",
+      name: "Raju",
+    },
+    {
+      image:
+        "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?size=338&ext=jpg&ga=GA1.1.1448711260.1706400000&semt=ais",
+      name: "Raju",
+    },
+    {
+      image:
+        "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?size=338&ext=jpg&ga=GA1.1.1448711260.1706400000&semt=ais",
+      name: "Raju",
+    },
+    {
+      image:
+        "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?size=338&ext=jpg&ga=GA1.1.1448711260.1706400000&semt=ais",
+      name: "Raju",
+    },
+    {
+      image:
+        "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?size=338&ext=jpg&ga=GA1.1.1448711260.1706400000&semt=ais",
+      name: "Raju",
+    },
+    {
+      image:
+        "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?size=338&ext=jpg&ga=GA1.1.1448711260.1706400000&semt=ais",
+      name: "Raju",
+    },
+    {
+      image:
+        "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?size=338&ext=jpg&ga=GA1.1.1448711260.1706400000&semt=ais",
+      name: "Raju",
+    },
+    {
+      image:
+        "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?size=338&ext=jpg&ga=GA1.1.1448711260.1706400000&semt=ais",
+      name: "Raju",
+    },
+    {
+      image:
+        "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?size=338&ext=jpg&ga=GA1.1.1448711260.1706400000&semt=ais",
+      name: "Raju",
+    },
+  ];
+
   return (
-    <Link href={`${group}/${id}`}>
-      <Center py={6}>
-        <Box
-          transition="all"
-          maxW={"445px"}
-          h={"100%"}
-          w={"full"}
-          rounded={"md"}
-          boxShadow={"2xl"}
-          p={6}
-          overflow={"hidden"}
-          cursor={"pointer"}
-          className="transition-all duration-300 ease-in-out hover:scale-105"
-        >
-          <Box
-            h={"210px"}
-            bg={"gray.100"}
-            mt={-6}
-            mx={-6}
-            mb={6}
-            pos={"relative"}
-          >
-            <Image src={imageUrl} layout="fill" objectFit="cover" alt={title} />
-          </Box>
-          <Stack>
+    <Link href={`${groupId}/${id}`} className="min-w-[340px]">
+      <div className="bg-white rounded-xl p-4 flex flex-col gap-6">
+        <div className="flex flex-row justify-between gap-4 w-[100%]">
+          {/* details */}
+          <div className="flex flex-col gap-2 w-[100%]">
+            {/* dateTime */}
+            <p className="font-bold text-[14px] text-green-800 tracking-wider">
+              SAT, FEB 3
+            </p>
+
+            {/* name */}
             <Text
-              color={"green.500"}
-              textTransform={"uppercase"}
-              fontWeight={800}
-              fontSize={"sm"}
-              letterSpacing={1.1}
+              noOfLines={2}
+              textOverflow="ellipsis"
+              className="font-bold text-[24px]"
             >
-              Online
+              testing title testing title testing title testing title testing
+              title testing title testing title testing title
             </Text>
-            <Heading fontSize={"2xl"} fontFamily={"body"}>
-              {title}
-            </Heading>
-            <Flex>
-              <Text color={"gray.500"} textOverflow="ellipsis" noOfLines={3}>
-                {description}
-              </Text>
-            </Flex>
-          </Stack>
-          <Stack mt={6} direction={"row"} spacing={4} align={"center"}>
-            {/* <Avatar src={authorImageUrl} /> */}
-            <Stack direction={"column"} spacing={0} fontSize={"sm"}>
-              <Text fontWeight={600}>location</Text>
-              {/* date time */}
-              <Text color={"gray.500"}>{date}</Text>
-            </Stack>
-          </Stack>
-        </Box>
-      </Center>
+
+            {/* location */}
+            <div className="flex flex-row gap-4 items-start text-gray-500">
+              <FaLocationArrow
+                style={{
+                  minHeight: "14px",
+                  minWidth: "14px",
+                  marginTop: "4px",
+                }}
+              />
+              <p>location</p>
+            </div>
+          </div>
+
+          {/* image */}
+          <div className="w-[100%] max-w-[200px]">
+            <Image
+              rounded={"xl"}
+              alt={"product image"}
+              src={
+                "https://images.unsplash.com/photo-1596516109370-29001ec8ec36?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyODE1MDl8MHwxfGFsbHx8fHx8fHx8fDE2Mzg5MzY2MzE&ixlib=rb-1.2.1&q=80&w=1080"
+              }
+              fit={"cover"}
+              align={"center"}
+              w={"100%"}
+              h={{ base: "100%", sm: "130px", lg: "130px" }}
+            />
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-6">
+          {/* description */}
+          <div>
+            <Text noOfLines={3} textOverflow="ellipsis" className="text-[14px]">
+              Lorem Ipsum is simply dummy text of the printing and typesetting
+              industry. Lorem Ipsum has been the industry's standard dummy text
+              ever since the 1500s, when an unknown printer took a galley of
+              type Lorem Ipsum is simply dummy text of the printing and
+              typesetting industry. Lorem Ipsum has been the industry's standard
+              dummy text ever since the 1500s, when an unknown printer took a
+              galley of type
+            </Text>
+          </div>
+
+          <div className="flex flex-row justify-between items-center">
+            <div className="flex flex-row items-center gap-2">
+              <Avatar
+              size="sm"
+                name="Rajesh"
+                src="https://images.unsplash.com/photo-1596516109370-29001ec8ec36?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyODE1MDl8MHwxfGFsbHx8fHx8fHx8fDE2Mzg5MzY2MzE&ixlib=rb-1.2.1&q=80&w=1080"
+              />
+              <p className="text-gray-500 text-[14px]">
+                {`${sampleAttendees?.length} attendee(s)`}
+              </p>
+            </div>
+
+            <Button
+              rounded={"md"}
+              className="bg-black text-white hover:text-black"
+              onClick={() => joinEventHandler()}
+            >
+              Join event
+            </Button>
+          </div>
+        </div>
+      </div>
     </Link>
   );
 }

@@ -47,14 +47,17 @@ export default function EventPage({
       </div>
       <div className="w-100% pt-[100px]">
         <EventDetails
-          title={""}
-          location={""}
-          timing={""}
+          name={""}
           description={""}
+          displayPhoto={""}
+          location={""}
+          online={false}
+          dateTime={null}
+          group={null}
           materials={[]}
-          images={[]}
-          eventType={""}
+          photos={[]}
           groupId={params?.groupId}
+          id={0}
         />
       </div>
     </div>

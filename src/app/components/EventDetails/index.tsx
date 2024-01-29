@@ -1,64 +1,94 @@
 "use client";
 
 import {
-  Box,
-  chakra,
-  Container,
-  Stack,
-  Text,
   Image,
-  Flex,
-  VStack,
   Button,
-  Heading,
-  SimpleGrid,
-  StackDivider,
-  useColorModeValue,
-  VisuallyHidden,
-  List,
-  ListItem,
-  HStack,
   Tag,
   Avatar,
   Divider,
+  SimpleGrid,
 } from "@chakra-ui/react";
-import { MdLocalShipping } from "react-icons/md";
 import {
   FaVideo,
   FaClock,
   FaLocationArrow,
   FaChevronRight,
 } from "react-icons/fa";
-import { MdOutlineLocationOn } from "react-icons/md";
 import Link from "next/link";
+import { EventType } from "@/app/types/events";
+import EventCards from "../EventCards";
 
 // Define the props interface
-interface EventDetailsProps {
-  title: string;
-  location: string;
-  timing: string;
-  description: string;
-  materials: string[];
-  images: string[];
-  eventType: string;
-  groupId: string;
-}
 
-export default function EventDetails(props: EventDetailsProps) {
+export default function EventDetails(props: EventType) {
   const {
-    title,
-    location,
-    timing,
+    id,
+    name,
     description,
+    displayPhoto,
+    location,
+    online,
+    dateTime,
+    group,
     materials,
-    images,
-    eventType,
+    photos,
     groupId,
   } = props;
 
   const joined = false;
 
   const joinEventHandler = () => {};
+
+  const samleEvents = [
+    {
+      id: 1,
+      name: "Event 1",
+      description: "Description of Event 1",
+      displayPhoto:
+        "https://fujifilm-x.com/wp-content/uploads/2021/01/gfx100s_sample_04_thum-1.jpg",
+      location: "Location 1",
+      online: true,
+      dateTime: "2024-01-29T18:11:16.620395",
+      groupId: 1,
+      photos: ["photo_1_1.jpg", "photo_1_2.jpg", "photo_1_3.jpg"],
+      materials: ["material_1_1.pdf", "material_1_2.pdf", "material_1_3.pdf"],
+      createdAt: "2024-01-29T18:11:16.620416",
+      updatedAt: "2024-01-29T18:11:16.620420",
+      group: "Group 5",
+    },
+    {
+      id: 2,
+      name: "Event 2",
+      description: "Description of Event 2",
+      displayPhoto:
+        "https://fujifilm-x.com/wp-content/uploads/2021/01/gfx100s_sample_04_thum-1.jpg",
+      location: "Location 2",
+      online: true,
+      dateTime: "2024-01-29T18:11:16.620430",
+      groupId: 1,
+      photos: ["photo_2_1.jpg", "photo_2_2.jpg", "photo_2_3.jpg"],
+      materials: ["material_2_1.pdf", "material_2_2.pdf", "material_2_3.pdf"],
+      createdAt: "2024-01-29T18:11:16.620442",
+      updatedAt: "2024-01-29T18:11:16.620445",
+      group: "Group 2",
+    },
+    {
+      id: 3,
+      name: "Event 3",
+      description: "Description of Event 3",
+      displayPhoto:
+        "https://fujifilm-x.com/wp-content/uploads/2021/01/gfx100s_sample_04_thum-1.jpg",
+      location: "Location 3",
+      online: false,
+      dateTime: "2024-01-29T18:11:16.620453",
+      groupId: 5,
+      photos: ["photo_3_1.jpg", "photo_3_2.jpg", "photo_3_3.jpg"],
+      materials: ["material_3_1.pdf", "material_3_2.pdf", "material_3_3.pdf"],
+      createdAt: "2024-01-29T18:11:16.620463",
+      updatedAt: "2024-01-29T18:11:16.620466",
+      group: "Group 4",
+    },
+  ];
 
   const sampleAttendees = [
     {
@@ -248,7 +278,26 @@ export default function EventDetails(props: EventDetailsProps) {
               <FaChevronRight />
             </div>
           </div>
-          events
+          <div className="flex flex-row gap-4 overflow-x-scroll">
+            {samleEvents?.map((event, index) => {
+              return (
+                <EventCards
+                  name={event?.name}
+                  displayPhoto={event?.displayPhoto}
+                  location={event?.location}
+                  online={event?.online}
+                  dateTime={null}
+                  photos={null}
+                  materials={null}
+                  groupId={groupId}
+                  key={index}
+                  id={event?.id}
+                  description={""}
+                  group={null}
+                />
+              );
+            })}
+          </div>
         </div>
       </div>
 
@@ -274,7 +323,7 @@ export default function EventDetails(props: EventDetailsProps) {
             </p>
           </div>
 
-          {eventType === "Online" ? (
+          {online ? (
             <div className="flex flex-row gap-4 items-start">
               <FaVideo
                 style={{
@@ -302,7 +351,7 @@ export default function EventDetails(props: EventDetailsProps) {
         <Divider />
         {!joined && (
           <Button
-            rounded={"xl"}
+            rounded={"md"}
             className="bg-black text-white hover:text-black"
             onClick={() => joinEventHandler()}
           >

@@ -82,9 +82,22 @@ export default function EventsPage({
             testing data
           </Text>
         </Flex>
-        <SimpleGrid columns={[1, 2, 3]} spacing={8}>
+        <SimpleGrid columns={[1, 1, 2]} spacing={4}>
           {eventData.map((event, index) => (
-            <EventCards key={index} {...event} />
+            <EventCards
+              name={""}
+              displayPhoto={""}
+              location={""}
+              online={false}
+              dateTime={null}
+              photos={[]}
+              materials={[]}
+              groupId={params?.groupId}
+              key={index}
+              id={0}
+              description={""}
+              group={null}
+            />
           ))}
         </SimpleGrid>
       </div>
