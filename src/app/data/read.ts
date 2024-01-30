@@ -1,6 +1,6 @@
 // https://www.prisma.io/docs/orm/prisma-client/queries refer here for the documentation
 
-import prisma from "../prisma"
+import prisma from "../prisma";
 
 export async function getUserByEmail(email: string) {
   return await prisma.user.findUnique({
@@ -11,7 +11,7 @@ export async function getUserByEmail(email: string) {
       groups: true,
       interests: true,
     },
-  })
+  });
 }
 
 export async function getUserById(id: number) {
@@ -23,20 +23,20 @@ export async function getUserById(id: number) {
       groups: true,
       interests: true,
     },
-  })
+  });
 }
 
 // ? get groups by county/state
-export async function getGroupsByLocationName(location: string) {
-  return await prisma.group.findMany({
-    where: {
-      location
-    },
-    include: {
-      tags: true,
-    },
-  })
-}
+// export async function getGroupsByLocationName(location: string) {
+//   return await prisma.group.findMany({
+//     where: {
+//       location,
+//     },
+//     include: {
+//       tags: true,
+//     },
+//   });
+// }
 
 export async function getGroupsByInterestId(id: number) {
   return await prisma.group.findMany({
@@ -50,7 +50,7 @@ export async function getGroupsByInterestId(id: number) {
     include: {
       tags: true,
     },
-  })
+  });
 }
 
 export async function getGroupsByInterestName(name: string) {
@@ -67,7 +67,7 @@ export async function getGroupsByInterestName(name: string) {
     include: {
       tags: true,
     },
-  })
+  });
 }
 
 // includes groups where the branches is ANY
@@ -82,12 +82,32 @@ export async function getGroupsByInterestName(name: string) {
 //   })
 // }
 
-export async function getEventsByGroupId(groupId: number) {
+export async function getUpcomingEventsByGroupId(groupId: number) {
   return await prisma.event.findMany({
     where: {
       groupId,
+      dateTime: {
+        gte: new Date(),
+      },
     },
-  })
+    include: {
+      attendees: true,
+    },
+  });
+}
+
+export async function getPastEventsByGroupId(groupId: number) {
+  return await prisma.event.findMany({
+    where: {
+      groupId,
+      dateTime: {
+        lt: new Date(),
+      },
+    },
+    include: {
+      attendees: true,
+    },
+  });
 }
 
 export async function getEventById(id: number) {
@@ -98,6 +118,7 @@ export async function getEventById(id: number) {
     include: {
       photos: true,
       materials: true,
+      attendees: true,
     },
-  })
+  });
 }
