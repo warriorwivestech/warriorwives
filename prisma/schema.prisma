@@ -19,6 +19,7 @@ model User {
   branch    userArmyBranch     @default(ARMY)
   interests InterestsOnUsers[]
   groups    MembersOnGroups[]
+  events    AttendeesOnEvents[]
   createdAt DateTime           @default(now())
   updatedAt DateTime           @updatedAt
 }
@@ -61,6 +62,7 @@ model Event {
   photos       EventPhoto[]
   materials    EventMaterial[]
   meetingLink  String?
+  attendees    AttendeesOnEvents[]
   createdAt    DateTime        @default(now())
   updatedAt    DateTime        @updatedAt
 }
@@ -97,6 +99,17 @@ model MembersOnGroups {
   updatedAt DateTime @updatedAt
 
   @@id([groupId, userId])
+}
+
+model AttendeesOnEvents {
+  event     Event    @relation(fields: [eventId], references: [id])
+  eventId   Int
+  user      User     @relation(fields: [userId], references: [id])
+  userId    Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@id([eventId, userId])
 }
 
 model EventPhoto {
