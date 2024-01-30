@@ -38,7 +38,8 @@ model Group {
   description     String
   displayPhoto    String
   branchOfService groupArmyBranch   @default(ANY)
-  location        String
+  county          String?
+  state           String            @default("National")
   online          Boolean           @default(false)
   members         MembersOnGroups[]
   tags            TagsOnGroups[]
@@ -50,15 +51,16 @@ model Group {
 model Event {
   id           Int             @id @default(autoincrement())
   name         String
-  description  String 
-  displayPhoto String
-  location     String
+  description  String
+  displayPhoto String?
+  location     String?
   online       Boolean         @default(false)
   dateTime     DateTime
   group        Group           @relation(fields: [groupId], references: [id])
   groupId      Int
   photos       EventPhoto[]
   materials    EventMaterial[]
+  meetingLink  String?
   createdAt    DateTime        @default(now())
   updatedAt    DateTime        @updatedAt
 }
