@@ -100,7 +100,7 @@ export default function GroupCard({
             {/* name */}
             <Heading size='md'>{name}</Heading>
             {/* description */}
-            <Flex textOverflow='ellipsis' noOfLines={3}>
+            <Flex textOverflow='ellipsis' noOfLines={5}>
               <Text>{description}</Text>
             </Flex>
           </Stack>
