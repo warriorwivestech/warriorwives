@@ -22,6 +22,8 @@ import Link from "next/link";
 import { FaMapMarkerAlt } from "react-icons/fa";
 import { InfoOutlineIcon } from "@chakra-ui/icons";
 import { RiBaseStationLine } from "react-icons/ri";
+import Tags from "../common/tags";
+import IconText from "../common/icontext";
 
 interface GroupCardProps {
   id: number;
@@ -52,12 +54,11 @@ export default function GroupCard({
         <CardBody>
           <HStack justifyContent={"space-between"} marginBottom='0.75rem'>
             <Text>{branchOfService}</Text>
-            <Flex justifyContent='center' gap={2} alignItems='center'>
-              <Icon as={FaMapMarkerAlt} className="text-red-700" />
-              <Text className='whitespace-nowrap text-slate-600 font-semibold'>{`${
-                county && `${county}, `
-              } ${state}`}</Text>
-            </Flex>
+            <IconText
+              icon={FaMapMarkerAlt}
+              iconClassName='text-red-700'
+              textClassName='whitespace-nowrap font-semibold'
+            >{`${county && `${county}, `} ${state}`}</IconText>
           </HStack>
           <Image
             src={displayPhoto}
@@ -67,13 +68,7 @@ export default function GroupCard({
           />
           <Stack mt='6' spacing='3'>
             <Flex flexDirection='row' justifyContent='space-between'>
-              <HStack spacing={2} className='flex-wrap'>
-                {tags.map((tag) => (
-                  <Tag w={"auto"} className='whitespace-nowrap'>
-                    {tag}
-                  </Tag>
-                ))}
-              </HStack>
+              <Tags tags={tags} />
               {online && (
                 <Popover trigger='hover' placement='top'>
                   <PopoverTrigger>
