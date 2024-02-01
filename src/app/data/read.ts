@@ -7,7 +7,7 @@ import { GroupsByUserIdResponse } from "./types";
 export async function getGroupsByUserId(userId: number) {
   const baseUrl = process.env.NEXT_PUBLIC_API_URL;
 
-  const res = await fetch(`${baseUrl}/user/3/groups`, { cache: "no-store" });
+  const res = await fetch(`${baseUrl}/users/3/groups`, { cache: "no-store" });
   const data: GroupsByUserIdResponse = await res.json();
 
   return parseGroupsByUserIdResponse(data);
