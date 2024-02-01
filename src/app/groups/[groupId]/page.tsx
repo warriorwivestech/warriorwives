@@ -107,62 +107,55 @@ export default function EventsPage({
               borderRadius='lg'
               className='w-full object-cover h-96'
             />
-            <Card
-              className={
-                !isSticky ? "border-none bg-transparent shadow-none" : ""
-              }
+            <Box
+              className={`${isSticky ? "bg-white rounded-xl" : ""} p-7`}
               position='fixed'
               transition={
-                "width 0.25s ease, border 1s ease, background 0.5s ease, top 0.3s ease"
+                "width 0.25s ease, border 1s ease, background 0.5s ease, top 0.2s ease"
               }
               top={!isSticky ? `calc(110px - ${scrollSpeed}px)` : "48px"}
               right='48px'
               width={`${width > minWidth ? width : minWidth}%`}
             >
-              <CardBody>
-                <Box>
-                  <Stack spacing={3}>
-                    <Stack>
-                      <Tags tags={group.tags} />
-                      <Heading className='heading mb-2'>{group.name}</Heading>
-                    </Stack>
-                    <Stack spacing={2}>
-                      <IconText
-                        icon={RiBaseStationFill}
-                        iconClassName='text-green-500'
-                        textClassName='uppercase text-green-500 tracking-wider font-bold'
-                      >
-                        ONLINE ONLY
-                      </IconText>
-                      <IconText
-                        icon={FaMapMarkerAlt}
-                        iconClassName='text-red-700'
-                      >{`${group.county && `${group.county}, `} ${
-                        group.state
-                      }`}</IconText>
-                      <IconText
-                        icon={MdPeopleAlt}
-                        iconClassName='text-blue-400'
-                      >
-                        {`${numberOfMembers} members`}
-                      </IconText>
-                      <IconText
-                        icon={BsPersonRaisedHand}
-                        iconClassName='text-gray-500'
-                      >
-                        Organised by {processedAdmins}
-                      </IconText>
-                    </Stack>
-                    <Button
-                      rounded={"md"}
-                      className='bg-black text-white hover:text-black w-full mt-4'
-                    >
-                      Join Group
-                    </Button>
+              <Box>
+                <Stack spacing={3}>
+                  <Stack>
+                    <Tags tags={group.tags} />
+                    <Heading className='heading mb-2'>{group.name}</Heading>
                   </Stack>
-                </Box>
-              </CardBody>
-            </Card>
+                  <Stack spacing={2}>
+                    <IconText
+                      icon={RiBaseStationFill}
+                      iconClassName='text-green-500'
+                      textClassName='uppercase text-green-500 tracking-wider font-bold'
+                    >
+                      ONLINE ONLY
+                    </IconText>
+                    <IconText
+                      icon={FaMapMarkerAlt}
+                      iconClassName='text-red-700'
+                    >{`${group.county && `${group.county}, `} ${
+                      group.state
+                    }`}</IconText>
+                    <IconText icon={MdPeopleAlt} iconClassName='text-blue-400'>
+                      {`${numberOfMembers} members`}
+                    </IconText>
+                    <IconText
+                      icon={BsPersonRaisedHand}
+                      iconClassName='text-gray-500'
+                    >
+                      Organised by {processedAdmins}
+                    </IconText>
+                  </Stack>
+                  <Button
+                    rounded={"md"}
+                    className='bg-black text-white hover:text-black w-full mt-4'
+                  >
+                    Join Group
+                  </Button>
+                </Stack>
+              </Box>
+            </Box>
           </SimpleGrid>
           <Flex className='flex-col gap-4'>
             <p className='text-heading5'>Description</p>
