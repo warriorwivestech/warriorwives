@@ -93,7 +93,7 @@ export default function EventsPage({
     };
   }, []);
 
-  const minWidth = 35;
+  const minWidth = 30;
   const width = 50 - scrollPosition / 15;
 
   return (
@@ -121,7 +121,7 @@ export default function EventsPage({
             >
               <CardBody>
                 <Box>
-                  <Stack spacing={5}>
+                  <Stack spacing={3}>
                     <Stack>
                       <Tags tags={group.tags} />
                       <Heading className='heading mb-2'>{group.name}</Heading>
@@ -155,7 +155,7 @@ export default function EventsPage({
                     </Stack>
                     <Button
                       rounded={"md"}
-                      className='bg-black text-white hover:text-black w-full'
+                      className='bg-black text-white hover:text-black w-full mt-4'
                     >
                       Join Group
                     </Button>
@@ -224,7 +224,7 @@ export default function EventsPage({
             </Stack>
           </SimpleGrid> */}
         <p className='text-heading4'>Events from {params?.groupId}</p>
-        <Flex className='flex-col w-3/5' gap={6}>
+        <Flex className='flex-col w-[65%]' gap={6}>
           {eventData.map((event, index) => (
             <EventCards
               name={""}
