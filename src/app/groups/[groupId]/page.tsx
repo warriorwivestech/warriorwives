@@ -80,89 +80,78 @@ function GroupData({ group }: { group: GroupData }) {
       ? `${admins.slice(0, 2).join(", ")} and ${admins.length - 2} others`
       : admins.join(" and ");
 
-  // SAMPLE
-  const isJoined = true;
-
-  const cardMinWidth = 30;
-  const cardWidth = 50 - scrollPosition / 15;
-
-  const descMinWidth = 60;
-  const descWidth = 100 - (isSticky ? scrollPosition / 3 : 0);
+  const minWidth = 30;
+  const width = 50 - scrollPosition / 15;
 
   return (
-    <div className='flex flex-col-reverse md:flex-row gap-8 justify-between'>
-      <div className='flex flex-col gap-6'>
+    <div className="flex flex-col-reverse md:flex-row gap-8 justify-between">
+      <div className="flex flex-col gap-6">
         <Stack gap={8}>
           <SimpleGrid columns={[1, 1, 2]} spacing={8}>
             <Image
               src={displayPhotoUrl}
               alt={name}
-              borderRadius='lg'
-              className='w-full object-cover h-96'
+              borderRadius="lg"
+              className="w-full object-cover h-96"
             />
             <Box
-              className={`${
-                isSticky ? "bg-white rounded-xl shadow-sm" : ""
-              } p-7`}
-              position='fixed'
+              className={`${isSticky ? "bg-white rounded-xl" : ""} p-7`}
+              position="fixed"
               transition={
                 "width 0.25s ease, border 1s ease, background 0.5s ease, top 0.2s ease"
               }
               top={!isSticky ? `calc(110px - ${scrollSpeed}px)` : "48px"}
-              right='48px'
-              width={`${cardWidth > cardMinWidth ? cardWidth : cardMinWidth}%`}
+              right="48px"
+              width={`${width > minWidth ? width : minWidth}%`}
             >
               <Box>
                 <Stack spacing={3}>
                   <Stack>
                     <Tags tags={tags} />
-                    <Heading className='heading mb-2'>{name}</Heading>
+                    <Heading className="heading mb-2">{name}</Heading>
                   </Stack>
                   <Stack spacing={2}>
                     {online && (
                       <IconText
                         icon={RiBaseStationFill}
-                        iconClassName='text-green-500'
-                        textClassName='uppercase text-green-500 tracking-wider font-bold'
+                        iconClassName="text-green-500"
+                        textClassName="uppercase text-green-500 tracking-wider font-bold"
                       >
                         ONLINE ONLY
                       </IconText>
                     )}
                     <IconText
                       icon={FaMapMarkerAlt}
-                      iconClassName='text-red-700'
+                      iconClassName="text-red-700"
                     >
                       {location}
                     </IconText>
-                    <IconText icon={MdPeopleAlt} iconClassName='text-blue-400'>
+                    <IconText icon={MdPeopleAlt} iconClassName="text-blue-400">
                       {`${membersCount} members`}
                     </IconText>
                     <IconText
                       icon={BsPersonRaisedHand}
-                      iconClassName='text-gray-500'
+                      iconClassName="text-gray-500"
                     >
                       Organised by {parsedAdmins}
                     </IconText>
                   </Stack>
                   <Button
                     rounded={"md"}
-                    isDisabled={isJoined}
-                    className={`${
-                      !isJoined && "bg-black text-white hover:text-black"
-                    } w-full mt-4`}
+                    className="bg-black text-white hover:text-black w-full mt-4"
                   >
-                    {isJoined ? "Joined" : "Join Group"}
+                    Join Group
                   </Button>
                 </Stack>
               </Box>
             </Box>
           </SimpleGrid>
-          <Flex className='flex-col gap-4'>
-            <p className='text-heading5'>Description</p>
+          <Flex className="flex-col gap-4">
+            <p className="text-heading5">Description</p>
             <Text
               noOfLines={linesCount}
               textOverflow={"ellipsis"}
-              width={`${descWidth > descMinWidth ? descWidth : descMinWidth}%`}
+              width={`${width > minWidth ? width + 50 : minWidth + 25}%`}
               transition={"width 0.25s ease"}
               ref={descriptionRef}
             >
@@ -170,8 +159,8 @@ function GroupData({ group }: { group: GroupData }) {
             </Text>
           </Flex>
         </Stack>
-        <p className='text-heading4'>Events from {name}</p>
-        <Flex className='flex-col w-[65%]' gap={6}>
+        <p className="text-heading4">Events from {name}</p>
+        <Flex className="flex-col w-[65%]" gap={6}>
           {sampleEventData.map((event, index) => (
             <EventCards
               name={""}
