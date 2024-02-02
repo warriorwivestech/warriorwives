@@ -79,6 +79,7 @@ function GroupData({ group }: { group: GroupData }) {
     admins.length > 2
       ? `${admins.slice(0, 2).join(", ")} and ${admins.length - 2} others`
       : admins.join(" and ");
+  const isJoined = true;
 
   const minWidth = 30;
   const width = 50 - scrollPosition / 15;
@@ -138,9 +139,12 @@ function GroupData({ group }: { group: GroupData }) {
                   </Stack>
                   <Button
                     rounded={"md"}
-                    className="bg-black text-white hover:text-black w-full mt-4"
+                    isDisabled={isJoined}
+                    className={`${
+                      !isJoined && "bg-black text-white hover:text-black"
+                    } w-full mt-4`}
                   >
-                    Join Group
+                    {isJoined ? "Joined" : "Join Group"}
                   </Button>
                 </Stack>
               </Box>
