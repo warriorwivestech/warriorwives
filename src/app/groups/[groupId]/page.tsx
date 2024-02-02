@@ -27,7 +27,7 @@ export default function EventsPage({
 }: {
   params: { groupId: string };
 }) {
-  // sample data to be replaced
+  // SAMPLE DATA TO BE REPLACED
   const group = {
     id: 1,
     name: "Alpha Team",
@@ -48,6 +48,7 @@ export default function EventsPage({
     admins.length > 2 ? `${admins.length - 1} others` : admins.slice(1, 2)
   }`;
   const numberOfMembers = 420;
+  const isJoined = true;
 
   const eventData = Array.from({ length: 10 }, (_, index) => ({
     id: `${index}`,
@@ -61,6 +62,7 @@ export default function EventsPage({
     author: `Author Name ${index + 1}`,
     authorImageUrl: "https://avatars0.githubusercontent.com/u/1164541?v=4",
   }));
+  // END OF SAMPLE DATA
 
   const [isSticky, setIsSticky] = useState(false);
   const [scrollPosition, setScrollPosition] = useState(70);
@@ -93,8 +95,11 @@ export default function EventsPage({
     };
   }, []);
 
-  const minWidth = 30;
-  const width = 50 - scrollPosition / 15;
+  const cardMinWidth = 30;
+  const cardWidth = 50 - scrollPosition / 15;
+
+  const descMinWidth = 60;
+  const descWidth = 100 - (isSticky ? scrollPosition / 3 : 0);
 
   return (
     <div className='flex flex-col-reverse md:flex-row gap-8 justify-between'>
@@ -108,14 +113,14 @@ export default function EventsPage({
               className='w-full object-cover h-96'
             />
             <Box
-              className={`${isSticky ? "bg-white rounded-xl" : ""} p-7`}
+              className={`${isSticky ? "bg-white rounded-xl shadow-sm" : ""} p-7`}
               position='fixed'
               transition={
                 "width 0.25s ease, border 1s ease, background 0.5s ease, top 0.2s ease"
               }
               top={!isSticky ? `calc(110px - ${scrollSpeed}px)` : "48px"}
               right='48px'
-              width={`${width > minWidth ? width : minWidth}%`}
+              width={`${cardWidth > cardMinWidth ? cardWidth : cardMinWidth}%`}
             >
               <Box>
                 <Stack spacing={3}>
@@ -149,9 +154,12 @@ export default function EventsPage({
                   </Stack>
                   <Button
                     rounded={"md"}
-                    className='bg-black text-white hover:text-black w-full mt-4'
+                    isDisabled={isJoined}
+                    className={`${
+                      !isJoined && "bg-black text-white hover:text-black"
+                    } w-full mt-4`}
                   >
-                    Join Group
+                    {isJoined ? "Joined" : "Join Group"}
                   </Button>
                 </Stack>
               </Box>
@@ -162,7 +170,7 @@ export default function EventsPage({
             <Text
               noOfLines={linesCount}
               textOverflow={"ellipsis"}
-              width={`${width > minWidth ? width + 50 : minWidth + 25}%`}
+              width={`${descWidth > descMinWidth ? descWidth : descMinWidth}%`}
               transition={"width 0.25s ease"}
               ref={descriptionRef}
             >
@@ -170,52 +178,6 @@ export default function EventsPage({
             </Text>
           </Flex>
         </Stack>
-
-        {/* <SimpleGrid columns={[1, 1, 2]} spacing={12}>
-            <Image
-              src={group.displayPhoto}
-              alt={group.name}
-              borderRadius='lg'
-              className='w-full object-cover h-96'
-            />
-            <Stack spacing={5}>
-              <Stack>
-                <Tags tags={group.tags} />
-                <Heading className='heading mb-2'>{group.name}</Heading>
-              </Stack>
-              <Stack spacing={2}>
-                <IconText
-                  icon={RiBaseStationFill}
-                  iconClassName='text-green-500'
-                  textClassName='uppercase text-green-500 tracking-wider font-bold'
-                >
-                  ONLINE ONLY
-                </IconText>
-                <IconText
-                  icon={FaMapMarkerAlt}
-                  iconClassName='text-red-700'
-                >{`${group.county && `${group.county}, `} ${
-                  group.state
-                }`}</IconText>
-                <IconText icon={MdPeopleAlt} iconClassName='text-blue-400'>
-                  {`${numberOfMembers} members`}
-                </IconText>
-                <IconText
-                  icon={BsPersonRaisedHand}
-                  iconClassName='text-gray-500'
-                >
-                  Organised by {processedAdmins}
-                </IconText>
-              </Stack>
-              <Text>{group.description}</Text>
-              <Button
-                rounded={"md"}
-                className='bg-black text-white hover:text-black lg:w-1/2 w-full'
-              >
-                Join Group
-              </Button>
-            </Stack>
-          </SimpleGrid> */}
         <p className='text-heading4'>Events from {params?.groupId}</p>
         <Flex className='flex-col w-[65%]' gap={6}>
           {eventData.map((event, index) => (
