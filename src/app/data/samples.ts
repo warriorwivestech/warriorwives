@@ -12,7 +12,7 @@ export const sampleGroupData = [
     members: [],
     tags: ["Special Operations", "Tactical", "Alpha"],
     events: [],
-    admin: false
+    admin: false,
   },
   {
     id: 2,
@@ -27,7 +27,7 @@ export const sampleGroupData = [
     members: [],
     tags: ["Air Support", "Aviation", "Bravo"],
     events: [],
-    admin: false
+    admin: false,
   },
   {
     id: 3,
@@ -42,7 +42,7 @@ export const sampleGroupData = [
     members: [],
     tags: ["Naval", "Maritime", "Delta"],
     events: [],
-    admin: false
+    admin: false,
   },
   {
     id: 4,
@@ -57,7 +57,7 @@ export const sampleGroupData = [
     members: [],
     tags: ["Infantry", "Special Forces", "Ranger", "Test", "Test", "Test"],
     events: [],
-    admin: false
+    admin: false,
   },
   {
     id: 5,
@@ -72,6 +72,19 @@ export const sampleGroupData = [
     members: [],
     tags: ["Communication", "Technology", "Echo"],
     events: [],
-    admin: false
+    admin: false,
   },
 ];
+
+export const sampleEventData = Array.from({ length: 10 }, (_, index) => ({
+  id: `${index}`,
+  group: `1`,
+  title: `Event Title ${index + 1}`,
+  description:
+    "This is a sample description for the event., This is a sample description for the event., This is a sample description for the event.,This is a sample description for the event., This is a sample description for the event.",
+  imageUrl: "https://images.unsplash.com/photo-1515378791036-0648a3ef77b2",
+  date: `Feb ${index + 1}, 2024`,
+  readTime: `${index + 1}min read`,
+  author: `Author Name ${index + 1}`,
+  authorImageUrl: "https://avatars0.githubusercontent.com/u/1164541?v=4",
+}));

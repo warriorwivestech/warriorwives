@@ -6,14 +6,11 @@ import {
   Button,
   Flex,
   SimpleGrid,
-  Tag,
   Text,
   Image,
   Stack,
   Heading,
   Box,
-  Card,
-  CardBody,
 } from "@chakra-ui/react";
 import { MdPeopleAlt } from "react-icons/md";
 import React, { useEffect, useState, useRef } from "react";
@@ -21,47 +18,12 @@ import { FaMapMarkerAlt } from "react-icons/fa";
 import IconText from "@/app/components/common/icontext";
 import { BsPersonRaisedHand } from "react-icons/bs";
 import { RiBaseStationFill } from "react-icons/ri";
+import { SWRProvider } from "@/app/providers/swrProvider";
+import useSWR from "swr";
+import { GroupData } from "@/app/api/groups/[groupId]/types";
+import { sampleEventData } from "@/app/data/samples";
 
-export default function EventsPage({
-  params,
-}: {
-  params: { groupId: string };
-}) {
-  // sample data to be replaced
-  const group = {
-    id: 1,
-    name: "Alpha Team",
-    description:
-      "Special Operations UnitSpecial Operations UniSpecial Operations UniSpecial Operations UniSpecial UniSOperations UniSpecial Operations UniSpecial Operations UniSpecial UniSpeOperations UniSpecial Operations UniSpecial Operations UniSpecial UniSpeOperations UniSpecial Operations UniSpecial Operations UniSpecial UniSpeOperations UniSpecial Operations UniSpecial Operations UniSpecial UniSpeOperations UniSpecial Operations UniSpecial Operations UniSpecial UniSpeOperations UniSpecial Operations UniSpecial Operations UniSpecial UniSpeOperations UniSpecial Operations UniSpecial Operations UniSpecial UniSpepecial Operations UniSpecial OperationsSpecial Operations UnitSpecial Operations Uni",
-    displayPhoto:
-      "https://t4.ftcdn.net/jpg/03/40/52/49/360_F_340524914_pzOWCq4I0WjytxaW8DTVFujrck1gjvvO.jpg",
-    branchOfService: "Army",
-    county: "XYZ County",
-    state: "California",
-    online: true,
-    members: [],
-    tags: ["Special Operations", "Tactical", "Alpha"],
-    events: [],
-  };
-  const admins = ["Johnny boy", "Jimmy Neutron", "Testing Name", "lols"];
-  const processedAdmins = `${admins.slice(0, 1)} and ${
-    admins.length > 2 ? `${admins.length - 1} others` : admins.slice(1, 2)
-  }`;
-  const numberOfMembers = 420;
-
-  const eventData = Array.from({ length: 10 }, (_, index) => ({
-    id: `${index}`,
-    group: `${params?.groupId}`,
-    title: `Event Title ${index + 1}`,
-    description:
-      "This is a sample description for the event., This is a sample description for the event., This is a sample description for the event.,This is a sample description for the event., This is a sample description for the event.",
-    imageUrl: "https://images.unsplash.com/photo-1515378791036-0648a3ef77b2",
-    date: `Feb ${index + 1}, 2024`,
-    readTime: `${index + 1}min read`,
-    author: `Author Name ${index + 1}`,
-    authorImageUrl: "https://avatars0.githubusercontent.com/u/1164541?v=4",
-  }));
-
+function GroupData({ group }: { group: GroupData }) {
   const [isSticky, setIsSticky] = useState(false);
   const [scrollPosition, setScrollPosition] = useState(70);
   const [scrollSpeed, setScrollSpeed] = useState(0);
@@ -91,65 +53,92 @@ export default function EventsPage({
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const {
+    id,
+    name,
+    description,
+    displayPhoto,
+    tags,
+    county,
+    state,
+    online,
+    members,
+    membersCount,
+  } = group;
+  const displayPhotoUrl =
+    displayPhoto ||
+    "https://t4.ftcdn.net/jpg/03/40/52/49/360_F_340524914_pzOWCq4I0WjytxaW8DTVFujrck1gjvvO.jpg";
+  const location = county ? `${county}, ${state}` : state;
+  const admins = members
+    .filter((member) => member.admin)
+    .map((member) => member.name);
+  const parsedAdmins =
+    admins.length > 2
+      ? `${admins.slice(0, 2).join(", ")} and ${admins.length - 2} others`
+      : admins.join(" and ");
 
   const minWidth = 30;
   const width = 50 - scrollPosition / 15;
 
   return (
-    <div className='flex flex-col-reverse md:flex-row gap-8 justify-between'>
-      <div className='flex flex-col gap-6'>
+    <div className="flex flex-col-reverse md:flex-row gap-8 justify-between">
+      <div className="flex flex-col gap-6">
         <Stack gap={8}>
           <SimpleGrid columns={[1, 1, 2]} spacing={8}>
             <Image
-              src={group.displayPhoto}
-              alt={group.name}
-              borderRadius='lg'
-              className='w-full object-cover h-96'
+              src={displayPhotoUrl}
+              alt={name}
+              borderRadius="lg"
+              className="w-full object-cover h-96"
             />
             <Box
               className={`${isSticky ? "bg-white rounded-xl" : ""} p-7`}
-              position='fixed'
+              position="fixed"
               transition={
                 "width 0.25s ease, border 1s ease, background 0.5s ease, top 0.2s ease"
               }
               top={!isSticky ? `calc(110px - ${scrollSpeed}px)` : "48px"}
-              right='48px'
+              right="48px"
               width={`${width > minWidth ? width : minWidth}%`}
             >
               <Box>
                 <Stack spacing={3}>
                   <Stack>
-                    <Tags tags={group.tags} />
-                    <Heading className='heading mb-2'>{group.name}</Heading>
+                    <Tags tags={tags} />
+                    <Heading className="heading mb-2">{name}</Heading>
                   </Stack>
                   <Stack spacing={2}>
-                    <IconText
-                      icon={RiBaseStationFill}
-                      iconClassName='text-green-500'
-                      textClassName='uppercase text-green-500 tracking-wider font-bold'
-                    >
-                      ONLINE ONLY
-                    </IconText>
+                    {online && (
+                      <IconText
+                        icon={RiBaseStationFill}
+                        iconClassName="text-green-500"
+                        textClassName="uppercase text-green-500 tracking-wider font-bold"
+                      >
+                        ONLINE ONLY
+                      </IconText>
+                    )}
                     <IconText
                       icon={FaMapMarkerAlt}
-                      iconClassName='text-red-700'
-                    >{`${group.county && `${group.county}, `} ${
-                      group.state
-                    }`}</IconText>
-                    <IconText icon={MdPeopleAlt} iconClassName='text-blue-400'>
-                      {`${numberOfMembers} members`}
+                      iconClassName="text-red-700"
+                    >
+                      {location}
+                    </IconText>
+                    <IconText icon={MdPeopleAlt} iconClassName="text-blue-400">
+                      {`${membersCount} members`}
                     </IconText>
                     <IconText
                       icon={BsPersonRaisedHand}
-                      iconClassName='text-gray-500'
+                      iconClassName="text-gray-500"
                     >
-                      Organised by {processedAdmins}
+                      Organised by {parsedAdmins}
                     </IconText>
                   </Stack>
                   <Button
                     rounded={"md"}
-                    className='bg-black text-white hover:text-black w-full mt-4'
+                    className="bg-black text-white hover:text-black w-full mt-4"
                   >
                     Join Group
                   </Button>
@@ -157,8 +146,8 @@ export default function EventsPage({
               </Box>
             </Box>
           </SimpleGrid>
-          <Flex className='flex-col gap-4'>
-            <p className='text-heading5'>Description</p>
+          <Flex className="flex-col gap-4">
+            <p className="text-heading5">Description</p>
             <Text
               noOfLines={linesCount}
               textOverflow={"ellipsis"}
@@ -166,59 +155,13 @@ export default function EventsPage({
               transition={"width 0.25s ease"}
               ref={descriptionRef}
             >
-              {group.description}
+              {description}
             </Text>
           </Flex>
         </Stack>
-
-        {/* <SimpleGrid columns={[1, 1, 2]} spacing={12}>
-            <Image
-              src={group.displayPhoto}
-              alt={group.name}
-              borderRadius='lg'
-              className='w-full object-cover h-96'
-            />
-            <Stack spacing={5}>
-              <Stack>
-                <Tags tags={group.tags} />
-                <Heading className='heading mb-2'>{group.name}</Heading>
-              </Stack>
-              <Stack spacing={2}>
-                <IconText
-                  icon={RiBaseStationFill}
-                  iconClassName='text-green-500'
-                  textClassName='uppercase text-green-500 tracking-wider font-bold'
-                >
-                  ONLINE ONLY
-                </IconText>
-                <IconText
-                  icon={FaMapMarkerAlt}
-                  iconClassName='text-red-700'
-                >{`${group.county && `${group.county}, `} ${
-                  group.state
-                }`}</IconText>
-                <IconText icon={MdPeopleAlt} iconClassName='text-blue-400'>
-                  {`${numberOfMembers} members`}
-                </IconText>
-                <IconText
-                  icon={BsPersonRaisedHand}
-                  iconClassName='text-gray-500'
-                >
-                  Organised by {processedAdmins}
-                </IconText>
-              </Stack>
-              <Text>{group.description}</Text>
-              <Button
-                rounded={"md"}
-                className='bg-black text-white hover:text-black lg:w-1/2 w-full'
-              >
-                Join Group
-              </Button>
-            </Stack>
-          </SimpleGrid> */}
-        <p className='text-heading4'>Events from {params?.groupId}</p>
-        <Flex className='flex-col w-[65%]' gap={6}>
-          {eventData.map((event, index) => (
+        <p className="text-heading4">Events from {name}</p>
+        <Flex className="flex-col w-[65%]" gap={6}>
+          {sampleEventData.map((event, index) => (
             <EventCards
               name={""}
               displayPhoto={""}
@@ -227,7 +170,7 @@ export default function EventsPage({
               dateTime={null}
               photos={[]}
               materials={[]}
-              groupId={params?.groupId}
+              groupId={String(id)}
               key={index}
               id={0}
               description={""}
@@ -237,5 +180,27 @@ export default function EventsPage({
         </Flex>
       </div>
     </div>
+  );
+}
+
+function _GroupPage({ params }: { params: { groupId: string } }) {
+  const {
+    data: group,
+    error,
+    isLoading,
+  } = useSWR<GroupData>(`http://localhost:3000/api/groups/${params.groupId}`);
+
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>Error loading group</div>;
+  if (!group) return <div>Not found</div>;
+
+  return <GroupData group={group} />;
+}
+
+export default function GroupPage({ params }: { params: { groupId: string } }) {
+  return (
+    <SWRProvider>
+      <_GroupPage params={params} />
+    </SWRProvider>
   );
 }

@@ -6,7 +6,7 @@ type TagByGroupId = {
   }
 }
 
-export type GroupByUserId = {
+type GroupByUserId = {
   groupId: number
   userId: number
   admin: boolean

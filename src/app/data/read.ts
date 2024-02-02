@@ -13,6 +13,15 @@ export async function getGroupsByUserId(userId: number) {
   return parseGroupsByUserIdResponse(data);
 }
 
+export async function getGroupById(id: number) {
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL;
+
+  const res = await fetch(`${baseUrl}/groups/${id}`, { cache: "no-store" });
+  const data = await res.json();
+
+  return data;
+}
+
 export async function getUserByEmail(email: string) {
   return await prisma.user.findUnique({
     where: {

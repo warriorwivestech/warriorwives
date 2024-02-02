@@ -4,7 +4,7 @@ import { Divider, SimpleGrid } from "@chakra-ui/react";
 import { getGroupsByUserId } from "../data/read";
 import { sampleGroupData } from "../data/samples";
 
-export default async function GroupPage() {
+export default async function GroupsPage() {
   // TODO: update this to use the user's actual id
   const groups = await getGroupsByUserId(1);
 
