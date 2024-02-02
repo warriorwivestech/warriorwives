@@ -8,8 +8,8 @@ interface TagsProps {
 const Tags = ({ tags }: TagsProps) => {
   return (
     <HStack spacing={2} className='flex-wrap'>
-      {tags.map((tag) => (
-        <Tag w={"auto"} className='whitespace-nowrap'>
+      {tags.map((tag, index) => (
+        <Tag w={"auto"} className='whitespace-nowrap' key={index}>
           {tag}
         </Tag>
       ))}

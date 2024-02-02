@@ -12,16 +12,17 @@ datasource db {
 }
 
 model User {
-  id        Int                @id @default(autoincrement())
-  email     String             @unique
-  name      String
-  superUser Boolean            @default(false)
-  branch    userArmyBranch     @default(ARMY)
-  interests InterestsOnUsers[]
-  groups    MembersOnGroups[]
-  events    AttendeesOnEvents[]
-  createdAt DateTime           @default(now())
-  updatedAt DateTime           @updatedAt
+  id              Int                  @id @default(autoincrement())
+  email           String               @unique
+  name            String
+  superUser       Boolean              @default(false)
+  branch          userArmyBranch       @default(ARMY)
+  interests       InterestsOnUsers[]
+  groups          MembersOnGroups[]
+  eventsJoined    AttendeesOnEvents[]
+  eventsOrganized OrganizersOnEvents[]
+  createdAt       DateTime             @default(now())
+  updatedAt       DateTime             @updatedAt
 }
 
 model Interest {
@@ -50,21 +51,22 @@ model Group {
 }
 
 model Event {
-  id           Int             @id @default(autoincrement())
+  id           Int                  @id @default(autoincrement())
   name         String
   description  String
   displayPhoto String?
   location     String?
-  online       Boolean         @default(false)
+  online       Boolean              @default(false)
   dateTime     DateTime
-  group        Group           @relation(fields: [groupId], references: [id])
+  group        Group                @relation(fields: [groupId], references: [id])
   groupId      Int
   photos       EventPhoto[]
   materials    EventMaterial[]
   meetingLink  String?
   attendees    AttendeesOnEvents[]
-  createdAt    DateTime        @default(now())
-  updatedAt    DateTime        @updatedAt
+  organizers   OrganizersOnEvents[]
+  createdAt    DateTime             @default(now())
+  updatedAt    DateTime             @updatedAt
 }
 
 model InterestsOnUsers {
@@ -102,6 +104,17 @@ model MembersOnGroups {
 }
 
 model AttendeesOnEvents {
+  event     Event    @relation(fields: [eventId], references: [id])
+  eventId   Int
+  user      User     @relation(fields: [userId], references: [id])
+  userId    Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@id([eventId, userId])
+}
+
+model OrganizersOnEvents {
   event     Event    @relation(fields: [eventId], references: [id])
   eventId   Int
   user      User     @relation(fields: [userId], references: [id])

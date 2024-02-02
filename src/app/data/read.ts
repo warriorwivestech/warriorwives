@@ -1,6 +1,26 @@
 // https://www.prisma.io/docs/orm/prisma-client/queries refer here for the documentation
 
 import prisma from "../prisma";
+import { parseGroupsByUserIdResponse } from "./helpers";
+import { GroupsByUserIdResponse } from "./types";
+
+export async function getGroupsByUserId(userId: number) {
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL;
+
+  const res = await fetch(`${baseUrl}/users/3/groups`, { cache: "no-store" });
+  const data: GroupsByUserIdResponse = await res.json();
+
+  return parseGroupsByUserIdResponse(data);
+}
+
+export async function getGroupById(id: number) {
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL;
+
+  const res = await fetch(`${baseUrl}/groups/${id}`, { cache: "no-store" });
+  const data = await res.json();
+
+  return data;
+}
 
 export async function getUserByEmail(email: string) {
   return await prisma.user.findUnique({
@@ -116,6 +136,12 @@ export async function getEventById(id: number) {
       id,
     },
     include: {
+      group: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
       photos: true,
       materials: true,
       attendees: true,
