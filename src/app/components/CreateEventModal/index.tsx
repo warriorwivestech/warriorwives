@@ -98,7 +98,7 @@ export function CreateEventModal() {
 
   // for image handling
 
-  const fileTypes = ["JPEG", "PNG", "GIF"];
+  const fileTypes = ["JPG", "JPEG", "PNG"];
 
   // Single image
   const [bannerImage, setBannerImage] = useState<FileWithPreview | null>(null);

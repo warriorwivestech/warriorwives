@@ -200,8 +200,4 @@ const NAV_ITEMS = [
     label: "My Events",
     href: "/events",
   },
-  {
-    label: "About Us",
-    href: "#",
-  },
 ];

@@ -30,7 +30,6 @@ function GroupData({ group }: { group: GroupData }) {
   const [lastScrollY, setLastScrollY] = useState(0);
 
   const descriptionRef = useRef<HTMLParagraphElement>(null);
-  const [linesCount, setLinesCount] = useState(0);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -44,11 +43,6 @@ function GroupData({ group }: { group: GroupData }) {
     };
 
     window.addEventListener("scroll", handleScroll);
-    const pElement = descriptionRef.current;
-    const lineHeight = window.getComputedStyle(pElement!).lineHeight;
-    const elementHeight = pElement!.clientHeight;
-    const lines = Math.floor(elementHeight / parseInt(lineHeight, 10));
-    setLinesCount(lines > 0 ? lines : 1);
 
     return () => {
       window.removeEventListener("scroll", handleScroll);
@@ -67,6 +61,7 @@ function GroupData({ group }: { group: GroupData }) {
     online,
     members,
     membersCount,
+    branchOfService,
   } = group;
   const displayPhotoUrl =
     displayPhoto ||
@@ -153,11 +148,11 @@ function GroupData({ group }: { group: GroupData }) {
           <Flex className="flex-col gap-4">
             <p className="text-heading5">Description</p>
             <Text
-              noOfLines={linesCount}
               textOverflow={"ellipsis"}
               width={`${width > minWidth ? width + 50 : minWidth + 25}%`}
               transition={"width 0.25s ease"}
               ref={descriptionRef}
+              className="break-all"
             >
               {description}
             </Text>

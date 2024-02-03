@@ -17,7 +17,7 @@ const IconText = ({
   textClassName,
 }: IconTextProps) => {
   return (
-    <Flex gap={2} alignItems='center' className='test flex-[0 0 auto]'>
+    <Flex gap={2} alignItems='center' className='flex-[0 0 auto]'>
       {icon && <Icon as={icon} className={iconClassName} />}
       <Text
         className={`whitespace-nowrap ${textClassName}`}

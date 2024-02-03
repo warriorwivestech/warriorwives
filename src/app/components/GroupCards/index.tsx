@@ -64,7 +64,7 @@ export default function GroupCard({
             <Text>{parsedBranchOfService}</Text>
             <IconText
               icon={FaMapMarkerAlt}
-              iconClassName="text-red-700"
+              iconClassName="!text-red-700"
               textClassName="whitespace-nowrap font-semibold"
             >
               {location}
