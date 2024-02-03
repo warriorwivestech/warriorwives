@@ -16,6 +16,7 @@ import {
 import { HamburgerIcon, CloseIcon } from "@chakra-ui/icons";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
+import { CreateEventModal } from "../CreateEventModal";
 
 export default function NavBar() {
   const pathname = usePathname();
@@ -62,6 +63,8 @@ export default function NavBar() {
           </Flex>
         </Flex>
 
+      
+
         <Stack
           flex={{ base: 1, md: 0 }}
           justify={"flex-end"}
@@ -69,6 +72,8 @@ export default function NavBar() {
           spacing={6}
         >
           {pathname !== "/register" ? (
+            <>
+              <CreateEventModal />
             <Button
               as={"a"}
               fontSize={"sm"}
@@ -78,6 +83,7 @@ export default function NavBar() {
             >
               warriorWivesAdmin
             </Button>
+            </>
           ) : (
             <Button
               as={"a"}
