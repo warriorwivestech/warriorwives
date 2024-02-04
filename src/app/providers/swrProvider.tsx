@@ -6,8 +6,8 @@ export function SWRProvider({ children }: { children: React.ReactNode }) {
   return (
     <SWRConfig
       value={{
-        fetcher: (resource, init) =>
-          fetch(resource, init).then((res) => res.json()),
+        fetcher: (resource: string, init: RequestInit | undefined) =>
+          fetch(`${process.env.NEXT_PUBLIC_API_URL}${resource}`, init).then((res) => res.json()),
       }}
     >
       {children}

@@ -32,8 +32,6 @@ function GroupData({ group }: { group: GroupData }) {
 
   const descriptionRef = useRef<HTMLParagraphElement>(null);
 
-  const groupAdmin = true;
-
   useEffect(() => {
     const handleScroll = () => {
       setScrollPosition(window.scrollY > 70 ? window.scrollY : 70);
@@ -56,28 +54,26 @@ function GroupData({ group }: { group: GroupData }) {
   const {
     id,
     name,
+    branchOfService,
     description,
     displayPhoto,
     tags,
     county,
     state,
     online,
-    members,
     membersCount,
-    branchOfService,
+    groupAdmin,
+    joined,
+    admins
   } = group;
   const displayPhotoUrl =
     displayPhoto ||
     "https://t4.ftcdn.net/jpg/03/40/52/49/360_F_340524914_pzOWCq4I0WjytxaW8DTVFujrck1gjvvO.jpg";
   const location = county ? `${county}, ${state}` : state;
-  const admins = members
-    .filter((member) => member.admin)
-    .map((member) => member.name);
   const parsedAdmins =
     admins.length > 2
       ? `${admins.slice(0, 2).join(", ")} and ${admins.length - 2} others`
       : admins.join(" and ");
-  const isJoined = true;
 
   const minWidth = 30;
   const width = 50 - scrollPosition / 15;
@@ -142,12 +138,12 @@ function GroupData({ group }: { group: GroupData }) {
                   ) : (
                     <Button
                       rounded={"md"}
-                      isDisabled={isJoined}
+                      isDisabled={joined}
                       className={`${
-                        !isJoined && "bg-black text-white hover:text-black"
+                        !joined && "bg-black text-white hover:text-black"
                       } w-full mt-4`}
                     >
-                      {isJoined ? "Joined" : "Join Group"}
+                      {joined ? "Joined" : "Join Group"}
                     </Button>
                   )}
                 </Stack>
@@ -198,7 +194,7 @@ function _GroupPage({ params }: { params: { groupId: string } }) {
     data: group,
     error,
     isLoading,
-  } = useSWR<GroupData>(`http://localhost:3000/api/groups/${params.groupId}`);
+  } = useSWR<GroupData>(`/groups/${params.groupId}`);
 
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error loading group</div>;

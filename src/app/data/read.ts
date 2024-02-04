@@ -1,25 +1,15 @@
 // https://www.prisma.io/docs/orm/prisma-client/queries refer here for the documentation
 
+import { apiClient } from "../apiClient";
 import prisma from "../prisma";
 import { parseGroupsByUserIdResponse } from "./helpers";
 import { GroupsByUserIdResponse } from "./types";
 
 export async function getGroupsByUserId(userId: number) {
-  const baseUrl = process.env.NEXT_PUBLIC_API_URL;
-
-  const res = await fetch(`${baseUrl}/users/3/groups`, { cache: "no-store" });
-  const data: GroupsByUserIdResponse = await res.json();
+  // TODO: replace the userId with the actual userId
+  const data: GroupsByUserIdResponse = await apiClient(`/users/3/groups`, { cache: "no-store" });
 
   return parseGroupsByUserIdResponse(data);
-}
-
-export async function getGroupById(id: number) {
-  const baseUrl = process.env.NEXT_PUBLIC_API_URL;
-
-  const res = await fetch(`${baseUrl}/groups/${id}`, { cache: "no-store" });
-  const data = await res.json();
-
-  return data;
 }
 
 export async function getUserByEmail(email: string) {
