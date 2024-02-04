@@ -22,6 +22,7 @@ import { SWRProvider } from "@/app/providers/swrProvider";
 import useSWR from "swr";
 import { GroupData } from "@/app/api/groups/[groupId]/types";
 import { sampleEventData } from "@/app/data/samples";
+import { CreateEventModal } from "@/app/components/CreateEventModal";
 
 function GroupData({ group }: { group: GroupData }) {
   const [isSticky, setIsSticky] = useState(false);
@@ -30,6 +31,8 @@ function GroupData({ group }: { group: GroupData }) {
   const [lastScrollY, setLastScrollY] = useState(0);
 
   const descriptionRef = useRef<HTMLParagraphElement>(null);
+
+  const groupAdmin = true;
 
   useEffect(() => {
     const handleScroll = () => {
@@ -78,6 +81,7 @@ function GroupData({ group }: { group: GroupData }) {
 
   const minWidth = 30;
   const width = 50 - scrollPosition / 15;
+
 
   return (
     <div className="flex flex-col-reverse md:flex-row gap-8 justify-between">
@@ -132,15 +136,20 @@ function GroupData({ group }: { group: GroupData }) {
                       Organised by {parsedAdmins}
                     </IconText>
                   </Stack>
-                  <Button
-                    rounded={"md"}
-                    isDisabled={isJoined}
-                    className={`${
-                      !isJoined && "bg-black text-white hover:text-black"
-                    } w-full mt-4`}
-                  >
-                    {isJoined ? "Joined" : "Join Group"}
-                  </Button>
+
+                  {groupAdmin ? (
+                    <CreateEventModal groupName={name} />
+                  ) : (
+                    <Button
+                      rounded={"md"}
+                      isDisabled={isJoined}
+                      className={`${
+                        !isJoined && "bg-black text-white hover:text-black"
+                      } w-full mt-4`}
+                    >
+                      {isJoined ? "Joined" : "Join Group"}
+                    </Button>
+                  )}
                 </Stack>
               </Box>
             </Box>
@@ -159,24 +168,26 @@ function GroupData({ group }: { group: GroupData }) {
           </Flex>
         </Stack>
         <p className="text-heading4">Events from {name}</p>
-        <Flex className="flex-col w-[65%]" gap={6}>
+        <>
+          <Flex className="flex-col w-[65%]" gap={6}>
           {sampleEventData.map((event, index) => (
             <EventCards
-              name={""}
-              displayPhoto={""}
-              location={""}
-              online={false}
-              dateTime={null}
-              photos={[]}
-              materials={[]}
-              groupId={String(id)}
-              key={index}
-              id={0}
-              description={""}
-              group={null}
-            />
-          ))}
-        </Flex>
+                name={event?.title}
+                displayPhoto={""}
+                location={""}
+                online={false}
+                dateTime={null}
+                photos={[]}
+                materials={[]}
+                groupId={String(id)}
+                key={index}
+                id={0}
+                description={""}
+                group={null}
+              />
+            ))}
+          </Flex>
+        </>
       </div>
     </div>
   );

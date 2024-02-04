@@ -102,8 +102,7 @@ export default function EventCards(props: EventType) {
               textOverflow="ellipsis"
               className="font-bold text-[24px]"
             >
-              testing title testing title testing title testing title testing
-              title testing title testing title testing title
+              {name}
             </Text>
 
             {/* location */}

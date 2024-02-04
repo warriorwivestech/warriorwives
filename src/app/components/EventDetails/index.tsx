@@ -12,11 +12,12 @@ import {
   FaVideo,
   FaClock,
   FaLocationArrow,
-  FaChevronRight,
+  FaChevronRight
 } from "react-icons/fa";
 import Link from "next/link";
 import { EventType } from "@/app/types/events";
 import EventCards from "../EventCards";
+import { FaPeopleGroup } from "react-icons/fa6";
 
 // Define the props interface
 
@@ -321,6 +322,13 @@ export default function EventDetails(props: EventType) {
             <Tag w={"auto"}>tags</Tag>
             <Tag w={"auto"}>tags</Tag>
           </div> */}
+
+          <div className="flex flex-row gap-4 items-start">
+            <FaPeopleGroup
+              style={{ minHeight: "18px", minWidth: "18px", marginTop: "4px" }}
+            />
+            <p>Organizer</p>
+          </div>
 
           <div className="flex flex-row gap-4 items-start">
             <FaClock

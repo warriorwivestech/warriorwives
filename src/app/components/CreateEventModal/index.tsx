@@ -56,9 +56,11 @@ interface HandleInputChangeParams {
   inputType: string;
 }
 
-export function CreateEventModal() {
+export function CreateEventModal({ groupName }: { groupName: string }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
+  const [bannerImage, setBannerImage] = useState<FileWithPreview | null>(null);
+  const [photos, setPhotos] = useState<FileWithPreview[]>([]);
   const [dirty, setDirty] = useState<requiredField>({
     name: false,
     description: false,
@@ -75,6 +77,47 @@ export function CreateEventModal() {
     displayPhoto: "",
     photos: [],
   });
+
+  const handleCloseModal = () => {
+    onClose();
+    setBannerImage(null);
+    setPhotos([]);
+    setDirty({
+      name: false,
+      description: false,
+      dateTime: false,
+    });
+    setInput({
+      name: "",
+      description: "",
+      location: "",
+      online: false,
+      link: "",
+      dateTime: "",
+      displayPhoto: "",
+      photos: [],
+    });
+  };
+
+  const getFormattedCurrentDateTime = () => {
+    const now = new Date();
+    // Adjusting date to UTC can help with timezone differences if needed
+    const year = now.getUTCFullYear();
+    const month = now.getUTCMonth() + 1;
+    const day = now.getUTCDate();
+    const hours = now.getUTCHours();
+    const minutes = now.getUTCMinutes();
+
+    const formattedMonth = month.toString().padStart(2, "0");
+    const formattedDay = day.toString().padStart(2, "0");
+    const formattedHours = hours.toString().padStart(2, "0");
+    const formattedMinutes = minutes.toString().padStart(2, "0");
+
+    return `${year}-${formattedMonth}-${formattedDay}T${formattedHours}:${formattedMinutes}`;
+  };
+
+  // Use this function to get the min attribute value
+  const minDateTime = getFormattedCurrentDateTime();
 
   const handleInputChange = ({ e, inputType }: HandleInputChangeParams) => {
     const value = typeof e === "string" ? e : e.target.value;
@@ -96,13 +139,9 @@ export function CreateEventModal() {
   const isDescriptionError = dirty?.description && input?.description === "";
   const isDateTimeError = dirty?.dateTime && input?.dateTime === "";
 
-  // for image handling
-
   const fileTypes = ["JPG", "JPEG", "PNG"];
 
   // Single image
-  const [bannerImage, setBannerImage] = useState<FileWithPreview | null>(null);
-
   const handleSingleChange = (file: File) => {
     if (file) {
       if (bannerImage?.url) URL.revokeObjectURL(bannerImage.url);
@@ -130,7 +169,6 @@ export function CreateEventModal() {
   };
 
   // Multiple images
-  const [photos, setPhotos] = useState<FileWithPreview[]>([]);
   const handleChange = (newFiles: FileList | File[]) => {
     const newFilesWithUrls: FileWithPreview[] = Array.from(newFiles).map(
       (file) => ({
@@ -161,12 +199,16 @@ export function CreateEventModal() {
 
   return (
     <>
-      <Button onClick={onOpen}>Create Events</Button>
+      <Button onClick={onOpen}>Create new event</Button>
 
-      <Modal closeOnOverlayClick={false} isOpen={isOpen} onClose={onClose}>
+      <Modal
+        closeOnOverlayClick={false}
+        isOpen={isOpen}
+        onClose={handleCloseModal}
+      >
         <ModalOverlay />
         <ModalContent minW="900px">
-          <ModalHeader>Create new event</ModalHeader>
+          <ModalHeader>Create new event for {groupName}</ModalHeader>
           <ModalCloseButton />
           <ModalBody pb={6} gap={6} display={"flex"} flexDirection={"column"}>
             {/* banner image */}
@@ -188,7 +230,7 @@ export function CreateEventModal() {
                     />
                     <Button
                       onClick={() => handleSingleDelete()}
-                      width={150}
+                      width={100}
                       bgColor={"#FC8181 !important"}
                       _hover={{
                         bgColor: "#E53E3E !important",
@@ -225,17 +267,23 @@ export function CreateEventModal() {
                 )}
               </FormControl>
 
-              {/* location */}
-              <FormControl>
-                {/* <FormLabel>Location</FormLabel> */}
+              {/* date time */}
+              <FormControl isInvalid={isDateTimeError}>
+                {/* <FormLabel>Meeting Link</FormLabel> */}
                 <Input
-                  placeholder="Location"
-                  type="location"
-                  value={input?.location}
+                  placeholder="Meeting Link"
+                  type="datetime-local"
+                  value={input?.dateTime}
+                  min={minDateTime}
                   onChange={(e) =>
-                    handleInputChange({ e: e, inputType: "location" })
+                    handleInputChange({ e: e, inputType: "dateTime" })
                   }
                 />
+                {isDateTimeError && (
+                  <FormErrorMessage>
+                    Date and time is required.
+                  </FormErrorMessage>
+                )}
               </FormControl>
             </div>
 
@@ -246,7 +294,7 @@ export function CreateEventModal() {
               <Textarea
                 height={200}
                 resize={"none"}
-                placeholder="Here is a sample placeholder"
+                placeholder="Description for the event"
                 value={input?.description}
                 onChange={(e) =>
                   handleInputChange({ e: e, inputType: "description" })
@@ -282,7 +330,7 @@ export function CreateEventModal() {
                           }}
                         />
                         <Button
-                          width={150}
+                          width={100}
                           onClick={() => handleDelete(index)}
                           bgColor={"#FC8181 !important"}
                           _hover={{
@@ -304,22 +352,6 @@ export function CreateEventModal() {
               </div>
             </div>
 
-            {/* date time */}
-            <FormControl isInvalid={isDateTimeError}>
-              {/* <FormLabel>Meeting Link</FormLabel> */}
-              <Input
-                placeholder="Meeting Link"
-                type="datetime-local"
-                value={input?.dateTime}
-                onChange={(e) =>
-                  handleInputChange({ e: e, inputType: "dateTime" })
-                }
-              />
-              {isDateTimeError && (
-                <FormErrorMessage>Date and time is required.</FormErrorMessage>
-              )}
-            </FormControl>
-
             {/* online */}
             <FormControl as="fieldset">
               <FormLabel as="legend">Is this an online event?</FormLabel>
@@ -337,27 +369,49 @@ export function CreateEventModal() {
               </RadioGroup>
             </FormControl>
 
+            {/* location */}
             {/* meeting link */}
-            <FormControl>
-              {/* <FormLabel>Meeting Link</FormLabel> */}
-              <Input
-                placeholder="Meeting Link"
-                type="link"
-                value={input?.link}
-                onChange={(e) => handleInputChange({ e: e, inputType: "link" })}
-              />
-            </FormControl>
+            {!input?.online ? (
+              <FormControl>
+                <Input
+                  placeholder="Location"
+                  type="location"
+                  value={input?.location}
+                  onChange={(e) =>
+                    handleInputChange({ e: e, inputType: "location" })
+                  }
+                />
+              </FormControl>
+            ) : (
+              <FormControl>
+                <Input
+                  placeholder="Meeting Link"
+                  type="link"
+                  value={input?.link}
+                  onChange={(e) =>
+                    handleInputChange({ e: e, inputType: "link" })
+                  }
+                />
+              </FormControl>
+            )}
           </ModalBody>
 
           <ModalFooter>
             <Button
               mr={3}
-              isDisabled={isDateTimeError || isDescriptionError || isNameError}
+              isDisabled={
+                isDateTimeError ||
+                isDescriptionError ||
+                isNameError ||
+                input?.name === "" ||
+                input?.description === "" ||
+                input?.dateTime === ""
+              }
               onClick={() => console.log(input)}
             >
               Save
             </Button>
-            <Button onClick={onClose}>Cancel</Button>
+            <Button onClick={() => handleCloseModal()}>Cancel</Button>
           </ModalFooter>
         </ModalContent>
       </Modal>

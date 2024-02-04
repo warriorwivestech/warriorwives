@@ -73,7 +73,7 @@ export default function NavBar() {
         >
           {pathname !== "/register" ? (
             <>
-              <CreateEventModal />
+              {/* <CreateEventModal /> */}
             <Button
               as={"a"}
               fontSize={"sm"}

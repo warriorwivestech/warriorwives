@@ -80,11 +80,11 @@ export const sampleEventData = Array.from({ length: 10 }, (_, index) => ({
   id: `${index}`,
   group: `1`,
   title: `Event Title ${index + 1}`,
-  description:
-    "This is a sample description for the event., This is a sample description for the event., This is a sample description for the event.,This is a sample description for the event., This is a sample description for the event.",
-  imageUrl: "https://images.unsplash.com/photo-1515378791036-0648a3ef77b2",
+  description: "This is a sample description for the event. Repeated for emphasis and variation in each event description.",
+  imageUrl: `https://source.unsplash.com/random/200x200?sig=${index}`, // Unique image for each event
   date: `Feb ${index + 1}, 2024`,
   readTime: `${index + 1}min read`,
   author: `Author Name ${index + 1}`,
-  authorImageUrl: "https://avatars0.githubusercontent.com/u/1164541?v=4",
+  authorImageUrl: `https://i.pravatar.cc/150?img=${index}`, // Unique author image for each
 }));
+
