@@ -12,6 +12,12 @@ export async function getGroupsByUserId(userId: number) {
   return parseGroupsByUserIdResponse(data);
 }
 
+export async function getGroupsBySearchText(searchText: string) {
+  const data = await apiClient(`/groups/search?text=${searchText}`);
+
+  return data;
+}
+
 export async function getUserByEmail(email: string) {
   return await prisma.user.findUnique({
     where: {

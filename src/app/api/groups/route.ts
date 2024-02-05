@@ -17,7 +17,6 @@ export async function GET(request: Request) {
       state: urlSearchParams.get("state"),
     };
   }
-  console.log(locationInfo);
 
   const userData = await prisma.user.findUnique({
     where: {

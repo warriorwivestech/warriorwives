@@ -1,10 +1,13 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { Box, Flex, Input, Spinner } from "@chakra-ui/react";
+import { Box, Flex, HStack, Input, Spinner, Tag } from "@chakra-ui/react";
 import { MdOutlineSearch } from "react-icons/md";
 import IconText from "../common/icontext";
 import { GroupData } from "@/app/api/groups/[groupId]/types";
+import { getGroupsBySearchText } from "@/app/data/read";
+import Link from "next/link";
+import Tags from "../common/tags";
 
 export default function Search() {
   const [searchInput, setSearchInput] = useState("");
@@ -23,9 +26,17 @@ export default function Search() {
   useEffect(() => {
     setLoading(true);
     const debounceTimeout = setTimeout(() => {
-      // TODO: do API call here
-      // setgroups the groups after call
-      setLoading(false);
+      if (!searchInput) {
+        setGroups([]);
+        setLoading(false);
+        return;
+      }
+      const fetchGroups = async () => {
+        const groups = await getGroupsBySearchText(searchInput);
+        setGroups(groups);
+        setLoading(false);
+      };
+      fetchGroups();
     }, 250);
 
     return () => clearTimeout(debounceTimeout);
@@ -72,15 +83,32 @@ export default function Search() {
               <Spinner />
             ) : groups.length ? (
               groups.map((group) => (
-                <Box
-                  key={group.id}
-                  className={`w-full px-3 py-2 hover:cursor-pointer hover:bg-gray-100 hover:font-semibold transition ease duration-300`}
-                >
-                  {group.name},{" "}
-                  {group.county
-                    ? `${group.county}, ${group.state}`
-                    : group.state}
-                </Box>
+                <Link href={`/groups/${group.id}`} key={group.id}>
+                  <Box
+                    className={`w-full px-3 py-2 hover:cursor-pointer hover:bg-gray-100 hover:font-semibold transition ease duration-300 flex justify-between`}
+                  >
+                    <Box>
+                      {group.name},{" "}
+                      {group.county
+                        ? `${group.county}, ${group.state}`
+                        : group.state}
+                    </Box>
+                    <Box>
+                      <HStack spacing={2} className="flex-wrap">
+                        <Tag
+                          w={"auto"}
+                          className="whitespace-nowrap"
+                          colorScheme="cyan"
+                        >
+                          {group.branchOfService === "Any"
+                            ? "All Branches"
+                            : group.branchOfService}
+                        </Tag>
+                        <Tags tags={group.tags} />
+                      </HStack>
+                    </Box>
+                  </Box>
+                </Link>
               ))
             ) : (
               <Box className="w-full px-3 py-2 font-semibold">
