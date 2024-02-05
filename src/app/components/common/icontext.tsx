@@ -1,6 +1,5 @@
-import { Flex, Icon, IconProps, Text } from "@chakra-ui/react";
+import { Flex, Icon, Text } from "@chakra-ui/react";
 import React, { ReactNode } from "react";
-import { FaMapMarkerAlt } from "react-icons/fa";
 import { IconType } from "react-icons";
 
 interface IconTextProps {

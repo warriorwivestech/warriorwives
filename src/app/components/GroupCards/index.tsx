@@ -52,7 +52,7 @@ export default function GroupCard({
 }: GroupCardProps) {
   const displayPhotoUrl =
     displayPhoto ||
-    "https://t4.ftcdn.net/jpg/03/40/52/49/360_F_340524914_pzOWCq4I0WjytxaW8DTVFujrck1gjvvO.jpg";
+    "https://startup.mp.gov.in/assets/img/img-not-found.png";
   const location = county ? `${county}, ${state}` : state;
   const parsedBranchOfService = branchOfService === "Any" ? "All Branches" : branchOfService;
 

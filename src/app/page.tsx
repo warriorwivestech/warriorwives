@@ -1,19 +1,37 @@
 import React from "react";
-import { Box, Divider, Flex, Heading, Input } from "@chakra-ui/react";
-import Carousel from "./components/carousel/carousel";
-import { RECOMMENDED_GROUPS } from "./sample/groups";
+import { Divider, Flex } from "@chakra-ui/react";
 import Map from "./components/Map";
-import Image from "next/image";
+import Search from "./components/Search";
 
 export default async function Home() {
+  const emojis = [
+    "💪",
+    "✨",
+    "🤘",
+    "⚔️",
+    "🪖",
+    "🧗‍♀️",
+    "🏌️",
+    "🏋️‍♀️",
+    "🚴‍♀️",
+    "🏄‍♀️",
+    "🏃‍♀️",
+    "🧘‍♀️",
+  ];
+
+  // TODO: search by text api here
   return (
     <>
       <Flex className='flex-col gap-10 mb-4'>
-        <Input className='w-full' placeholder='Search for groups...' />
+        <p className='text-heading2'>
+          Welcome back to WarriorWives!{" "}
+          {emojis[Math.round(Math.random() * emojis.length)]}
+        </p>
         <Divider />
-        <Carousel groups={RECOMMENDED_GROUPS} />
+        <Search />
         <Divider />
         <Map />
+        {/* <Carousel groups={RECOMMENDED_GROUPS} /> */}
       </Flex>
     </>
   );

@@ -6,101 +6,11 @@ import * as maptilersdk from "@maptiler/sdk";
 import "@maptiler/sdk/dist/maptiler-sdk.css";
 import axios from "axios";
 
-import { Box, Button, Checkbox, Heading, Spinner } from "@chakra-ui/react";
+import { Box, Checkbox, Spinner } from "@chakra-ui/react";
 import { FaMapMarkedAlt } from "react-icons/fa";
 import GroupCard from "../GroupCards";
-const sampleGroupData = [
-  {
-    id: "1",
-    title: "Beach Clean-Up",
-    description:
-      "Join us for a community beach clean-up and make a difference!",
-    imageUrl:
-      "https://images.unsplash.com/photo-1575936123452-b67c3203c357?q=80&w=1000&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8aW1hZ2V8ZW58MHx8MHx8fDA%3D",
-    buttonText: "Join Event",
-  },
-  {
-    id: "2",
-    title: "Local Art Exhibition",
-    description:
-      "Explore stunning artworks by local artists in our vibrant art exhibition.",
-    imageUrl:
-      "https://images.unsplash.com/photo-1575936123452-b67c3203c357?q=80&w=1000&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8aW1hZ2V8ZW58MHx8MHx8fDA%3D",
-    buttonText: "View Details",
-  },
-  {
-    id: "3",
-    title: "Charity Fun Run",
-    description:
-      "Participate in our 5k fun run to raise funds for a noble cause.",
-    imageUrl:
-      "https://images.unsplash.com/photo-1575936123452-b67c3203c357?q=80&w=1000&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8aW1hZ2V8ZW58MHx8MHx8fDA%3D",
-    buttonText: "Register Now",
-  },
-  {
-    id: "4",
-    title: "Outdoor Yoga Session",
-    description:
-      "Experience tranquility and mindfulness with our outdoor yoga classes.",
-    imageUrl:
-      "https://images.unsplash.com/photo-1575936123452-b67c3203c357?q=80&w=1000&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8aW1hZ2V8ZW58MHx8MHx8fDA%3D",
-    buttonText: "Join Session",
-  },
-  {
-    id: "5",
-    title: "Tech Networking Event",
-    description:
-      "Connect with fellow tech enthusiasts and industry leaders at our networking event.",
-    imageUrl:
-      "https://images.unsplash.com/photo-1575936123452-b67c3203c357?q=80&w=1000&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8aW1hZ2V8ZW58MHx8MHx8fDA%3D",
-    buttonText: "Sign Up",
-  },
-  {
-    id: "6",
-    title: "Cooking Workshop",
-    description:
-      "Learn new culinary skills in our interactive cooking workshop.",
-    imageUrl:
-      "https://images.unsplash.com/photo-1575936123452-b67c3203c357?q=80&w=1000&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8aW1hZ2V8ZW58MHx8MHx8fDA%3D",
-    buttonText: "Enroll Today",
-  },
-  {
-    id: "7",
-    title: "Book Club Meetup",
-    description:
-      "Join our monthly book club meeting to discuss this month's chosen book.",
-    imageUrl:
-      "https://images.unsplash.com/photo-1575936123452-b67c3203c357?q=80&w=1000&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8aW1hZ2V8ZW58MHx8MHx8fDA%3D",
-    buttonText: "Attend Meetup",
-  },
-  {
-    id: "8",
-    title: "Live Jazz Night",
-    description: "Enjoy an evening of live jazz music at our local café.",
-    imageUrl:
-      "https://images.unsplash.com/photo-1575936123452-b67c3203c357?q=80&w=1000&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8aW1hZ2V8ZW58MHx8MHx8fDA%3D",
-    buttonText: "Reserve Seats",
-  },
-  {
-    id: "9",
-    title: "Community Gardening",
-    description: "Get your hands dirty and help beautify our community garden.",
-    imageUrl:
-      "https://images.unsplash.com/photo-1575936123452-b67c3203c357?q=80&w=1000&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8aW1hZ2V8ZW58MHx8MHx8fDA%3D",
-    buttonText: "Volunteer",
-  },
-  {
-    id: "10",
-    title: "Film Screening Under the Stars",
-    description:
-      "Join us for an open-air screening of classic and contemporary films.",
-    imageUrl:
-      "https://images.unsplash.com/photo-1575936123452-b67c3203c357?q=80&w=1000&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8aW1hZ2V8ZW58MHx8MHx8fDA%3D",
-    buttonText: "Buy Tickets",
-  },
-];
-
-const SAMPLE_LOCATION = [-98, 39];
+import MapLoading from "./loading";
+import IconText from "../common/icontext";
 
 const COUNTY_GEOJSON_URL =
   "https://gist.githubusercontent.com/sdwfrost/d1c73f91dd9d175998ed166eb216994a/raw/e89c35f308cee7e2e5a784e1d3afc5d449e9e4bb/counties.geojson";
@@ -118,6 +28,22 @@ function generateColorFromString(stateName: string) {
   return "#" + (hash | 0x44000000).toString(16).slice(1, 7);
 }
 
+function getDynamicBounds(
+  [centerLng, centerLat]: [number, number],
+  radiusMiles: number
+) {
+  const milePerLng = 53.7567404459;
+  const milePerLat = 69.172;
+
+  const lngRadius = radiusMiles / milePerLng;
+  const latRadius = radiusMiles / milePerLat;
+
+  return [
+    [centerLng - lngRadius, centerLat - latRadius], // southwest coordinates
+    [centerLng + latRadius, centerLat + lngRadius], // northeast coordinates
+  ];
+}
+
 const Map = () => {
   const mapContainer = useRef<HTMLDivElement | null>(null);
   const map = useRef<maptilersdk.Map | null>(null);
@@ -127,10 +53,12 @@ const Map = () => {
   const [stateGeoJsonData, setStateGeoJsonData] = useState(null);
   const [countyGeoJsonData, setCountyGeoJsonData] = useState(null);
 
+  const [groups, setGroups] = useState([]);
   const [selectedState, setSelectedState] = useState("");
   const [selectedCounty, setSelectedCounty] = useState("");
 
   const [loading, setLoading] = useState(true);
+  const [loadingGroups, setLoadingGroups] = useState(false);
 
   const addStateGeoJsonDataToMap = (geoJsonData: any) => {
     geoJsonData?.features.forEach((feature: any, index: number) => {
@@ -146,7 +74,7 @@ const Map = () => {
         } as string & maptilersdk.GeoJSONSourceSpecification,
         paint: {
           "fill-color": generateColorFromString(feature.properties.name),
-          "fill-opacity": 0.5,
+          "fill-opacity": 0.25,
         },
       });
 
@@ -210,11 +138,13 @@ const Map = () => {
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
           function (position) {
-            // TODO: uncomment once done
-            // const { latitude, longitude } = position.coords;
+            const { latitude, longitude } = position.coords;
 
-            // sample data
-            const [longitude, latitude] = SAMPLE_LOCATION;
+            if (
+              (longitude < 130 && longitude > -60) ||
+              (latitude < 24 && latitude > 50)
+            )
+              return;
 
             const marker = new maptilersdk.Marker()
               .setLngLat([longitude, latitude])
@@ -226,7 +156,14 @@ const Map = () => {
             marker.setPopup(popup);
 
             map.current!.setCenter([longitude, latitude]);
-            map.current!.setZoom(5);
+            map.current!.setZoom(9);
+            map.current!.setMaxBounds(
+              getDynamicBounds(
+                [longitude, latitude],
+                100
+              ) as maptilersdk.LngLatBoundsLike
+            );
+            setByCounty(true);
           },
           function (error) {
             console.error("cannot get user location: ", error.message);
@@ -287,7 +224,18 @@ const Map = () => {
     addCountyBorders();
   }, [byCounty]);
 
-  const [selectedString, setSelectedString] = useState("");
+  useEffect(() => {
+    if (!selectedState) return;
+
+    const fetchData = () => {
+      setLoadingGroups(true);
+      // TODO: add fetch by location here
+      // setGroups(groups)
+      setLoadingGroups(false);
+    };
+
+    fetchData();
+  }, [selectedState, selectedCounty]);
 
   useEffect(() => {
     /* 
@@ -303,20 +251,16 @@ const Map = () => {
       setSelectedCounty("");
       return;
     }
-
-    setSelectedString(
-      `${selectedCounty ? `${selectedCounty}, ` : ""} ${selectedState}`
-    );
   }, [selectedState, selectedCounty]);
 
   return (
     <Flex className='flex-col gap-2'>
       <Flex className='items-end justify-between'>
-        <p className='flex gap-2 items-center text-heading5'>
-          <FaMapMarkedAlt />
-          Search by Location
-        </p>
+        <IconText icon={FaMapMarkedAlt} textClassName='text-heading5'>
+          Search groups by location
+        </IconText>
         <Checkbox
+          isChecked={byCounty}
           onChange={(e) => setByCounty(e.target.checked)}
           disabled={loading}
         >
@@ -334,20 +278,28 @@ const Map = () => {
           </Card>
         </Box>
         {selectedState ? (
-          <Flex className='flex-col gap-4'>
-            <p className='text-base font-semibold'>
-              Groups in {selectedCounty && `${selectedCounty}, `}
-              {selectedState}
-              {/* <Tag color={generateColorFromString(selectedState)}>
-                {selectedState}
-              </Tag> */}
-            </p>
-            <SimpleGrid columns={[1, 2, 3, 4]} spacing={5}>
-              {sampleGroupData.map((group, index) => {
-                return <GroupCard key={index} {...group} />;
-              })}
-            </SimpleGrid>
-          </Flex>
+          !loadingGroups ? (
+            groups.length > 0 ? (
+              <Flex className='flex-col gap-4'>
+                <p className='text-base font-semibold'>
+                  Groups in {selectedCounty && `${selectedCounty}, `}
+                  {selectedState}
+                </p>
+                <SimpleGrid columns={[1, 2, 3]} spacing={5}>
+                  {groups.map((group, index) => {
+                    return <GroupCard key={index} {...group} />;
+                  })}
+                </SimpleGrid>
+              </Flex>
+            ) : (
+              <p>
+                No groups found in {selectedCounty && `${selectedCounty}, `}
+                {selectedState}.
+              </p>
+            )
+          ) : (
+            <MapLoading />
+          )
         ) : (
           !loading && (
             <p className='text-sm font-normal text-gray-500'>

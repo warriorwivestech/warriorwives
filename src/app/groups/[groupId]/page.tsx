@@ -22,6 +22,7 @@ import { SWRProvider } from "@/app/providers/swrProvider";
 import useSWR from "swr";
 import { GroupData } from "@/app/api/groups/[groupId]/types";
 import { sampleEventData } from "@/app/data/samples";
+import GroupLoading from "./loading";
 import { CreateEventModal } from "@/app/components/CreateEventModal";
 
 function GroupData({ group }: { group: GroupData }) {
@@ -80,54 +81,54 @@ function GroupData({ group }: { group: GroupData }) {
 
 
   return (
-    <div className="flex flex-col-reverse md:flex-row gap-8 justify-between">
-      <div className="flex flex-col gap-6">
+    <div className='flex flex-col-reverse md:flex-row gap-8 justify-between'>
+      <div className='flex flex-col gap-6'>
         <Stack gap={8}>
           <SimpleGrid columns={[1, 1, 2]} spacing={8}>
             <Image
               src={displayPhotoUrl}
               alt={name}
-              borderRadius="lg"
-              className="w-full object-cover h-96"
+              borderRadius='lg'
+              className='w-full object-cover h-96'
             />
             <Box
               className={`${isSticky ? "bg-white rounded-xl" : ""} p-7`}
-              position="fixed"
+              position='fixed'
               transition={
                 "width 0.25s ease, border 1s ease, background 0.5s ease, top 0.2s ease"
               }
               top={!isSticky ? `calc(110px - ${scrollSpeed}px)` : "48px"}
-              right="48px"
+              right='48px'
               width={`${width > minWidth ? width : minWidth}%`}
             >
               <Box>
                 <Stack spacing={3}>
                   <Stack>
                     <Tags tags={tags} />
-                    <Heading className="heading mb-2">{name}</Heading>
+                    <Heading className='heading mb-2'>{name}</Heading>
                   </Stack>
                   <Stack spacing={2}>
                     {online && (
                       <IconText
                         icon={RiBaseStationFill}
-                        iconClassName="text-green-500"
-                        textClassName="uppercase text-green-500 tracking-wider font-bold"
+                        iconClassName='text-green-500'
+                        textClassName='uppercase text-green-500 tracking-wider font-bold'
                       >
                         ONLINE ONLY
                       </IconText>
                     )}
                     <IconText
                       icon={FaMapMarkerAlt}
-                      iconClassName="text-red-700"
+                      iconClassName='text-red-700'
                     >
                       {location}
                     </IconText>
-                    <IconText icon={MdPeopleAlt} iconClassName="text-blue-400">
+                    <IconText icon={MdPeopleAlt} iconClassName='text-blue-400'>
                       {`${membersCount} members`}
                     </IconText>
                     <IconText
                       icon={BsPersonRaisedHand}
-                      iconClassName="text-gray-500"
+                      iconClassName='text-gray-500'
                     >
                       Organised by {parsedAdmins}
                     </IconText>
@@ -150,14 +151,14 @@ function GroupData({ group }: { group: GroupData }) {
               </Box>
             </Box>
           </SimpleGrid>
-          <Flex className="flex-col gap-4">
-            <p className="text-heading5">Description</p>
+          <Flex className='flex-col gap-4'>
+            <p className='text-heading5'>Description</p>
             <Text
               textOverflow={"ellipsis"}
               width={`${width > minWidth ? width + 50 : minWidth + 25}%`}
               transition={"width 0.25s ease"}
               ref={descriptionRef}
-              className="break-all"
+              className='break-all'
             >
               {description}
             </Text>
@@ -196,11 +197,12 @@ function _GroupPage({ params }: { params: { groupId: string } }) {
     isLoading,
   } = useSWR<GroupData>(`/groups/${params.groupId}`);
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) return <GroupLoading />;
   if (error) return <div>Error loading group</div>;
   if (!group) return <div>Not found</div>;
 
-  return <GroupData group={group} />;
+  return <GroupLoading />
+  // return <GroupData group={group} />;
 }
 
 export default function GroupPage({ params }: { params: { groupId: string } }) {
