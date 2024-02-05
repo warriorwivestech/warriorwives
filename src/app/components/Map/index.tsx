@@ -11,6 +11,7 @@ import { FaMapMarkedAlt } from "react-icons/fa";
 import GroupCard from "../GroupCards";
 import MapLoading from "./loading";
 import IconText from "../common/icontext";
+import { GroupData } from "@/app/api/groups/[groupId]/types";
 
 const COUNTY_GEOJSON_URL =
   "https://gist.githubusercontent.com/sdwfrost/d1c73f91dd9d175998ed166eb216994a/raw/e89c35f308cee7e2e5a784e1d3afc5d449e9e4bb/counties.geojson";
@@ -53,7 +54,7 @@ const Map = () => {
   const [stateGeoJsonData, setStateGeoJsonData] = useState(null);
   const [countyGeoJsonData, setCountyGeoJsonData] = useState(null);
 
-  const [groups, setGroups] = useState([]);
+  const [groups, setGroups] = useState<GroupData[]>([]);
   const [selectedState, setSelectedState] = useState("");
   const [selectedCounty, setSelectedCounty] = useState("");
 
