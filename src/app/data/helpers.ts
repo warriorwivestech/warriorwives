@@ -1,6 +1,6 @@
 import { GroupsByUserIdResponse } from "./types";
 
-function parseBranchOfService(branch: string) {
+export function parseBranchOfService(branch: string) {
   // convert branch of service to a more readable format
   // ARMY -> Army
   // NAVY -> Navy

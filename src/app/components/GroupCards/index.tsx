@@ -35,7 +35,7 @@ interface GroupCardProps {
   state: string;
   online: boolean;
   tags: string[];
-  admin: boolean;
+  admin?: boolean;
 }
 
 export default function GroupCard({
@@ -48,7 +48,7 @@ export default function GroupCard({
   state,
   online,
   tags,
-  admin,
+  admin = false,
 }: GroupCardProps) {
   const displayPhotoUrl =
     displayPhoto ||

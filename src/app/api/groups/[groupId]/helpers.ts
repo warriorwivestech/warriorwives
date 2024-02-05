@@ -1,3 +1,4 @@
+import { parseBranchOfService } from "@/app/data/helpers";
 import { GroupResponse } from "./types";
 
 export function parseGroupData(
@@ -7,6 +8,7 @@ export function parseGroupData(
 ) {
   return {
     ...data,
+    branchOfService: parseBranchOfService(data.branchOfService),
     tags: data.tags.map((tag: any) => tag.interest.name),
     membersCount: data._count.members,
     joined: memberData ? true : false,

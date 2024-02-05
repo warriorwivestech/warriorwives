@@ -36,62 +36,6 @@ export async function getUserById(id: number) {
   });
 }
 
-// ? get groups by county/state
-// export async function getGroupsByLocationName(location: string) {
-//   return await prisma.group.findMany({
-//     where: {
-//       location,
-//     },
-//     include: {
-//       tags: true,
-//     },
-//   });
-// }
-
-export async function getGroupsByInterestId(id: number) {
-  return await prisma.group.findMany({
-    where: {
-      tags: {
-        some: {
-          interestId: id,
-        },
-      },
-    },
-    include: {
-      tags: true,
-    },
-  });
-}
-
-export async function getGroupsByInterestName(name: string) {
-  return await prisma.group.findMany({
-    where: {
-      tags: {
-        some: {
-          interest: {
-            name,
-          },
-        },
-      },
-    },
-    include: {
-      tags: true,
-    },
-  });
-}
-
-// includes groups where the branches is ANY
-// export async function getGroupsByBranch(branch: string) {
-//   return await prisma.group.findMany({
-//     where: {
-//       branchOfService: branch,
-//     },
-//     include: {
-//       tags: true,
-//     },
-//   })
-// }
-
 export async function getUpcomingEventsByGroupId(groupId: number) {
   return await prisma.event.findMany({
     where: {

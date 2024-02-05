@@ -1,6 +1,6 @@
 import React from "react";
 import { Box, Divider, Flex, Heading, Input } from "@chakra-ui/react";
-import Carousel from "./components/Carousel/carousel";
+import Carousel from "./components/carousel/carousel";
 import { RECOMMENDED_GROUPS } from "./sample/groups";
 import Map from "./components/Map";
 import Image from "next/image";
