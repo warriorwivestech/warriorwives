@@ -1,3 +1,4 @@
+import { ChangeEvent } from "react";
 import { GroupTypes } from "./groups";
 
 export interface EventPhotoType {
@@ -26,4 +27,35 @@ export interface EventType {
   groupId: string;
   meetingLink?: string;
   longCard?: Boolean
+}
+
+export interface NewEvent {
+  name: string;
+  description: string;
+  location: string;
+  online: boolean;
+  link: string;
+  dateTime: any;
+  displayPhoto: string;
+  photos: string[];
+}
+
+export interface requiredEventField {
+  name: boolean;
+  description: boolean;
+  dateTime: boolean;
+}
+
+export type FileWithPreview = {
+  file: File;
+  url: string;
+};
+
+export type InputChangeEvent = ChangeEvent<
+  HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+>;
+
+export interface HandleInputChangeParams {
+  e: InputChangeEvent | string;
+  inputType: string;
 }

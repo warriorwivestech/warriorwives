@@ -1,6 +1,12 @@
 "use client";
 
 import {
+  HandleInputChangeParams,
+  NewEvent,
+  requiredEventField,
+} from "@/app/types/events";
+import { FileWithPreview } from "@/app/types/groups";
+import {
   Button,
   FormControl,
   FormErrorMessage,
@@ -22,46 +28,15 @@ import {
   Divider,
   SimpleGrid,
 } from "@chakra-ui/react";
-import React, { ChangeEvent, useState } from "react";
+import React, { useState } from "react";
 import { FileUploader } from "react-drag-drop-files";
-
-interface NewEvent {
-  name: string;
-  description: string;
-  location: string;
-  online: boolean;
-  link: string;
-  dateTime: any;
-  displayPhoto: string;
-  photos: string[];
-}
-
-interface requiredField {
-  name: boolean;
-  description: boolean;
-  dateTime: boolean;
-}
-
-type FileWithPreview = {
-  file: File;
-  url: string;
-};
-
-type InputChangeEvent = ChangeEvent<
-  HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
->;
-
-interface HandleInputChangeParams {
-  e: InputChangeEvent | string;
-  inputType: string;
-}
 
 export function CreateEventModal({ groupName }: { groupName: string }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const [bannerImage, setBannerImage] = useState<FileWithPreview | null>(null);
   const [photos, setPhotos] = useState<FileWithPreview[]>([]);
-  const [dirty, setDirty] = useState<requiredField>({
+  const [dirty, setDirty] = useState<requiredEventField>({
     name: false,
     description: false,
     dateTime: false,
@@ -193,8 +168,17 @@ export function CreateEventModal({ groupName }: { groupName: string }) {
     );
   };
 
-  const logFiles = () => {
-    console.log(photos);
+  const isButtonDisabled = () => {
+    const conditions = [
+      isDateTimeError,
+      isDescriptionError,
+      isNameError,
+      input?.name === "",
+      input?.description === "",
+      input?.dateTime === "",
+    ];
+
+    return conditions.some((condition) => condition);
   };
 
   return (
@@ -399,14 +383,7 @@ export function CreateEventModal({ groupName }: { groupName: string }) {
           <ModalFooter>
             <Button
               mr={3}
-              isDisabled={
-                isDateTimeError ||
-                isDescriptionError ||
-                isNameError ||
-                input?.name === "" ||
-                input?.description === "" ||
-                input?.dateTime === ""
-              }
+              isDisabled={isButtonDisabled()}
               onClick={() => console.log(input)}
             >
               Save

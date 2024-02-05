@@ -27,38 +27,11 @@ import React, { ChangeEvent, useEffect, useState } from "react";
 import { FileUploader } from "react-drag-drop-files";
 import axios from "axios";
 import { AsyncSelect, Select as MultiSelect } from "chakra-react-select";
-
-interface NewGroup {
-  name: string;
-  description: string;
-  online: boolean;
-  displayPhoto: string;
-  county: string;
-  state: string;
-  branchOfService: string[];
-  tags: string[];
-}
-
-interface requiredGroupField {
-  name: boolean;
-  description: boolean;
-  branchOfService: boolean;
-  tags: boolean;
-}
-
-type FileWithPreview = {
-  file: File;
-  url: string;
-};
-
-type InputChangeEvent = ChangeEvent<
-  HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
->;
-
-interface HandleInputChangeParams {
-  e: InputChangeEvent | string;
-  inputType: string;
-}
+import {
+  FileWithPreview,
+  NewGroup,
+  requiredGroupField,
+} from "@/app/types/groups";
 
 export function CreateGroupModal() {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -237,6 +210,21 @@ export function CreateGroupModal() {
     fetchStateData();
   }, []);
 
+  const isButtonDisabled = () => {
+    const conditions = [
+      isDescriptionError,
+      isNameError,
+      isTagsError,
+      isBranchOfServiceError,
+      input?.branchOfService?.length === 0,
+      input?.tags?.length === 0,
+      input?.description === "",
+      input?.name === "",
+    ];
+
+    return conditions.some((condition) => condition);
+  };
+
   return (
     <>
       <Button onClick={onOpen}>Create new group</Button>
@@ -395,7 +383,9 @@ export function CreateGroupModal() {
                   }
                 />
                 {isTagsError && (
-                  <FormErrorMessage>Select atleast one tag.</FormErrorMessage>
+                  <FormErrorMessage>
+                    Select atleast one interest.
+                  </FormErrorMessage>
                 )}
               </FormControl>
 
@@ -434,16 +424,7 @@ export function CreateGroupModal() {
           <ModalFooter>
             <Button
               mr={3}
-              isDisabled={
-                isDescriptionError ||
-                isNameError ||
-                isTagsError ||
-                isBranchOfServiceError ||
-                input?.branchOfService?.length === 0 ||
-                input?.tags?.length === 0 ||
-                input?.description === "" ||
-                input?.name === ""
-              }
+              isDisabled={isButtonDisabled()}
               onClick={() => console.log(input)}
             >
               Save
