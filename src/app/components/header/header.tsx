@@ -17,6 +17,7 @@ import { HamburgerIcon, CloseIcon } from "@chakra-ui/icons";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { CreateEventModal } from "../CreateEventModal";
+import { CreateGroupModal } from "../CreateGroupModal";
 
 export default function NavBar() {
   const pathname = usePathname();
@@ -73,7 +74,7 @@ export default function NavBar() {
         >
           {pathname !== "/register" ? (
             <>
-              {/* <CreateEventModal /> */}
+             <CreateGroupModal />
             <Button
               as={"a"}
               fontSize={"sm"}
