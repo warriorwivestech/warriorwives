@@ -201,8 +201,7 @@ function _GroupPage({ params }: { params: { groupId: string } }) {
   if (error) return <div>Error loading group</div>;
   if (!group) return <div>Not found</div>;
 
-  return <GroupLoading />
-  // return <GroupData group={group} />;
+  return <GroupData group={group} />;
 }
 
 export default function GroupPage({ params }: { params: { groupId: string } }) {

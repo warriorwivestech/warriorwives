@@ -1,22 +1,29 @@
 import { parseBranchOfService } from "@/app/data/helpers";
 import prisma from "@/app/prisma";
 
-// get recommended groups based on user interests
+// get groups based on location
 export async function GET(request: Request) {
   // TODO: get userId from session
   const userId = 3;
+  const urlSearchParams = new URL(request.url).searchParams;
+
+  let locationInfo = {};
+  if (urlSearchParams.get("county")) {
+    locationInfo = {
+      county: urlSearchParams.get("county"),
+    };
+  } else if (urlSearchParams.get("state")) {
+    locationInfo = {
+      state: urlSearchParams.get("state"),
+    };
+  }
+  console.log(locationInfo);
 
   const userData = await prisma.user.findUnique({
     where: {
       id: userId,
     },
     select: {
-      branch: true,
-      interests: {
-        select: {
-          interestId: true,
-        },
-      },
       groups: {
         select: {
           groupId: true,
@@ -29,25 +36,15 @@ export async function GET(request: Request) {
     return Response.json([]);
   }
 
-  // get groups by interest and exclude groups user is already in, limit to 10
-  const recommendedGroups = await prisma.group.findMany({
-    take: 10,
+  // get groups by county or state and exclude groups user is already in, limit to 10
+  const groupsByLocation = await prisma.group.findMany({
     where: {
       OR: [
         {
-          tags: {
-            some: {
-              interestId: {
-                in: userData.interests.map((interest) => interest.interestId),
-              },
-            },
-          },
+          ...locationInfo
         },
         {
-          branchOfService: userData.branch,
-        },
-        {
-          branchOfService: "ANY",
+          state: "National",
         },
       ],
       id: {
@@ -67,7 +64,18 @@ export async function GET(request: Request) {
     },
   });
 
-  const parsedGroups = recommendedGroups.map((group) => {
+  // sort "national" groups to the end
+  groupsByLocation.sort((a, b) => {
+    if (a.state === "National") {
+      return 1;
+    }
+    if (b.state === "National") {
+      return -1;
+    }
+    return 0;
+  });
+
+  const parsedGroups = groupsByLocation.map((group) => {
     return {
       ...group,
       tags: group.tags.map((tag) => tag.interest.name),

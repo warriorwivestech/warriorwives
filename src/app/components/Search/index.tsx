@@ -48,8 +48,8 @@ export default function Search() {
   }, []);
 
   return (
-    <Flex gap={0} className='flex-col relative'>
-      <IconText icon={MdOutlineSearch} textClassName='text-heading5'>
+    <Flex gap={0} className="flex-col relative">
+      <IconText icon={MdOutlineSearch} textClassName="text-heading5">
         Search groups by text
       </IconText>
       <div>
@@ -57,7 +57,7 @@ export default function Search() {
           className={`w-full mt-4 bg-white !z-20 ${
             showDropdown && !!searchInput ? "rounded-b-none border-b-0" : ""
           }`}
-          placeholder='Search for groups...'
+          placeholder="Search for groups..."
           onChange={handleInputChange}
           value={searchInput}
           ref={inputRef}
@@ -73,6 +73,7 @@ export default function Search() {
             ) : groups.length ? (
               groups.map((group) => (
                 <Box
+                  key={group.id}
                   className={`w-full px-3 py-2 hover:cursor-pointer hover:bg-gray-100 hover:font-semibold transition ease duration-300`}
                 >
                   {group.name},{" "}
@@ -82,7 +83,9 @@ export default function Search() {
                 </Box>
               ))
             ) : (
-              <Box className='w-full px-3 py-2 font-semibold'>No groups found.</Box>
+              <Box className="w-full px-3 py-2 font-semibold">
+                No groups found.
+              </Box>
             )}
           </Box>
         )}

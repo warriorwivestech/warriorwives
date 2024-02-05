@@ -12,6 +12,8 @@ import GroupCard from "../GroupCards";
 import MapLoading from "./loading";
 import IconText from "../common/icontext";
 import { GroupData } from "@/app/api/groups/[groupId]/types";
+import { SWRProvider } from "@/app/providers/swrProvider";
+import useSWR from "swr";
 
 const COUNTY_GEOJSON_URL =
   "https://gist.githubusercontent.com/sdwfrost/d1c73f91dd9d175998ed166eb216994a/raw/e89c35f308cee7e2e5a784e1d3afc5d449e9e4bb/counties.geojson";
@@ -45,7 +47,7 @@ function getDynamicBounds(
   ];
 }
 
-const Map = () => {
+const _Map = () => {
   const mapContainer = useRef<HTMLDivElement | null>(null);
   const map = useRef<maptilersdk.Map | null>(null);
   maptilersdk.config.apiKey = process.env.NEXT_PUBLIC_MAPTILER_API_KEY!;
@@ -54,12 +56,10 @@ const Map = () => {
   const [stateGeoJsonData, setStateGeoJsonData] = useState(null);
   const [countyGeoJsonData, setCountyGeoJsonData] = useState(null);
 
-  const [groups, setGroups] = useState<GroupData[]>([]);
   const [selectedState, setSelectedState] = useState("");
   const [selectedCounty, setSelectedCounty] = useState("");
 
   const [loading, setLoading] = useState(true);
-  const [loadingGroups, setLoadingGroups] = useState(false);
 
   const addStateGeoJsonDataToMap = (geoJsonData: any) => {
     geoJsonData?.features.forEach((feature: any, index: number) => {
@@ -225,18 +225,11 @@ const Map = () => {
     addCountyBorders();
   }, [byCounty]);
 
-  useEffect(() => {
-    if (!selectedState) return;
+  const selectedCountyQuery = selectedCounty ? `county=${selectedCounty}` : "";
+  const selectedStateQuery = selectedState ? `state=${selectedState}` : "";
+  const queryString = selectedCountyQuery ? `?${selectedCountyQuery}` : selectedStateQuery ? `?${selectedStateQuery}` : "";
 
-    const fetchData = () => {
-      setLoadingGroups(true);
-      // TODO: add fetch by location here
-      // setGroups(groups)
-      setLoadingGroups(false);
-    };
-
-    fetchData();
-  }, [selectedState, selectedCounty]);
+  const { data: groups, error, isLoading: isLoadingGroups } = useSWR<GroupData[]>(`/groups${queryString}`);
 
   useEffect(() => {
     /* 
@@ -255,9 +248,9 @@ const Map = () => {
   }, [selectedState, selectedCounty]);
 
   return (
-    <Flex className='flex-col gap-2'>
-      <Flex className='items-end justify-between'>
-        <IconText icon={FaMapMarkedAlt} textClassName='text-heading5'>
+    <Flex className="flex-col gap-2">
+      <Flex className="items-end justify-between">
+        <IconText icon={FaMapMarkedAlt} textClassName="text-heading5">
           Search groups by location
         </IconText>
         <Checkbox
@@ -269,20 +262,20 @@ const Map = () => {
         </Checkbox>
       </Flex>
       <Flex className={`flex-col ${selectedState ? "gap-8" : "gap-2"}`}>
-        <Box className='relative w-full h-[60vh] min-h-[500px]'>
-          <Card ref={mapContainer} className='absolute w-full h-full'>
+        <Box className="relative w-full h-[60vh] min-h-[500px]">
+          <Card ref={mapContainer} className="absolute w-full h-full">
             {loading && (
-              <Flex className='h-full justify-center items-center'>
+              <Flex className="h-full justify-center items-center">
                 <Spinner />
               </Flex>
             )}
           </Card>
         </Box>
         {selectedState ? (
-          !loadingGroups ? (
+          !isLoadingGroups ? (
             groups.length > 0 ? (
-              <Flex className='flex-col gap-4'>
-                <p className='text-base font-semibold'>
+              <Flex className="flex-col gap-4">
+                <p className="text-base font-semibold">
                   Groups in {selectedCounty && `${selectedCounty}, `}
                   {selectedState}
                 </p>
@@ -303,7 +296,7 @@ const Map = () => {
           )
         ) : (
           !loading && (
-            <p className='text-sm font-normal text-gray-500'>
+            <p className="text-sm font-normal text-gray-500">
               Click on a state/county to get started.
             </p>
           )
@@ -313,4 +306,10 @@ const Map = () => {
   );
 };
 
-export default Map;
+export default function Map() {
+  return (
+    <SWRProvider>
+      <_Map />
+    </SWRProvider>
+  );
+}
