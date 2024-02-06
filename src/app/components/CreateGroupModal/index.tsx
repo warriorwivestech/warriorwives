@@ -160,6 +160,7 @@ export function CreateGroupModal() {
     setBannerImage(null);
   };
   const sample = [
+    { value: "ALL", label: "All Branch" },
     { value: "ARMY", label: "Army" },
     { value: "NAVY", label: "Navy" },
     { value: "AIR_FORCE", label: "Air Force" },
