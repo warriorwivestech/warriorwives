@@ -150,11 +150,11 @@ export default function EventCards(props: EventType) {
 
           <div className="flex flex-row justify-between items-center">
             <div className="flex flex-row items-center gap-2">
-              <Avatar
+              {/* <Avatar
                 size="sm"
                 name="Rajesh"
                 src="https://images.unsplash.com/photo-1596516109370-29001ec8ec36?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyODE1MDl8MHwxfGFsbHx8fHx8fHx8fDE2Mzg5MzY2MzE&ixlib=rb-1.2.1&q=80&w=1080"
-              />
+              /> */}
               <p className="text-gray-500 text-[14px]">
                 {`${sampleAttendees?.length} attendee(s)`}
               </p>
@@ -165,7 +165,7 @@ export default function EventCards(props: EventType) {
               className="bg-black text-white hover:text-black"
               onClick={() => joinEventHandler()}
             >
-              Join event
+              View event
             </Button>
           </div>
         </div>

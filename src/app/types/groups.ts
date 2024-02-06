@@ -35,3 +35,8 @@ export type FileWithPreview = {
   file: File;
   url: string;
 };
+
+export interface LocationType {
+  County: string;
+  State: string;
+}

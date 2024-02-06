@@ -26,16 +26,21 @@ import {
 import React, { ChangeEvent, useEffect, useState } from "react";
 import { FileUploader } from "react-drag-drop-files";
 import axios from "axios";
-import { AsyncSelect, Select as MultiSelect } from "chakra-react-select";
+import {
+  AsyncSelect,
+  CreatableSelect,
+  Select as MultiSelect,
+} from "chakra-react-select";
 import {
   FileWithPreview,
+  LocationType,
   NewGroup,
   requiredGroupField,
 } from "@/app/types/groups";
+import locationData from "../../json/location.json";
 
 export function CreateGroupModal() {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [state, setState] = useState<string[]>();
   const [bannerImage, setBannerImage] = useState<FileWithPreview | null>(null);
   const [dirty, setDirty] = useState<requiredGroupField>({
     name: false,
@@ -153,62 +158,49 @@ export function CreateGroupModal() {
     if (bannerImage) URL.revokeObjectURL(bannerImage.url);
     setBannerImage(null);
   };
-
-  // for getting country and states
-  const COUNTY_GEOJSON_URL =
-    "https://gist.githubusercontent.com/sdwfrost/d1c73f91dd9d175998ed166eb216994a/raw/e89c35f308cee7e2e5a784e1d3afc5d449e9e4bb/counties.geojson";
-  const STATE_GEOJSON_URL =
-    "https://raw.githubusercontent.com/PublicaMundi/MappingAPI/master/data/geojson/us-states.json";
-
   const sample = [
     { value: "1", label: "Option 1" },
     { value: "2", label: "Option 2" },
     { value: "3", label: "Option 3" },
   ];
 
-  async function fetchCountiesData({ inputValue }: { inputValue: string }) {
-    try {
-      const response = await axios.get(COUNTY_GEOJSON_URL);
-      let extractedCounties = response?.data?.features?.map(
-        (res: any) => res?.properties?.NAME
-      );
+  const [selectedState, setSelectedState] = useState<string>("");
+  const [filteredCounties, setFilteredCounties] = useState<LocationType[]>([]);
 
-      let uniqueCounties = Array.from(new Set(extractedCounties));
+  // Extract unique states for the state dropdown
+  let states: any = Array.from(
+    new Set(locationData.map((location) => location.State))
+  );
 
-      let filteredCounties = uniqueCounties.filter((countyName: any) =>
-        countyName?.toLowerCase()?.includes(inputValue.toLowerCase())
-      );
+  states = states.map((state: any) => {
+    return { value: state, label: state };
+  });
 
-      let counties = filteredCounties.map((countyName) => ({
-        value: countyName,
-        label: countyName,
-      }));
+  // Handle changing of the state dropdown
+  const handleStateChange = (e: any) => {
+    const state = e?.label;
+    setSelectedState(state);
 
-      return counties;
-    } catch (e) {
-      console.error("Error fetching GeoJSON data: ", e);
-      return [];
-    }
-  }
+    handleInputChange({
+      e: e,
+      inputType: "state",
+      single: true,
+    });
 
-  async function fetchStateData() {
-    try {
-      let states;
-      const response = await axios.get(STATE_GEOJSON_URL);
+    // Filter counties based on selected state
+    let counties: any = locationData.filter(
+      (location) => location.State === state
+    );
 
-      states = response?.data?.features?.map((res: any) => {
-        return { value: res?.properties?.name, label: res?.properties?.name };
-      });
+    counties = counties.map((county: any) => {
+      return {
+        label: county?.County,
+        value: county?.County,
+      };
+    });
 
-      setState(states);
-    } catch (e) {
-      console.error("Error fetching GeoJSON data: ", e);
-    }
-  }
-
-  useEffect(() => {
-    fetchStateData();
-  }, []);
+    setFilteredCounties(counties);
+  };
 
   const isButtonDisabled = () => {
     const conditions = [
@@ -329,8 +321,20 @@ export function CreateGroupModal() {
 
             <div className="flex flex-row gap-6">
               <FormControl>
-                <AsyncSelect
-                  loadOptions={(e) => fetchCountiesData({ inputValue: e })}
+                <MultiSelect
+                  options={states}
+                  placeholder="Select state"
+                  onChange={(e: any) => handleStateChange(e)}
+                  variant="outline"
+                  isClearable
+                  useBasicStyles
+                />
+              </FormControl>
+
+              <FormControl>
+                <MultiSelect
+                  isDisabled={!selectedState}
+                  options={filteredCounties}
                   placeholder="Select county"
                   onChange={(e) =>
                     handleInputChange({
@@ -344,31 +348,13 @@ export function CreateGroupModal() {
                   useBasicStyles
                 />
               </FormControl>
-
-              <FormControl>
-                <MultiSelect
-                  options={state}
-                  placeholder="Select state"
-                  onChange={(e) =>
-                    handleInputChange({
-                      e: e,
-                      inputType: "state",
-                      single: true,
-                    })
-                  }
-                  variant="outline"
-                  isClearable
-                  useBasicStyles
-                />
-              </FormControl>
             </div>
 
             <div className="flex flex-row gap-6">
               <FormControl isInvalid={isTagsError}>
-                <MultiSelect
+                <CreatableSelect
                   isMulti
                   name="interest"
-                  options={sample}
                   placeholder="Select interest"
                   variant="outline"
                   useBasicStyles
@@ -391,7 +377,6 @@ export function CreateGroupModal() {
 
               <FormControl isInvalid={isBranchOfServiceError}>
                 <MultiSelect
-                  isMulti
                   name="branchOfService"
                   options={sample}
                   placeholder="Select branch of service"
@@ -407,7 +392,7 @@ export function CreateGroupModal() {
                     handleInputChange({
                       e: e,
                       inputType: "branchOfService",
-                      multi: true,
+                      single: true,
                     })
                   }
                 />
