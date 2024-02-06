@@ -22,6 +22,7 @@ import { CreateGroupModal } from "../CreateGroupModal";
 export default function NavBar() {
   const pathname = usePathname();
   const { isOpen, onToggle } = useDisclosure();
+  if (pathname === "/login") return;
 
   return (
     <Box>
@@ -56,15 +57,13 @@ export default function NavBar() {
           alignItems={"center"}
           marginLeft={{ base: "0", md: "2rem" }}
         >
-          <Box as="a" href="/">
-            <Image src="/logo.png" width={50} height={50} alt="logo" />
+          <Box as='a' href='/'>
+            <Image src='/logo.png' width={50} height={50} alt='logo' />
           </Box>
           <Flex display={{ base: "none", md: "flex" }} ml={10}>
             <DesktopNav />
           </Flex>
         </Flex>
-
-      
 
         <Stack
           flex={{ base: 1, md: 0 }}
@@ -74,16 +73,16 @@ export default function NavBar() {
         >
           {pathname !== "/register" ? (
             <>
-             <CreateGroupModal />
-            <Button
-              as={"a"}
-              fontSize={"sm"}
-              fontWeight={400}
-              variant={"link"}
-              href={"#"}
-            >
-              warriorWivesAdmin
-            </Button>
+              <CreateGroupModal />
+              <Button
+                as={"a"}
+                fontSize={"sm"}
+                fontWeight={400}
+                variant={"link"}
+                href={"#"}
+              >
+                warriorWivesAdmin
+              </Button>
             </>
           ) : (
             <Button
@@ -123,7 +122,7 @@ const DesktopNav = () => {
           <Popover trigger={"hover"} placement={"bottom-start"}>
             <PopoverTrigger>
               <Box
-                as="a"
+                as='a'
                 p={2}
                 href={navItem.href ?? "#"}
                 fontSize={"sm"}
@@ -173,10 +172,10 @@ const MobileNavItem = ({
     <Stack spacing={4} onClick={onToggle}>
       <Box
         py={2}
-        as="a"
+        as='a'
         href={href ?? "#"}
-        justifyContent="space-between"
-        alignItems="center"
+        justifyContent='space-between'
+        alignItems='center'
         _hover={{
           textDecoration: "none",
         }}

@@ -282,7 +282,7 @@ export function CreateGroupModal() {
             <FormControl isInvalid={isNameError}>
               {/* <FormLabel>Name</FormLabel> */}
               <Input
-                placeholder="Name"
+                placeholder="Group name"
                 type="name"
                 value={input?.name}
                 onChange={(e) => handleInputChange({ e: e, inputType: "name" })}
@@ -299,7 +299,7 @@ export function CreateGroupModal() {
               <Textarea
                 height={200}
                 resize={"none"}
-                placeholder="Description for the event"
+                placeholder="Description for the group"
                 value={input?.description}
                 onChange={(e) =>
                   handleInputChange({ e: e, inputType: "description" })
@@ -312,7 +312,7 @@ export function CreateGroupModal() {
 
             {/* online */}
             <FormControl as="fieldset">
-              <FormLabel as="legend">Is this an online event?</FormLabel>
+              <FormLabel as="legend">Is this an online group?</FormLabel>
               <RadioGroup
                 defaultValue="No"
                 value={input?.online ? "Yes" : "No"}
@@ -384,7 +384,7 @@ export function CreateGroupModal() {
                 />
                 {isTagsError && (
                   <FormErrorMessage>
-                    Select atleast one interest.
+                    Please select at least one interest.
                   </FormErrorMessage>
                 )}
               </FormControl>
@@ -414,7 +414,7 @@ export function CreateGroupModal() {
 
                 {isBranchOfServiceError && (
                   <FormErrorMessage>
-                    Select atleast one branch of service.
+                    Please select at least one branch of service.
                   </FormErrorMessage>
                 )}
               </FormControl>

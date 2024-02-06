@@ -158,12 +158,12 @@ const _Map = () => {
 
             map.current!.setCenter([longitude, latitude]);
             map.current!.setZoom(9);
-            map.current!.setMaxBounds(
-              getDynamicBounds(
-                [longitude, latitude],
-                100
-              ) as maptilersdk.LngLatBoundsLike
-            );
+            // map.current!.setMaxBounds(
+            //   getDynamicBounds(
+            //     [longitude, latitude],
+            //     100
+            //   ) as maptilersdk.LngLatBoundsLike
+            // );
             setByCounty(true);
           },
           function (error) {

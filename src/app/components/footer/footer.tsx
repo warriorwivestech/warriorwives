@@ -12,6 +12,7 @@ import {
   useColorModeValue,
 } from "@chakra-ui/react";
 import { FaTwitter, FaYoutube, FaInstagram } from "react-icons/fa";
+import { usePathname } from "next/navigation";
 
 const ListHeader = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -54,6 +55,8 @@ const SocialButton = ({
 };
 
 export default function Footer() {
+  const pathname = usePathname();
+  if (pathname === "/login") return;
   return (
     <Box bg="white" color={useColorModeValue("gray.700", "gray.200")}>
       <Container as={Stack} maxW={"6xl"} py={10}>
