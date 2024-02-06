@@ -5,6 +5,7 @@ import useSWR from "swr";
 import GroupCard from "../GroupCards";
 import { SWRProvider } from "@/app/providers/swrProvider";
 import { Group } from "./types";
+import RecommendedGroupsLoading from "./loading";
 
 function _RecommendedGroups() {
   const {
@@ -12,7 +13,7 @@ function _RecommendedGroups() {
     error,
     isLoading,
   } = useSWR<Group[]>("/groups/recommended");
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) return <RecommendedGroupsLoading />;
   if (error) return <div>Error...</div>;
   if (!groups)
     return (
@@ -20,10 +21,10 @@ function _RecommendedGroups() {
     );
 
   return (
-    <div className="flex flex-row gap-8 overflow-scroll overflow-y-hidden">
+    <div className='flex flex-row gap-8 overflow-scroll overflow-y-hidden'>
       {groups.map((group) => {
         return (
-          <div key={group.id} className="min-w-[330px] sm:min-w-[500px] mb-4">
+          <div key={group.id} className='min-w-[330px] sm:min-w-[500px] mb-4'>
             <GroupCard {...group} />
           </div>
         );

@@ -11,6 +11,7 @@ import {
   Stack,
   Heading,
   Box,
+  Badge,
 } from "@chakra-ui/react";
 import { MdPeopleAlt } from "react-icons/md";
 import React, { useEffect, useState, useRef } from "react";
@@ -24,6 +25,8 @@ import { GroupData } from "@/app/api/groups/[groupId]/types";
 import { sampleEventData } from "@/app/data/samples";
 import GroupLoading from "./loading";
 import { CreateEventModal } from "@/app/components/CreateEventModal";
+import { GiLightningBranches } from "react-icons/gi";
+import { generateColorFromString } from "@/app/components/Map";
 
 function GroupData({ group }: { group: GroupData }) {
   const [isSticky, setIsSticky] = useState(false);
@@ -65,7 +68,7 @@ function GroupData({ group }: { group: GroupData }) {
     membersCount,
     groupAdmin,
     joined,
-    admins
+    admins,
   } = group;
   const displayPhotoUrl =
     displayPhoto ||
@@ -76,13 +79,18 @@ function GroupData({ group }: { group: GroupData }) {
       ? `${admins.slice(0, 2).join(", ")} and ${admins.length - 2} others`
       : admins.join(" and ");
 
-  const minWidth = 30;
-  const width = 50 - scrollPosition / 15;
+  const cardMinWidth = 30;
+  const cardWidth = 50 - scrollPosition / 15;
 
+  const descMinWidth = 60;
+  const descWidth = 100 - (isSticky ? scrollPosition / 3 : 0);
+
+  const parsedBranchOfService =
+    branchOfService === "Any" ? "All Branches" : branchOfService;
 
   return (
     <div className='flex flex-col-reverse md:flex-row gap-8 justify-between'>
-      <div className='flex flex-col gap-6'>
+      <div className='flex flex-col gap-16'>
         <Stack gap={8}>
           <SimpleGrid columns={[1, 1, 2]} spacing={8}>
             <Image
@@ -92,20 +100,30 @@ function GroupData({ group }: { group: GroupData }) {
               className='w-full object-cover h-96'
             />
             <Box
-              className={`${isSticky ? "bg-white rounded-xl" : ""} p-7`}
+              className={`${isSticky ? "bg-white rounded-xl border" : ""} p-7`}
               position='fixed'
               transition={
-                "width 0.25s ease, border 1s ease, background 0.5s ease, top 0.2s ease"
+                "width 0.25s ease, background 0.5s ease, top 0.2s ease"
               }
               top={!isSticky ? `calc(110px - ${scrollSpeed}px)` : "48px"}
               right='48px'
-              width={`${width > minWidth ? width : minWidth}%`}
+              width={`${cardWidth > cardMinWidth ? cardWidth : cardMinWidth}%`}
             >
               <Box>
-                <Stack spacing={3}>
-                  <Stack>
-                    <Tags tags={tags} />
+                <Stack spacing={5}>
+                  <Stack spacing={1}>
+                    <span>
+                      <Badge
+                        background={generateColorFromString(
+                          parsedBranchOfService,
+                          "99"
+                        )}
+                      >
+                        {parsedBranchOfService}
+                      </Badge>
+                    </span>
                     <Heading className='heading mb-2'>{name}</Heading>
+                    <Tags tags={tags} />
                   </Stack>
                   <Stack spacing={2}>
                     {online && (
@@ -155,7 +173,9 @@ function GroupData({ group }: { group: GroupData }) {
             <p className='text-heading5'>Description</p>
             <Text
               textOverflow={"ellipsis"}
-              width={`${width > minWidth ? width + 50 : minWidth + 25}%`}
+              width={`${
+                descWidth > descMinWidth ? descWidth + 50 : descMinWidth + 25
+              }%`}
               transition={"width 0.25s ease"}
               ref={descriptionRef}
               className='break-all'
@@ -164,11 +184,11 @@ function GroupData({ group }: { group: GroupData }) {
             </Text>
           </Flex>
         </Stack>
-        <p className="text-heading4">Events from {name}</p>
-        <>
-          <Flex className="flex-col w-[65%]" gap={6}>
-          {sampleEventData.map((event, index) => (
-            <EventCards
+        <Stack gap={4}>
+          <p className='text-heading4'>Events from {name}</p>
+          <Flex className='flex-col w-[65%]' gap={6}>
+            {sampleEventData.map((event, index) => (
+              <EventCards
                 name={event?.title}
                 displayPhoto={""}
                 location={""}
@@ -184,7 +204,7 @@ function GroupData({ group }: { group: GroupData }) {
               />
             ))}
           </Flex>
-        </>
+        </Stack>
       </div>
     </div>
   );

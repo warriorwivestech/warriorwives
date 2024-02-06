@@ -38,6 +38,7 @@ import {
   requiredGroupField,
 } from "@/app/types/groups";
 import locationData from "../../json/location.json";
+import { MdDelete } from "react-icons/md";
 
 export function CreateGroupModal() {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -227,16 +228,16 @@ export function CreateGroupModal() {
         onClose={handleCloseModal}
       >
         <ModalOverlay />
-        <ModalContent minW="900px">
+        <ModalContent minW='900px'>
           <ModalHeader>Create new group</ModalHeader>
           <ModalCloseButton />
           <ModalBody pb={6} gap={6} display={"flex"} flexDirection={"column"}>
             {/* banner image */}
-            <div className="flex flex-col gap-2">
+            <div className='flex flex-col gap-2'>
               <FormLabel>Banner Image</FormLabel>
-              <div className="flex flex-col justify-center w-[100%] items-center gap-6">
+              <div className='flex flex-col justify-center w-[100%] items-center gap-6'>
                 {bannerImage && (
-                  <div className="flex flex-col gap-4 justify-center items-center">
+                  <div className='flex flex-col gap-4 justify-center items-center'>
                     <img
                       src={bannerImage.url}
                       alt={bannerImage.file.name}
@@ -250,20 +251,20 @@ export function CreateGroupModal() {
                     />
                     <Button
                       onClick={() => handleSingleDelete()}
-                      width={100}
                       bgColor={"#FC8181 !important"}
+                      size={"sm"}
                       _hover={{
                         bgColor: "#E53E3E !important",
                       }}
                     >
-                      Delete
+                      <MdDelete size={25} />
                     </Button>
                   </div>
                 )}
                 <FileUploader
                   multiple={false}
                   handleChange={handleSingleChange}
-                  name="file"
+                  name='file'
                   types={fileTypes}
                 />
               </div>
@@ -274,8 +275,8 @@ export function CreateGroupModal() {
             <FormControl isInvalid={isNameError}>
               {/* <FormLabel>Name</FormLabel> */}
               <Input
-                placeholder="Group name"
-                type="name"
+                placeholder='Group name'
+                type='name'
                 value={input?.name}
                 onChange={(e) => handleInputChange({ e: e, inputType: "name" })}
               />
@@ -291,7 +292,7 @@ export function CreateGroupModal() {
               <Textarea
                 height={200}
                 resize={"none"}
-                placeholder="Description for the group"
+                placeholder='Description for the group'
                 value={input?.description}
                 onChange={(e) =>
                   handleInputChange({ e: e, inputType: "description" })
@@ -303,23 +304,23 @@ export function CreateGroupModal() {
             </FormControl>
 
             {/* online */}
-            <FormControl as="fieldset">
-              <FormLabel as="legend">Is this an online group?</FormLabel>
+            <FormControl as='fieldset'>
+              <FormLabel as='legend'>Is this an online group?</FormLabel>
               <RadioGroup
-                defaultValue="No"
+                defaultValue='No'
                 value={input?.online ? "Yes" : "No"}
                 onChange={(e) =>
                   handleInputChange({ e: e, inputType: "online" })
                 }
               >
-                <HStack spacing="24px">
-                  <Radio value="Yes">Yes</Radio>
-                  <Radio value="No">No</Radio>
+                <HStack spacing='24px'>
+                  <Radio value='Yes'>Yes</Radio>
+                  <Radio value='No'>No</Radio>
                 </HStack>
               </RadioGroup>
             </FormControl>
 
-            <div className="flex flex-row gap-6">
+            <div className='flex flex-row gap-6'>
               <FormControl>
                 <MultiSelect
                   options={states}
@@ -343,14 +344,14 @@ export function CreateGroupModal() {
                       single: true,
                     })
                   }
-                  variant="outline"
+                  variant='outline'
                   isClearable
                   useBasicStyles
                 />
               </FormControl>
             </div>
 
-            <div className="flex flex-row gap-6">
+            <div className='flex flex-row gap-6'>
               <FormControl isInvalid={isTagsError}>
                 <CreatableSelect
                   isMulti
@@ -379,8 +380,8 @@ export function CreateGroupModal() {
                 <MultiSelect
                   name="branchOfService"
                   options={sample}
-                  placeholder="Select branch of service"
-                  variant="outline"
+                  placeholder='Select branch of service'
+                  variant='outline'
                   useBasicStyles
                   onBlur={() =>
                     setDirty((prev) => ({

@@ -20,7 +20,7 @@ const COUNTY_GEOJSON_URL =
 const STATE_GEOJSON_URL =
   "https://raw.githubusercontent.com/PublicaMundi/MappingAPI/master/data/geojson/us-states.json";
 
-function generateColorFromString(stateName: string) {
+export function generateColorFromString(stateName: string, opacity: string) {
   let hash = 0;
   for (let i = 0; i < stateName.length; i++) {
     hash = stateName.charCodeAt(i) + ((hash << 5) - hash);
@@ -28,7 +28,7 @@ function generateColorFromString(stateName: string) {
   hash = hash * 31 + stateName.length;
   hash = hash * 17 + stateName.charCodeAt(stateName.length - 1);
   hash = hash & 0x7fffffff;
-  return "#" + (hash | 0x44000000).toString(16).slice(1, 7);
+  return "#" + (hash | 0x44000000).toString(16).slice(1, 7) + opacity;
 }
 
 function getDynamicBounds(
@@ -74,8 +74,8 @@ const _Map = () => {
           },
         } as string & maptilersdk.GeoJSONSourceSpecification,
         paint: {
-          "fill-color": generateColorFromString(feature.properties.name),
-          "fill-opacity": 0.25,
+          "fill-color": generateColorFromString(feature.properties.name, "FF"),
+          "fill-opacity": 1,
         },
       });
 

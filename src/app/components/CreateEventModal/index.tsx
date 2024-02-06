@@ -30,6 +30,9 @@ import {
 } from "@chakra-ui/react";
 import React, { useState } from "react";
 import { FileUploader } from "react-drag-drop-files";
+import { MdDelete } from "react-icons/md";
+import { RiAdminFill } from "react-icons/ri";
+import IconText from "../common/icontext";
 
 export function CreateEventModal({ groupName }: { groupName: string }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -183,24 +186,28 @@ export function CreateEventModal({ groupName }: { groupName: string }) {
 
   return (
     <>
-      <Button onClick={onOpen}>Create new event</Button>
-
+      <Button
+        onClick={onOpen}
+        className='bg-black text-white hover:text-black mt-4'
+      >
+        <IconText icon={RiAdminFill}>Create a new event</IconText>
+      </Button>
       <Modal
         closeOnOverlayClick={false}
         isOpen={isOpen}
         onClose={handleCloseModal}
       >
         <ModalOverlay />
-        <ModalContent minW="900px">
+        <ModalContent minW='900px'>
           <ModalHeader>Create new event for {groupName}</ModalHeader>
           <ModalCloseButton />
           <ModalBody pb={6} gap={6} display={"flex"} flexDirection={"column"}>
             {/* banner image */}
-            <div className="flex flex-col gap-2">
+            <div className='flex flex-col gap-2'>
               <FormLabel>Banner Image</FormLabel>
-              <div className="flex flex-col justify-center w-[100%] items-center gap-6">
+              <div className='flex flex-col justify-center w-[100%] items-center gap-6'>
                 {bannerImage && (
-                  <div className="flex flex-col gap-4 justify-center items-center">
+                  <div className='flex flex-col gap-4 justify-center items-center'>
                     <img
                       src={bannerImage.url}
                       alt={bannerImage.file.name}
@@ -214,33 +221,33 @@ export function CreateEventModal({ groupName }: { groupName: string }) {
                     />
                     <Button
                       onClick={() => handleSingleDelete()}
-                      width={100}
                       bgColor={"#FC8181 !important"}
+                      size={"sm"}
                       _hover={{
                         bgColor: "#E53E3E !important",
                       }}
                     >
-                      Delete
+                      <MdDelete size={25} />
                     </Button>
                   </div>
                 )}
                 <FileUploader
                   multiple={false}
                   handleChange={handleSingleChange}
-                  name="file"
+                  name='file'
                   types={fileTypes}
                 />
               </div>
             </div>
             <Divider />
 
-            <div className="flex flex-row gap-8">
+            <div className='flex flex-row gap-8'>
               {/* name */}
               <FormControl isInvalid={isNameError}>
                 {/* <FormLabel>Name</FormLabel> */}
                 <Input
-                  placeholder="Name"
-                  type="name"
+                  placeholder='Name'
+                  type='name'
                   value={input?.name}
                   onChange={(e) =>
                     handleInputChange({ e: e, inputType: "name" })
@@ -255,8 +262,8 @@ export function CreateEventModal({ groupName }: { groupName: string }) {
               <FormControl isInvalid={isDateTimeError}>
                 {/* <FormLabel>Meeting Link</FormLabel> */}
                 <Input
-                  placeholder="Meeting Link"
-                  type="datetime-local"
+                  placeholder='Meeting Link'
+                  type='datetime-local'
                   value={input?.dateTime}
                   min={minDateTime}
                   onChange={(e) =>
@@ -278,7 +285,7 @@ export function CreateEventModal({ groupName }: { groupName: string }) {
               <Textarea
                 height={200}
                 resize={"none"}
-                placeholder="Description for the event"
+                placeholder='Description for the event'
                 value={input?.description}
                 onChange={(e) =>
                   handleInputChange({ e: e, inputType: "description" })
@@ -290,17 +297,17 @@ export function CreateEventModal({ groupName }: { groupName: string }) {
             </FormControl>
 
             {/* image */}
-            <div className="flex flex-col gap-2">
+            <div className='flex flex-col gap-2'>
               <FormLabel>Images</FormLabel>
 
-              <div className="flex flex-col justify-center w-[100%] items-center gap-6">
+              <div className='flex flex-col justify-center w-[100%] items-center gap-6'>
                 {photos.length > 0 && (
                   <SimpleGrid columns={3} spacing={10}>
                     {/* <button onClick={logFiles}>Log Uploaded Pictures</button> */}
                     {photos.map((photosObj, index) => (
                       <div
                         key={index}
-                        className="flex flex-col gap-4 justify-center items-center"
+                        className='flex flex-col gap-4 justify-center items-center'
                       >
                         {/* <p>File name: {fileObj.file.name}</p> */}
                         <img
@@ -314,14 +321,14 @@ export function CreateEventModal({ groupName }: { groupName: string }) {
                           }}
                         />
                         <Button
-                          width={100}
                           onClick={() => handleDelete(index)}
                           bgColor={"#FC8181 !important"}
+                          size={"sm"}
                           _hover={{
                             bgColor: "#E53E3E !important",
                           }}
                         >
-                          Delete
+                          <MdDelete size={25} />
                         </Button>
                       </div>
                     ))}
@@ -330,25 +337,25 @@ export function CreateEventModal({ groupName }: { groupName: string }) {
                 <FileUploader
                   multiple={true}
                   handleChange={handleChange}
-                  name="file"
+                  name='file'
                   types={fileTypes}
                 />
               </div>
             </div>
 
             {/* online */}
-            <FormControl as="fieldset">
-              <FormLabel as="legend">Is this an online event?</FormLabel>
+            <FormControl as='fieldset'>
+              <FormLabel as='legend'>Is this an online event?</FormLabel>
               <RadioGroup
-                defaultValue="No"
+                defaultValue='No'
                 value={input?.online ? "Yes" : "No"}
                 onChange={(e) =>
                   handleInputChange({ e: e, inputType: "online" })
                 }
               >
-                <HStack spacing="24px">
-                  <Radio value="Yes">Yes</Radio>
-                  <Radio value="No">No</Radio>
+                <HStack spacing='24px'>
+                  <Radio value='Yes'>Yes</Radio>
+                  <Radio value='No'>No</Radio>
                 </HStack>
               </RadioGroup>
             </FormControl>
@@ -358,8 +365,8 @@ export function CreateEventModal({ groupName }: { groupName: string }) {
             {!input?.online ? (
               <FormControl>
                 <Input
-                  placeholder="Location"
-                  type="location"
+                  placeholder='Location'
+                  type='location'
                   value={input?.location}
                   onChange={(e) =>
                     handleInputChange({ e: e, inputType: "location" })
@@ -369,8 +376,8 @@ export function CreateEventModal({ groupName }: { groupName: string }) {
             ) : (
               <FormControl>
                 <Input
-                  placeholder="Meeting Link"
-                  type="link"
+                  placeholder='Meeting Link'
+                  type='link'
                   value={input?.link}
                   onChange={(e) =>
                     handleInputChange({ e: e, inputType: "link" })
