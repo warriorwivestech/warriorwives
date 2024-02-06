@@ -12,6 +12,7 @@ import {
   PopoverTrigger,
   useColorModeValue,
   useDisclosure,
+  useMediaQuery,
 } from "@chakra-ui/react";
 import { HamburgerIcon, CloseIcon } from "@chakra-ui/icons";
 import Image from "next/image";
@@ -21,6 +22,7 @@ import { CreateGroupModal } from "../CreateGroupModal";
 
 export default function NavBar() {
   const pathname = usePathname();
+  const [desktopSize] = useMediaQuery("(min-width: 1024px)");
   const { isOpen, onToggle } = useDisclosure();
   if (pathname === "/login") return;
 
@@ -57,8 +59,8 @@ export default function NavBar() {
           alignItems={"center"}
           marginLeft={{ base: "0", md: "2rem" }}
         >
-          <Box as='a' href='/'>
-            <Image src='/logo.png' width={50} height={50} alt='logo' />
+          <Box as="a" href="/">
+            <Image src="/logo.png" width={50} height={50} alt="logo" />
           </Box>
           <Flex display={{ base: "none", md: "flex" }} ml={10}>
             <DesktopNav />
@@ -73,7 +75,7 @@ export default function NavBar() {
         >
           {pathname !== "/register" ? (
             <>
-              <CreateGroupModal />
+              {desktopSize && <CreateGroupModal />}
               <Button
                 as={"a"}
                 fontSize={"sm"}
@@ -122,7 +124,7 @@ const DesktopNav = () => {
           <Popover trigger={"hover"} placement={"bottom-start"}>
             <PopoverTrigger>
               <Box
-                as='a'
+                as="a"
                 p={2}
                 href={navItem.href ?? "#"}
                 fontSize={"sm"}
@@ -172,10 +174,10 @@ const MobileNavItem = ({
     <Stack spacing={4} onClick={onToggle}>
       <Box
         py={2}
-        as='a'
+        as="a"
         href={href ?? "#"}
-        justifyContent='space-between'
-        alignItems='center'
+        justifyContent="space-between"
+        alignItems="center"
         _hover={{
           textDecoration: "none",
         }}
