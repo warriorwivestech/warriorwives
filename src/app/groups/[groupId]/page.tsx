@@ -123,6 +123,7 @@ function GroupData({ group }: { group: GroupData }) {
                   <Stack spacing={1}>
                     <span>
                       <Badge
+                      className="px-[4px] py-[2px] rounded-sm"
                         background={generateColorFromString(
                           parsedBranchOfService,
                           "99"
