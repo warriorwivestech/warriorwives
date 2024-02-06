@@ -11,6 +11,7 @@ import {
   Stack,
   Heading,
   Box,
+  useMediaQuery,
   Badge,
 } from "@chakra-ui/react";
 import { MdPeopleAlt } from "react-icons/md";
@@ -87,6 +88,7 @@ function GroupData({ group }: { group: GroupData }) {
 
   const parsedBranchOfService =
     branchOfService === "Any" ? "All Branches" : branchOfService;
+  const [desktopSize] = useMediaQuery("(min-width: 1024px)");
 
   return (
     <div className='flex flex-col-reverse md:flex-row gap-8 justify-between'>
@@ -96,18 +98,25 @@ function GroupData({ group }: { group: GroupData }) {
             <Image
               src={displayPhotoUrl}
               alt={name}
-              borderRadius='lg'
-              className='w-full object-cover h-96'
+              borderRadius="lg"
+              className="w-full object-cover h-64 md:h-96"
             />
             <Box
-              className={`${isSticky ? "bg-white rounded-xl border" : ""} p-7`}
-              position='fixed'
+              className={`${
+                isSticky && desktopSize ? "bg-white rounded-xl border" : ""
+              } ${!desktopSize && "bg-white"}  lg:fixed p-7 rounded-xl `}
               transition={
                 "width 0.25s ease, background 0.5s ease, top 0.2s ease"
               }
+              top={
+                !isSticky && desktopSize
+                  ? `calc(110px - ${scrollSpeed}px)`
+                  : "48px"
+              }
+              right="48px"
+              width={`${desktopSize && (cardWidth > cardMinWidth ? cardWidth : cardMinWidth)}%`}
               top={!isSticky ? `calc(110px - ${scrollSpeed}px)` : "48px"}
               right='48px'
-              width={`${cardWidth > cardMinWidth ? cardWidth : cardMinWidth}%`}
             >
               <Box>
                 <Stack spacing={5}>
@@ -129,24 +138,24 @@ function GroupData({ group }: { group: GroupData }) {
                     {online && (
                       <IconText
                         icon={RiBaseStationFill}
-                        iconClassName='text-green-500'
-                        textClassName='uppercase text-green-500 tracking-wider font-bold'
+                        iconClassName="text-green-500"
+                        textClassName="uppercase text-green-500 tracking-wider font-bold"
                       >
                         ONLINE ONLY
                       </IconText>
                     )}
                     <IconText
                       icon={FaMapMarkerAlt}
-                      iconClassName='text-red-700'
+                      iconClassName="text-red-700"
                     >
                       {location}
                     </IconText>
-                    <IconText icon={MdPeopleAlt} iconClassName='text-blue-400'>
+                    <IconText icon={MdPeopleAlt} iconClassName="text-blue-400">
                       {`${membersCount} members`}
                     </IconText>
                     <IconText
                       icon={BsPersonRaisedHand}
-                      iconClassName='text-gray-500'
+                      iconClassName="text-gray-500"
                     >
                       Organised by {parsedAdmins}
                     </IconText>
@@ -169,16 +178,16 @@ function GroupData({ group }: { group: GroupData }) {
               </Box>
             </Box>
           </SimpleGrid>
-          <Flex className='flex-col gap-4'>
-            <p className='text-heading5'>Description</p>
+          <Flex className="flex-col gap-4">
+            <p className="text-heading5">Description</p>
             <Text
               textOverflow={"ellipsis"}
               width={`${
-                descWidth > descMinWidth ? descWidth + 50 : descMinWidth + 25
+                desktopSize && (descWidth > descMinWidth ? descWidth + 50 : descMinWidth + 25)
               }%`}
               transition={"width 0.25s ease"}
               ref={descriptionRef}
-              className='break-all'
+              className="break-all"
             >
               {description}
             </Text>
@@ -186,7 +195,7 @@ function GroupData({ group }: { group: GroupData }) {
         </Stack>
         <Stack gap={4}>
           <p className='text-heading4'>Events from {name}</p>
-          <Flex className='flex-col w-[65%]' gap={6}>
+          <Flex className='flex-col w-[100%] md:w-[65%]' gap={6}>
             {sampleEventData.map((event, index) => (
               <EventCards
                 name={event?.title}

@@ -22,7 +22,7 @@ export default function EventsPage() {
     <>
       <div className="flex flex-col gap-8">
         <p className="text-heading4">Joined events</p>
-        <Flex className="flex-col w-[65%]" gap={6}>
+        <Flex className="flex-col w-[100%]" gap={6}>
           {sampleEventData.map((event, index) => (
             <EventCards
               name={event?.title}
