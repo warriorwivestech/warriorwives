@@ -75,7 +75,7 @@ const _Map = () => {
         } as string & maptilersdk.GeoJSONSourceSpecification,
         paint: {
           "fill-color": generateColorFromString(feature.properties.name, "FF"),
-          "fill-opacity": 1,
+          "fill-opacity": 0.5,
         },
       });
 
