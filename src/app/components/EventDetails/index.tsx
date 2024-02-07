@@ -202,7 +202,9 @@ export default function EventDetails({
             <FaPeopleGroup
               style={{ minHeight: "18px", minWidth: "18px", marginTop: "4px" }}
             />
-            <p>{`Organized by ${organizersString}`}</p>
+            <p>{`Organized by ${
+              organizersString ? organizersString : "Jackson"
+            }`}</p>
           </div>
 
           <div className="flex flex-row gap-4 items-start">

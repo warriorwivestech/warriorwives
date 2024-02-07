@@ -27,7 +27,7 @@ export default async function EventPage({
           </Link>
         </Button> */}
         {/* Header */}
-        <div className="bg-white py-[24px] w-[100%] absolute left-0 top-[73px]">
+        <div className="bg-white py-[24px] w-[100%] absolute left-0 top-[60px]">
           <div className="max-w-[1440px] m-auto flex gap-4 flex-col px-[24px] md:px-[48px]">
             <p className="text-heading4 font-bold">
               {event.name}

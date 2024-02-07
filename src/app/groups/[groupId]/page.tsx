@@ -14,6 +14,7 @@ import {
   useMediaQuery,
   Badge,
   Spinner,
+  Skeleton,
 } from "@chakra-ui/react";
 import { MdPeopleAlt } from "react-icons/md";
 import React, { useEffect, useState, useRef } from "react";
@@ -40,7 +41,14 @@ function EventsData({
   isLoading: boolean;
   error: any;
 }) {
-  if (isLoading) return <EventCardsLoading />;
+  if (isLoading)
+    return (
+      <div className="w-[100%] md:w-[65%] flex flex-col gap-8">
+        <Skeleton height="150px" className="rounded-xl" />
+        <Skeleton height="150px" className="rounded-xl" />
+        <Skeleton height="150px" className="rounded-xl" />
+      </div>
+    );
   if (error) return <div>Error loading events</div>;
   if (!eventsData) return <div>No events found for this group.</div>;
   if (eventsData.length === 0)

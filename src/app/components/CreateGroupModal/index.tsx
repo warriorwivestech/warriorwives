@@ -158,7 +158,7 @@ export function CreateGroupModal() {
       } else {
         console.log("File uploaded successfully: ", data);
         setBannerImageUrl(
-          `${process.env.NEXT_PUBLIC_SUPABASE_BLOB_URL}/${data.fullPath}`
+          `${process.env.NEXT_PUBLIC_SUPABASE_BLOB_URL}/${data?.fullPath}`
         );
       }
 
