@@ -65,8 +65,9 @@ export default function GroupCard({
           <HStack justifyContent={"space-between"} marginBottom='0.75rem'>
             <span>
               <Badge
-              className="px-[4px] py-[2px] rounded-sm"
-                background={generateColorFromString(parsedBranchOfService, "99")}
+                w={"auto"}
+                className='px-[4px] py-[2px] rounded-sm'
+                colorScheme='gray'
               >
                 {parsedBranchOfService}
               </Badge>

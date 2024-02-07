@@ -1,7 +1,15 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { Box, Flex, HStack, Input, Spinner, Tag } from "@chakra-ui/react";
+import {
+  Badge,
+  Box,
+  Flex,
+  HStack,
+  Input,
+  Spinner,
+  Tag,
+} from "@chakra-ui/react";
 import { MdOutlineSearch } from "react-icons/md";
 import IconText from "../common/icontext";
 import { GroupData } from "@/app/api/groups/[groupId]/types";
@@ -59,8 +67,8 @@ export default function Search() {
   }, []);
 
   return (
-    <Flex gap={0} className="flex-col relative">
-      <IconText icon={MdOutlineSearch} textClassName="text-heading5">
+    <Flex gap={0} className='flex-col relative'>
+      <IconText icon={MdOutlineSearch} textClassName='text-heading5'>
         Search groups by text
       </IconText>
       <div>
@@ -68,7 +76,7 @@ export default function Search() {
           className={`w-full mt-4 bg-white !z-20 ${
             showDropdown && !!searchInput ? "rounded-b-none border-b-0" : ""
           }`}
-          placeholder="Search for groups..."
+          placeholder='Search for groups...'
           onChange={handleInputChange}
           value={searchInput}
           ref={inputRef}
@@ -94,16 +102,16 @@ export default function Search() {
                         : group.state}
                     </Box>
                     <Box>
-                      <HStack spacing={2} className="flex-wrap">
-                        <Tag
+                      <HStack spacing={2} className='flex-wrap'>
+                        <Badge
                           w={"auto"}
-                          className="whitespace-nowrap"
-                          colorScheme="cyan"
+                          className='px-[4px] py-[2px] rounded-sm'
+                          colorScheme='gray'
                         >
                           {group.branchOfService === "Any"
                             ? "All Branches"
                             : group.branchOfService}
-                        </Tag>
+                        </Badge>
                         <Tags tags={group.tags} />
                       </HStack>
                     </Box>
@@ -111,7 +119,7 @@ export default function Search() {
                 </Link>
               ))
             ) : (
-              <Box className="w-full px-3 py-2 font-semibold">
+              <Box className='w-full px-3 py-2 font-semibold'>
                 No groups found.
               </Box>
             )}

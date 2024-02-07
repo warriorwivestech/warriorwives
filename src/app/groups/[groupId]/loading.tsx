@@ -21,6 +21,7 @@ export default function GroupLoading() {
                 spacing="4"
                 skeletonHeight="10"
                 borderRadius="12"
+                className="w-1/2"
               />
               <SkeletonText
                 mt="4"
@@ -34,9 +35,9 @@ export default function GroupLoading() {
           <Flex className="flex-col gap-4">
             <SkeletonText
               mt="4"
-              noOfLines={4}
+              noOfLines={10}
               spacing="4"
-              skeletonHeight="2"
+              skeletonHeight="4"
               borderRadius="12"
             />
           </Flex>

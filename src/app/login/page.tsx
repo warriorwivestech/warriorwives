@@ -5,6 +5,7 @@ import React from "react";
 
 import { FcGoogle } from "react-icons/fc";
 import IconText from "../components/common/icontext";
+import Link from "next/link";
 
 export default function LoginPage() {
   return (
@@ -18,7 +19,7 @@ export default function LoginPage() {
       <Text className='text-heading4 tracking-wide'>Welcome to WarriorWives</Text>
       <Button className='border'>
         <IconText icon={FcGoogle} textClassName='font-normal'>
-          Sign in with Google
+          <Link href="/">Sign in with Google</Link>
         </IconText>
       </Button>
     </Box>

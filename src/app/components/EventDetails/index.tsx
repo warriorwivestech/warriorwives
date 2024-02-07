@@ -249,7 +249,7 @@ export default function EventDetails({
 
         <Divider />
         {joined || justJoined ? (
-          <Button rounded={"md"} className="" disabled>
+          <Button rounded={"md"} className="border" isDisabled={true}>
             Joined
           </Button>
         ) : (

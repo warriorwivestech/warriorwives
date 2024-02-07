@@ -29,6 +29,7 @@ import { CreateEventModal } from "@/app/components/CreateEventModal";
 import { generateColorFromString } from "@/app/components/Map";
 import { Event } from "@/app/api/groups/[groupId]/events/types";
 import { apiClient } from "@/app/apiClient";
+import EventCardsLoading from "@/app/components/EventCards/loading";
 
 function EventsData({
   eventsData,
@@ -39,13 +40,14 @@ function EventsData({
   isLoading: boolean;
   error: any;
 }) {
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) return <EventCardsLoading />;
   if (error) return <div>Error loading events</div>;
-  if (!eventsData) return <div>No events found for this group</div>;
-  if (eventsData.length === 0) return <div>No events found for this group</div>;
+  if (!eventsData) return <div>No events found for this group.</div>;
+  if (eventsData.length === 0)
+    return <div>No events found for this group.</div>;
 
   return (
-    <Flex className="flex-col w-[100%] md:w-[65%]" gap={6}>
+    <Flex className='flex-col w-[100%] md:w-[65%]' gap={6}>
       {eventsData.map((event) => (
         <EventCards
           key={event.id}
@@ -147,15 +149,15 @@ function GroupData({ group }: { group: GroupData }) {
   };
 
   return (
-    <div className="flex flex-col-reverse md:flex-row gap-8 justify-between">
-      <div className="flex flex-col gap-16">
+    <div className='flex flex-col-reverse md:flex-row gap-8 justify-between'>
+      <div className='flex flex-col gap-16'>
         <Stack gap={8}>
           <SimpleGrid columns={[1, 1, 2]} spacing={8}>
             <Image
               src={displayPhotoUrl}
               alt={name}
-              borderRadius="lg"
-              className="w-full object-cover h-64 md:h-96"
+              borderRadius='lg'
+              className='w-full object-cover h-64 md:h-96'
             />
             <Box
               className={`${
@@ -169,53 +171,49 @@ function GroupData({ group }: { group: GroupData }) {
                   ? `calc(110px - ${scrollSpeed}px)`
                   : "48px"
               }
-              right="48px"
+              right='48px'
               width={`${
                 desktopSize &&
                 (cardWidth > cardMinWidth ? cardWidth : cardMinWidth)
               }%`}
-              top={!isSticky ? `calc(110px - ${scrollSpeed}px)` : "48px"}
-              right="48px"
             >
               <Box>
                 <Stack spacing={5}>
                   <Stack spacing={1}>
                     <span>
                       <Badge
-                        className="px-[4px] py-[2px] rounded-sm"
-                        background={generateColorFromString(
-                          parsedBranchOfService,
-                          "99"
-                        )}
+                        w={"auto"}
+                        className='px-[4px] py-[2px] rounded-sm'
+                        colorScheme='gray'
                       >
                         {parsedBranchOfService}
                       </Badge>
                     </span>
-                    <Heading className="heading mb-2">{name}</Heading>
+                    <Heading className='heading mb-2'>{name}</Heading>
                     <Tags tags={tags} />
                   </Stack>
                   <Stack spacing={2}>
                     {online && (
                       <IconText
                         icon={RiBaseStationFill}
-                        iconClassName="text-green-500"
-                        textClassName="uppercase text-green-500 tracking-wider font-bold"
+                        iconClassName='text-green-500'
+                        textClassName='uppercase text-green-500 tracking-wider font-bold'
                       >
                         ONLINE ONLY
                       </IconText>
                     )}
                     <IconText
                       icon={FaMapMarkerAlt}
-                      iconClassName="text-red-700"
+                      iconClassName='text-red-700'
                     >
                       {location}
                     </IconText>
-                    <IconText icon={MdPeopleAlt} iconClassName="text-blue-400">
+                    <IconText icon={MdPeopleAlt} iconClassName='text-blue-400'>
                       {`${membersCount} members`}
                     </IconText>
                     <IconText
                       icon={BsPersonRaisedHand}
-                      iconClassName="text-gray-500"
+                      iconClassName='text-gray-500'
                     >
                       Organised by {parsedAdmins}
                     </IconText>
@@ -224,13 +222,17 @@ function GroupData({ group }: { group: GroupData }) {
                   {groupAdmin ? (
                     <CreateEventModal groupName={name} />
                   ) : joined || justJoined ? (
-                    <Button rounded={"md"} className="w-full mt-4" disabled>
+                    <Button
+                      rounded={"md"}
+                      className='w-full mt-4 border'
+                      isDisabled={true}
+                    >
                       Joined
                     </Button>
                   ) : (
                     <Button
                       rounded={"md"}
-                      className="bg-black text-white hover:text-black w-full mt-4"
+                      className='bg-black text-white hover:text-black w-full mt-4'
                       onClick={joinEventHandler}
                       disabled={isJoining}
                     >
@@ -241,24 +243,24 @@ function GroupData({ group }: { group: GroupData }) {
               </Box>
             </Box>
           </SimpleGrid>
-          <Flex className="flex-col gap-4">
-            <p className="text-heading5">Description</p>
+          <Flex className='flex-col gap-4'>
+            <p className='text-heading5'>Description</p>
             <Text
               textOverflow={"ellipsis"}
               width={`${
                 desktopSize &&
-                (descWidth > descMinWidth ? descWidth + 50 : descMinWidth + 25)
+                (descWidth > descMinWidth ? descWidth : descMinWidth)
               }%`}
               transition={"width 0.25s ease"}
               ref={descriptionRef}
-              className="break-all"
+              className='break-words'
             >
               {description}
             </Text>
           </Flex>
         </Stack>
         <Stack gap={4}>
-          <p className="text-heading4">Events from {name}</p>
+          <p className='text-heading4'>Events from {name}</p>
           <EventsData
             eventsData={eventsData}
             isLoading={isLoading}
