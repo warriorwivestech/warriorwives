@@ -12,142 +12,75 @@ import {
   FaVideo,
   FaClock,
   FaLocationArrow,
-  FaChevronRight
+  FaChevronRight,
 } from "react-icons/fa";
 import Link from "next/link";
 import { EventType } from "@/app/types/events";
 import EventCards from "../EventCards";
 import { FaPeopleGroup } from "react-icons/fa6";
+import OtherEvents from "./OtherEvents";
 
 // Define the props interface
+interface EventDetailsProps {
+  id: number;
+  name: string;
+  description: string;
+  displayPhoto: string | null;
+  location: string | null;
+  meetingLink: string | null;
+  dateTime: string;
+  online: boolean;
+  attendees: string[];
+  photos: string[];
+  organizers: string[];
+  joined: boolean;
+  groupName: string;
+  groupId: number;
+}
 
-export default function EventDetails(props: EventType) {
-  const {
-    id,
-    name,
-    description,
-    displayPhoto,
-    location,
-    online,
-    dateTime,
-    group,
-    materials,
-    photos,
-    groupId,
-    meetingLink,
-  } = props;
-
-  const joined = false;
-
+export default function EventDetails({
+  id,
+  name,
+  description,
+  displayPhoto,
+  location,
+  meetingLink,
+  online,
+  dateTime,
+  attendees,
+  photos,
+  organizers,
+  joined,
+  groupName,
+  groupId,
+}: EventDetailsProps) {
+  const displayPhotoUrl =
+    displayPhoto || "https://startup.mp.gov.in/assets/img/img-not-found.png";
+  // last organizer is should be "and" instead of ","
+  const lastOrganizer = organizers[organizers.length - 1];
+  const otherOrganizers = organizers.slice(0, -1).join(", ");
+  const organizersString =
+    organizers.length === 0 ? "" : `${otherOrganizers} and ${lastOrganizer}`;
+  const startDateTime = new Date(dateTime).toLocaleString("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+    hour: "numeric",
+    minute: "numeric",
+    hour12: true,
+  });
+  // endDateTime is one hour after startDateTime
+  const endDateTime = new Date(
+    new Date(dateTime).getTime() + 60 * 60 * 1000
+  ).toLocaleString("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+    hour: "numeric",
+    minute: "numeric",
+    hour12: true,
+  });
   const joinEventHandler = () => {};
-
-  const samleEvents = [
-    {
-      id: 1,
-      name: "Event 1",
-      description: "Description of Event 1",
-      displayPhoto:
-        "https://fujifilm-x.com/wp-content/uploads/2021/01/gfx100s_sample_04_thum-1.jpg",
-      location: "Location 1",
-      online: true,
-      dateTime: "2024-01-29T18:11:16.620395",
-      groupId: 1,
-      photos: ["photo_1_1.jpg", "photo_1_2.jpg", "photo_1_3.jpg"],
-      materials: ["material_1_1.pdf", "material_1_2.pdf", "material_1_3.pdf"],
-      createdAt: "2024-01-29T18:11:16.620416",
-      updatedAt: "2024-01-29T18:11:16.620420",
-      group: "Group 5",
-    },
-    {
-      id: 2,
-      name: "Event 2",
-      description: "Description of Event 2",
-      displayPhoto:
-        "https://fujifilm-x.com/wp-content/uploads/2021/01/gfx100s_sample_04_thum-1.jpg",
-      location: "Location 2",
-      online: true,
-      dateTime: "2024-01-29T18:11:16.620430",
-      groupId: 1,
-      photos: ["photo_2_1.jpg", "photo_2_2.jpg", "photo_2_3.jpg"],
-      materials: ["material_2_1.pdf", "material_2_2.pdf", "material_2_3.pdf"],
-      createdAt: "2024-01-29T18:11:16.620442",
-      updatedAt: "2024-01-29T18:11:16.620445",
-      group: "Group 2",
-    },
-    {
-      id: 3,
-      name: "Event 3",
-      description: "Description of Event 3",
-      displayPhoto:
-        "https://fujifilm-x.com/wp-content/uploads/2021/01/gfx100s_sample_04_thum-1.jpg",
-      location: "Location 3",
-      online: false,
-      dateTime: "2024-01-29T18:11:16.620453",
-      groupId: 5,
-      photos: ["photo_3_1.jpg", "photo_3_2.jpg", "photo_3_3.jpg"],
-      materials: ["material_3_1.pdf", "material_3_2.pdf", "material_3_3.pdf"],
-      createdAt: "2024-01-29T18:11:16.620463",
-      updatedAt: "2024-01-29T18:11:16.620466",
-      group: "Group 4",
-    },
-  ];
-
-  const sampleAttendees = [
-    {
-      image:
-        "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?size=338&ext=jpg&ga=GA1.1.1448711260.1706400000&semt=ais",
-      name: "Raju",
-    },
-    {
-      image:
-        "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?size=338&ext=jpg&ga=GA1.1.1448711260.1706400000&semt=ais",
-      name: "Raju",
-    },
-    {
-      image:
-        "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?size=338&ext=jpg&ga=GA1.1.1448711260.1706400000&semt=ais",
-      name: "Raju",
-    },
-    {
-      image:
-        "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?size=338&ext=jpg&ga=GA1.1.1448711260.1706400000&semt=ais",
-      name: "Raju",
-    },
-    {
-      image:
-        "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?size=338&ext=jpg&ga=GA1.1.1448711260.1706400000&semt=ais",
-      name: "Raju",
-    },
-    {
-      image:
-        "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?size=338&ext=jpg&ga=GA1.1.1448711260.1706400000&semt=ais",
-      name: "Raju",
-    },
-    {
-      image:
-        "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?size=338&ext=jpg&ga=GA1.1.1448711260.1706400000&semt=ais",
-      name: "Raju",
-    },
-    {
-      image:
-        "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?size=338&ext=jpg&ga=GA1.1.1448711260.1706400000&semt=ais",
-      name: "Raju",
-    },
-    {
-      image:
-        "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?size=338&ext=jpg&ga=GA1.1.1448711260.1706400000&semt=ais",
-      name: "Raju",
-    },
-  ];
-
-  const samplePictures = [
-    "https://fujifilm-x.com/wp-content/uploads/2021/01/gfx100s_sample_04_thum-1.jpg",
-    "https://fujifilm-x.com/wp-content/uploads/2021/01/gfx100s_sample_04_thum-1.jpg",
-    "https://fujifilm-x.com/wp-content/uploads/2021/01/gfx100s_sample_04_thum-1.jpg",
-    "https://fujifilm-x.com/wp-content/uploads/2021/01/gfx100s_sample_04_thum-1.jpg",
-    "https://fujifilm-x.com/wp-content/uploads/2021/01/gfx100s_sample_04_thum-1.jpg",
-    "https://fujifilm-x.com/wp-content/uploads/2021/01/gfx100s_sample_04_thum-1.jpg",
-  ];
 
   return (
     <div className="flex flex-col-reverse md:flex-row gap-8 justify-between">
@@ -160,9 +93,7 @@ export default function EventDetails(props: EventType) {
           <Image
             rounded={"xl"}
             alt={"product image"}
-            src={
-              "https://images.unsplash.com/photo-1596516109370-29001ec8ec36?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyODE1MDl8MHwxfGFsbHx8fHx8fHx8fDE2Mzg5MzY2MzE&ixlib=rb-1.2.1&q=80&w=1080"
-            }
+            src={displayPhotoUrl}
             fit={"cover"}
             align={"center"}
             w={"100%"}
@@ -173,77 +104,28 @@ export default function EventDetails(props: EventType) {
         {/* description */}
         <div className="flex flex-col gap-4">
           <p className="text-heading5">Description</p>
-          <p>
-            Lorem Ipsum is simply dummy text of the printing and typesetting
-            industry. Lorem Ipsum has been the industry's standard dummy text
-            ever since the 1500s, when an unknown printer took a galley of type
-            and scrambled it to make a type specimen book. It has survived not
-            only five centuries, but also the leap into electronic typesetting,
-            remaining essentially unchanged. It was popularised in the 1960s
-            with the release of Letraset sheets containing Lorem Ipsum passages,
-            and more recently with desktop publishing software like Aldus
-            PageMaker including versions of Lorem Ipsum
-          </p>
-          <p>
-            Lorem Ipsum is simply dummy text of the printing and typesetting
-            industry. Lorem Ipsum has been the industry's standard dummy text
-            ever since the 1500s, when an unknown printer took a galley of type
-            and scrambled it to make a type specimen book. It has survived not
-            only five centuries, but also the leap into electronic typesetting,
-            remaining essentially unchanged. It was popularised in the 1960s
-            with the release of Letraset sheets containing Lorem Ipsum passages,
-            and more recently with desktop publishing software like Aldus
-            PageMaker including versions of Lorem Ipsum
-          </p>
-          <p>
-            Lorem Ipsum is simply dummy text of the printing and typesetting
-            industry. Lorem Ipsum has been the industry's standard dummy text
-            ever since the 1500s, when an unknown printer took a galley of type
-            and scrambled it to make a type specimen book. It has survived not
-            only five centuries, but also the leap into electronic typesetting,
-            remaining essentially unchanged. It was popularised in the 1960s
-            with the release of Letraset sheets containing Lorem Ipsum passages,
-            and more recently with desktop publishing software like Aldus
-            PageMaker including versions of Lorem Ipsum
-          </p>
-          <p>
-            Lorem Ipsum is simply dummy text of the printing and typesetting
-            industry. Lorem Ipsum has been the industry's standard dummy text
-            ever since the 1500s, when an unknown printer took a galley of type
-            and scrambled it to make a type specimen book. It has survived not
-            only five centuries, but also the leap into electronic typesetting,
-            remaining essentially unchanged. It was popularised in the 1960s
-            with the release of Letraset sheets containing Lorem Ipsum passages,
-            and more recently with desktop publishing software like Aldus
-            PageMaker including versions of Lorem Ipsum
-          </p>
-          <p>
-            Lorem Ipsum is simply dummy text of the printing and typesetting
-            industry. Lorem Ipsum has been the industry's standard dummy text
-            ever since the 1500s, when an unknown printer took a galley of type
-            and scrambled it to make a type specimen book. It has survived not
-            only five centuries, but also the leap into electronic typesetting,
-            remaining essentially unchanged. It was popularised in the 1960s
-            with the release of Letraset sheets containing Lorem Ipsum passages,
-            and more recently with desktop publishing software like Aldus
-            PageMaker including versions of Lorem Ipsum
-          </p>
+          <p>{description}</p>
         </div>
 
         {/* Attendees */}
-        {sampleAttendees && (
+        {attendees && (
           <div className="flex flex-col gap-4">
-            <p className="text-heading5">Attendees {sampleAttendees?.length}</p>
+            <p className="text-heading5">Attendees {attendees.length}</p>
             <div className="bg-white rounded-xl w-[100%] flex flex-row p-6 gap-4 overflow-x-scroll">
-              {sampleAttendees.map((attendee) => {
+              {attendees.map((attendee) => {
                 return (
-                  <div className="bg-white p-4 shadow-lg text-center flex flex-col justify-center items-center gap-4">
+                  <div
+                    className="bg-white p-4 shadow-lg text-center flex flex-col justify-center items-center gap-4"
+                    key={attendee}
+                  >
                     <Avatar
                       size="2xl"
-                      name={attendee?.name}
-                      src={attendee?.image}
+                      name={attendee}
+                      src={
+                        "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?size=338&ext=jpg&ga=GA1.1.1448711260.1706400000&semt=ais"
+                      }
                     />
-                    <p className="font-bold">{attendee?.name}</p>
+                    <p className="font-bold">{attendee}</p>
                   </div>
                 );
               })}
@@ -252,17 +134,20 @@ export default function EventDetails(props: EventType) {
         )}
 
         {/* Pictures */}
-        {samplePictures && (
+        {photos.length > 0 && (
           <div className="flex flex-col gap-4">
-            <p className="text-heading5">Pictures {samplePictures?.length}</p>
+            <p className="text-heading5">Pictures {photos.length}</p>
             <div className="rounded-xl w-[100%] flex flex-row gap-4 overflow-x-scroll">
-              {samplePictures.map((picture) => {
+              {photos.map((photos, index) => {
                 return (
-                  <div className="bg-white p-4 shadow-lg text-center flex flex-col justify-center items-center gap-4 rounded-xl w-[100%]">
+                  <div
+                    className="bg-white p-4 shadow-lg text-center flex flex-col justify-center items-center gap-4 rounded-xl w-[100%]"
+                    key={index}
+                  >
                     <Image
                       rounded={"md"}
                       alt={"product image"}
-                      src={picture}
+                      src={photos}
                       fit={"cover"}
                       align={"center"}
                       minW={"300px"}
@@ -280,7 +165,7 @@ export default function EventDetails(props: EventType) {
         {/* Events */}
         <div className="flex flex-col gap-4">
           <div className="flex flex-row justify-between">
-            <p className="text-heading5">Other events</p>
+            <p className="text-heading5">Other events by {groupName}</p>
             <div className="flex flex-row gap-2 justify-center items-center">
               <Link className="font-bold" href={`/groups/${groupId}`}>
                 View all
@@ -288,27 +173,7 @@ export default function EventDetails(props: EventType) {
               <FaChevronRight />
             </div>
           </div>
-          <div className="flex flex-row gap-4 overflow-x-scroll">
-            {samleEvents?.map((event, index) => {
-              return (
-                <EventCards
-                  longCard={true}
-                  name={event?.name}
-                  displayPhoto={event?.displayPhoto}
-                  location={event?.location}
-                  online={event?.online}
-                  dateTime={null}
-                  photos={null}
-                  materials={null}
-                  groupId={groupId}
-                  key={index}
-                  id={event?.id}
-                  description={""}
-                  group={null}
-                />
-              );
-            })}
-          </div>
+          <OtherEvents groupId={groupId} eventId={id} />
         </div>
       </div>
 
@@ -327,20 +192,17 @@ export default function EventDetails(props: EventType) {
             <FaPeopleGroup
               style={{ minHeight: "18px", minWidth: "18px", marginTop: "4px" }}
             />
-            <p>Organizer</p>
+            <p>{`Organized by ${organizersString}`}</p>
           </div>
 
           <div className="flex flex-row gap-4 items-start">
             <FaClock
               style={{ minHeight: "18px", minWidth: "18px", marginTop: "4px" }}
             />
-            <p>
-              Tuesday, January 30, 2024 at 8:30 PM to Tuesday, January 30, 2024
-              at 9:30 PM MYT
-            </p>
+            <p>{`${startDateTime} to ${endDateTime}`}</p>
           </div>
 
-          {!online ? (
+          {online ? (
             <div className="flex flex-row gap-4 items-start">
               <FaVideo
                 style={{
@@ -353,7 +215,7 @@ export default function EventDetails(props: EventType) {
               <div className="flex flex-col">
                 <p>Online</p>
                 <a
-                  href={meetingLink}
+                  href={meetingLink || "#"}
                   target="_blank"
                   className="cursor-pointer text-blue-500"
                 >
@@ -370,7 +232,7 @@ export default function EventDetails(props: EventType) {
                   marginTop: "4px",
                 }}
               />
-              <p>location</p>
+              <p>{location}</p>
             </div>
           )}
         </div>

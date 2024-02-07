@@ -23,11 +23,45 @@ import { RiBaseStationFill } from "react-icons/ri";
 import { SWRProvider } from "@/app/providers/swrProvider";
 import useSWR from "swr";
 import { GroupData } from "@/app/api/groups/[groupId]/types";
-import { sampleEventData } from "@/app/data/samples";
 import GroupLoading from "./loading";
 import { CreateEventModal } from "@/app/components/CreateEventModal";
-import { GiLightningBranches } from "react-icons/gi";
 import { generateColorFromString } from "@/app/components/Map";
+import { Event } from "@/app/api/groups/[groupId]/events/types";
+
+function EventsData({
+  eventsData,
+  isLoading,
+  error,
+}: {
+  eventsData: Event[];
+  isLoading: boolean;
+  error: any;
+}) {
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>Error loading events</div>;
+  if (!eventsData) return <div>No events found for this group</div>;
+  if (eventsData.length === 0) return <div>No events found for this group</div>;
+
+  return (
+    <Flex className="flex-col w-[100%] md:w-[65%]" gap={6}>
+      {eventsData.map((event) => (
+        <EventCards
+          key={event.id}
+          id={event.id}
+          groupId={event.groupId}
+          name={event.name}
+          description={event.description}
+          displayPhoto={event.displayPhoto}
+          online={event.online}
+          meetingLink={event.meetingLink}
+          location={event.location}
+          dateTime={event.dateTime}
+          attendeesCount={event._count.attendees}
+        />
+      ))}
+    </Flex>
+  );
+}
 
 function GroupData({ group }: { group: GroupData }) {
   const [isSticky, setIsSticky] = useState(false);
@@ -90,9 +124,11 @@ function GroupData({ group }: { group: GroupData }) {
     branchOfService === "Any" ? "All Branches" : branchOfService;
   const [desktopSize] = useMediaQuery("(min-width: 1024px)");
 
+  const { data: eventsData, error, isLoading } = useSWR(`/groups/${id}/events`);
+
   return (
-    <div className='flex flex-col-reverse md:flex-row gap-8 justify-between'>
-      <div className='flex flex-col gap-16'>
+    <div className="flex flex-col-reverse md:flex-row gap-8 justify-between">
+      <div className="flex flex-col gap-16">
         <Stack gap={8}>
           <SimpleGrid columns={[1, 1, 2]} spacing={8}>
             <Image
@@ -114,16 +150,19 @@ function GroupData({ group }: { group: GroupData }) {
                   : "48px"
               }
               right="48px"
-              width={`${desktopSize && (cardWidth > cardMinWidth ? cardWidth : cardMinWidth)}%`}
+              width={`${
+                desktopSize &&
+                (cardWidth > cardMinWidth ? cardWidth : cardMinWidth)
+              }%`}
               top={!isSticky ? `calc(110px - ${scrollSpeed}px)` : "48px"}
-              right='48px'
+              right="48px"
             >
               <Box>
                 <Stack spacing={5}>
                   <Stack spacing={1}>
                     <span>
                       <Badge
-                      className="px-[4px] py-[2px] rounded-sm"
+                        className="px-[4px] py-[2px] rounded-sm"
                         background={generateColorFromString(
                           parsedBranchOfService,
                           "99"
@@ -132,7 +171,7 @@ function GroupData({ group }: { group: GroupData }) {
                         {parsedBranchOfService}
                       </Badge>
                     </span>
-                    <Heading className='heading mb-2'>{name}</Heading>
+                    <Heading className="heading mb-2">{name}</Heading>
                     <Tags tags={tags} />
                   </Stack>
                   <Stack spacing={2}>
@@ -184,7 +223,8 @@ function GroupData({ group }: { group: GroupData }) {
             <Text
               textOverflow={"ellipsis"}
               width={`${
-                desktopSize && (descWidth > descMinWidth ? descWidth + 50 : descMinWidth + 25)
+                desktopSize &&
+                (descWidth > descMinWidth ? descWidth + 50 : descMinWidth + 25)
               }%`}
               transition={"width 0.25s ease"}
               ref={descriptionRef}
@@ -195,25 +235,12 @@ function GroupData({ group }: { group: GroupData }) {
           </Flex>
         </Stack>
         <Stack gap={4}>
-          <p className='text-heading4'>Events from {name}</p>
-          <Flex className='flex-col w-[100%] md:w-[65%]' gap={6}>
-            {sampleEventData.map((event, index) => (
-              <EventCards
-                name={event?.title}
-                displayPhoto={""}
-                location={""}
-                online={false}
-                dateTime={null}
-                photos={[]}
-                materials={[]}
-                groupId={String(id)}
-                key={index}
-                id={0}
-                description={""}
-                group={null}
-              />
-            ))}
-          </Flex>
+          <p className="text-heading4">Events from {name}</p>
+          <EventsData
+            eventsData={eventsData}
+            isLoading={isLoading}
+            error={error}
+          />
         </Stack>
       </div>
     </div>

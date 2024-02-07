@@ -18,23 +18,6 @@ export async function GET(request: Request) {
     };
   }
 
-  const userData = await prisma.user.findUnique({
-    where: {
-      id: userId,
-    },
-    select: {
-      groups: {
-        select: {
-          groupId: true,
-        },
-      },
-    },
-  });
-
-  if (!userData) {
-    return Response.json([]);
-  }
-
   // get groups by county or state and exclude groups user is already in, limit to 10
   const groupsByLocation = await prisma.group.findMany({
     where: {
@@ -46,9 +29,6 @@ export async function GET(request: Request) {
           state: "National",
         },
       ],
-      id: {
-        notIn: userData.groups.map((group) => group.groupId),
-      },
     },
     include: {
       tags: {

@@ -22,9 +22,9 @@ const STATE_GEOJSON_URL =
 
 export function generateColorFromString(stateName: string, opacity: string) {
   let hash = 0;
-  for (let i = 0; i < stateName.length; i++) {
-    hash = stateName.charCodeAt(i) + ((hash << 5) - hash);
-  }
+    for (let i = 0; i < stateName.length; i++) {
+        hash = stateName.charCodeAt(i) + ((hash << 5) - hash);
+    }
   hash = hash * 31 + stateName.length;
   hash = hash * 17 + stateName.charCodeAt(stateName.length - 1);
   hash = hash & 0x7fffffff;

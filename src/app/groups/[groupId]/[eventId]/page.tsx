@@ -1,16 +1,16 @@
-"use client";
-
+import { Event } from "@/app/api/events/[eventId]/route";
+import { apiClient } from "@/app/apiClient";
 import EventDetails from "@/app/components/EventDetails";
-import { Avatar, Button, Icon } from "@chakra-ui/react";
-import Link from "next/link";
+import { Avatar } from "@chakra-ui/react";
 import React from "react";
-import { FaChevronLeft, FaRegClock } from "react-icons/fa";
 
-export default function EventPage({
+export default async function EventPage({
   params,
 }: {
   params: { groupId: string; eventId: string };
 }) {
+  const event: Event = await apiClient(`/events/${params?.eventId}`, { cache: "no-store" });
+
   return (
     <div className="flex flex-col gap-12">
       <div className="flex flex-col w-[100%]">
@@ -30,7 +30,7 @@ export default function EventPage({
         <div className="bg-white py-[24px] w-[100%] absolute left-0 top-[73px]">
           <div className="max-w-[1440px] m-auto flex gap-4 flex-col px-[24px] md:px-[48px]">
             <p className="text-heading4 font-bold">
-              Cultivate a Positive Mindset with Positive Psychology
+              {event.name}
             </p>
 
             <div className="flex flex-row gap-4">
@@ -39,7 +39,7 @@ export default function EventPage({
                 <p>Hosted by</p>
 
                 {/* groupname */}
-                <p className="font-bold">groupname</p>
+                <p className="font-bold">{event.groupName}</p>
               </div>
             </div>
           </div>
@@ -47,17 +47,20 @@ export default function EventPage({
       </div>
       <div className="w-100% pt-[100px]">
         <EventDetails
-          name={""}
-          description={""}
-          displayPhoto={""}
-          location={""}
-          online={false}
-          dateTime={null}
-          group={null}
-          materials={[]}
-          photos={[]}
-          groupId={params?.groupId}
-          id={0}
+          id={event.id}
+          name={event.name}
+          description={event.description}
+          displayPhoto={event.displayPhoto}
+          location={event.location}
+          meetingLink={event.meetingLink}
+          dateTime={event.dateTime}
+          online={event.online}
+          attendees={event.attendees}
+          photos={event.photos}
+          organizers={event.organizers}
+          joined={event.joined}
+          groupName={event.groupName}
+          groupId={event.groupId}
         />
       </div>
     </div>
