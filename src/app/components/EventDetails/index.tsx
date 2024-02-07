@@ -99,7 +99,7 @@ export default function EventDetails({
       <div className="flex flex-col gap-8 w-[100%] md:w-[65%]">
         {/* banner image */}
         {/* change back to without exclaimation mark when done*/}
-        {!displayPhotoUrl && (
+        {displayPhotoUrl && (
           <Image
             rounded={"xl"}
             alt={"product image"}
