@@ -13,6 +13,7 @@ import {
   Box,
   useMediaQuery,
   Badge,
+  Spinner,
 } from "@chakra-ui/react";
 import { MdPeopleAlt } from "react-icons/md";
 import React, { useEffect, useState, useRef } from "react";
@@ -27,6 +28,7 @@ import GroupLoading from "./loading";
 import { CreateEventModal } from "@/app/components/CreateEventModal";
 import { generateColorFromString } from "@/app/components/Map";
 import { Event } from "@/app/api/groups/[groupId]/events/types";
+import { apiClient } from "@/app/apiClient";
 
 function EventsData({
   eventsData,
@@ -126,6 +128,24 @@ function GroupData({ group }: { group: GroupData }) {
 
   const { data: eventsData, error, isLoading } = useSWR(`/groups/${id}/events`);
 
+  const [justJoined, setJustJoined] = useState(false);
+  const [isJoining, setIsJoining] = useState(false);
+  const joinEventHandler = async () => {
+    // join group
+    // TODO: UPDATE USER ID
+    setIsJoining(true);
+    const response = await apiClient("/groups/join", {
+      method: "POST",
+      body: JSON.stringify({ groupId: id, userId: 3 }),
+    });
+
+    // if success, set joined to true
+    if (response) {
+      setJustJoined(true);
+    }
+    setIsJoining(false);
+  };
+
   return (
     <div className="flex flex-col-reverse md:flex-row gap-8 justify-between">
       <div className="flex flex-col gap-16">
@@ -203,15 +223,18 @@ function GroupData({ group }: { group: GroupData }) {
 
                   {groupAdmin ? (
                     <CreateEventModal groupName={name} />
+                  ) : joined || justJoined ? (
+                    <Button rounded={"md"} className="w-full mt-4" disabled>
+                      Joined
+                    </Button>
                   ) : (
                     <Button
                       rounded={"md"}
-                      isDisabled={joined}
-                      className={`${
-                        !joined && "bg-black text-white hover:text-black"
-                      } w-full mt-4`}
+                      className="bg-black text-white hover:text-black w-full mt-4"
+                      onClick={joinEventHandler}
+                      disabled={isJoining}
                     >
-                      {joined ? "Joined" : "Join Group"}
+                      {isJoining ? <Spinner /> : "Join Group"}
                     </Button>
                   )}
                 </Stack>

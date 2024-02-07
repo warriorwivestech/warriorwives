@@ -1,13 +1,6 @@
 "use client";
 
-import {
-  Image,
-  Button,
-  Tag,
-  Avatar,
-  Divider,
-  SimpleGrid,
-} from "@chakra-ui/react";
+import { Image, Button, Avatar, Divider, Spinner } from "@chakra-ui/react";
 import {
   FaVideo,
   FaClock,
@@ -15,10 +8,10 @@ import {
   FaChevronRight,
 } from "react-icons/fa";
 import Link from "next/link";
-import { EventType } from "@/app/types/events";
-import EventCards from "../EventCards";
 import { FaPeopleGroup } from "react-icons/fa6";
 import OtherEvents from "./OtherEvents";
+import { apiClient } from "@/app/apiClient";
+import { useState } from "react";
 
 // Define the props interface
 interface EventDetailsProps {
@@ -80,7 +73,24 @@ export default function EventDetails({
     minute: "numeric",
     hour12: true,
   });
-  const joinEventHandler = () => {};
+
+  const [justJoined, setJustJoined] = useState(false);
+  const [isJoining, setIsJoining] = useState(false);
+  const joinEventHandler = async () => {
+    // join event
+    // TODO: UPDATE USER ID
+    setIsJoining(true);
+    const response = await apiClient("/events/join", {
+      method: "POST",
+      body: JSON.stringify({ eventId: id, userId: 3 }),
+    });
+
+    // if success, set joined to true
+    if (response) {
+      setJustJoined(true);
+    }
+    setIsJoining(false);
+  };
 
   return (
     <div className="flex flex-col-reverse md:flex-row gap-8 justify-between">
@@ -238,13 +248,18 @@ export default function EventDetails({
         </div>
 
         <Divider />
-        {!joined && (
+        {joined || justJoined ? (
+          <Button rounded={"md"} className="" disabled>
+            Joined
+          </Button>
+        ) : (
           <Button
             rounded={"md"}
             className="bg-black text-white hover:text-black"
-            onClick={() => joinEventHandler()}
+            onClick={joinEventHandler}
+            disabled={isJoining}
           >
-            Join event
+            {isJoining ? <Spinner /> : "Join Event"}
           </Button>
         )}
       </div>
