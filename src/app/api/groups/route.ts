@@ -23,7 +23,7 @@ export async function GET(request: Request) {
     where: {
       OR: [
         {
-          ...locationInfo
+          ...locationInfo,
         },
         {
           state: "National",
@@ -63,4 +63,103 @@ export async function GET(request: Request) {
   });
 
   return Response.json(parsedGroups);
+}
+
+// const sample = [
+//   { value: "ALL", label: "All Branch" },
+//   { value: "ARMY", label: "Army" },
+//   { value: "NAVY", label: "Navy" },
+//   { value: "AIR_FORCE", label: "Air Force" },
+//   { value: "COAST_GUARD", label: "Coast Guard" },
+//   { value: "MARINE_CORPS", label: "Marine Corps" },
+//   { value: "SPACE_FORCE", label: "Space Force" },
+// ];
+
+// parse back label to value from example above in sample
+function parseReverseBranchOfService(branchOfService: string) {
+  switch (branchOfService) {
+    case "Army":
+      return "ARMY";
+    case "Navy":
+      return "NAVY";
+    case "Air Force":
+      return "AIR_FORCE";
+    case "Coast Guard":
+      return "COAST_GUARD";
+    case "Marine Corps":
+      return "MARINE_CORPS";
+    case "Space Force":
+      return "SPACE_FORCE";
+    default:
+      return "ANY";
+  }
+}
+
+export async function POST(request: Request) {
+  const req = await request.json();
+  const {
+    name,
+    description,
+    displayPhoto,
+    branchOfService,
+    county,
+    state,
+    online,
+    tags,
+    userId,
+  } = req;
+  const parsedBranchOfService = parseReverseBranchOfService(branchOfService);
+  // uppercase first letter of each word in name and remove extra spaces at the end
+  const parsedTags = tags.map((tag: string) => {
+    return tag
+      .split(" ")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join(" ")
+      .trim();
+  });
+
+  console.log("trying to create group...")
+  const groupData = await prisma.group.create({
+    data: {
+      name,
+      description,
+      displayPhoto,
+      branchOfService: parsedBranchOfService,
+      county,
+      state,
+      online,
+      // tags: {
+      //   connectOrCreate: parsedTags.map((tag: string) => {
+      //     return {
+      //       create: {
+      //         interest: {
+      //           name: tag,
+      //         }
+      //       },
+      //     };
+      //   }),
+      // },
+      members: {
+        create: {
+          userId,
+          admin: true,
+        },
+      },
+    },
+  });
+  console.log("group created", groupData)
+  // const tagsData = await prisma.tagsOnGroups.createMany({
+  //   data: parsedTags.map((tag: string) => {
+  //     return {
+  //       groupId: groupData.id,
+  //       interest: {
+  //         connectOrCreate: {
+  //           name: tag,
+  //         },
+  //       },
+  //     };
+  //   }),
+  // });
+
+  return Response.json(groupData);
 }

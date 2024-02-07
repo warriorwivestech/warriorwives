@@ -25,7 +25,6 @@ import {
 } from "@chakra-ui/react";
 import React, { ChangeEvent, useEffect, useState } from "react";
 import { FileUploader } from "react-drag-drop-files";
-import axios from "axios";
 import {
   AsyncSelect,
   CreatableSelect,
@@ -39,16 +38,21 @@ import {
 } from "@/app/types/groups";
 import locationData from "../../json/location.json";
 import { MdDelete } from "react-icons/md";
+import { supabase } from "@/app/supabase";
+import { useRouter } from "next/navigation";
+import { apiClient } from "@/app/apiClient";
 
 export function CreateGroupModal() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [bannerImage, setBannerImage] = useState<FileWithPreview | null>(null);
+  const [bannerImageUrl, setBannerImageUrl] = useState<string | null>(null);
   const [dirty, setDirty] = useState<requiredGroupField>({
     name: false,
     description: false,
     branchOfService: false,
     tags: false,
   });
+  const router = useRouter()
 
   const [input, setInput] = useState<NewGroup>({
     name: "",
@@ -134,7 +138,7 @@ export function CreateGroupModal() {
   const fileTypes = ["JPG", "JPEG", "PNG"];
 
   // Single image
-  const handleSingleChange = (file: File) => {
+  const handleSingleChange = async (file: File) => {
     if (file) {
       if (bannerImage?.url) URL.revokeObjectURL(bannerImage.url);
 
@@ -143,8 +147,22 @@ export function CreateGroupModal() {
         url: URL.createObjectURL(file),
       };
 
-      setBannerImage(newFileWithUrl);
+      // generate random filepath using a hash
+      const filePath = `group-banners/${Math.random()}-${file.name}`;
 
+      const { data, error } = await supabase.storage
+        .from("warrior-wives-test")
+        .upload(filePath, file);
+      if (error) {
+        console.log("Error uploading file: ", error.message);
+      } else {
+        console.log("File uploaded successfully: ", data);
+        setBannerImageUrl(
+          `${process.env.NEXT_PUBLIC_SUPABASE_BLOB_URL}/${data.fullPath}`
+        );
+      }
+
+      setBannerImage(newFileWithUrl);
       // Get the blob
 
       // Set
@@ -421,7 +439,25 @@ export function CreateGroupModal() {
             <Button
               mr={3}
               isDisabled={isButtonDisabled()}
-              onClick={() => console.log(input)}
+              onClick={async () => {
+                console.log(input, bannerImageUrl);
+
+                const groupData = await apiClient("/groups", {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify({
+                    ...input,
+                    displayPhoto: bannerImageUrl,
+                    userId: 3
+                  }),
+                });
+                console.log(groupData);
+                handleCloseModal();
+                // navigate to group page
+                router.push(`/groups/${groupData.id}`);
+              }}
             >
               Save
             </Button>
