@@ -26,6 +26,7 @@ export async function POST(request: Request) {
     photos,
     meetingLink,
     userId,
+    displayPhoto
   } = req;
   const parsedDateTime = new Date(dateTime);
 
@@ -39,6 +40,7 @@ export async function POST(request: Request) {
       dateTime: parsedDateTime,
       groupId,
       meetingLink,
+      displayPhoto,
       photos: {
         create: photos.map((photo: string) => {
           return {
