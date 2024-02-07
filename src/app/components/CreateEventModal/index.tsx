@@ -33,12 +33,17 @@ import { FileUploader } from "react-drag-drop-files";
 import { MdDelete } from "react-icons/md";
 import { RiAdminFill } from "react-icons/ri";
 import IconText from "../common/icontext";
+import { supabase } from "@/app/supabase";
+import { apiClient } from "@/app/apiClient";
+import { useRouter } from "next/navigation";
 
-export function CreateEventModal({ groupName }: { groupName: string }) {
+export function CreateEventModal({ groupName, groupId }: { groupName: string, groupId: number }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const [bannerImage, setBannerImage] = useState<FileWithPreview | null>(null);
+  const [bannerImageUrl, setBannerImageUrl] = useState<string | null>(null);
   const [photos, setPhotos] = useState<FileWithPreview[]>([]);
+  const [photosUrl, setPhotosUrl] = useState<string[]>([]);
   const [dirty, setDirty] = useState<requiredEventField>({
     name: false,
     description: false,
@@ -118,9 +123,10 @@ export function CreateEventModal({ groupName }: { groupName: string }) {
   const isDateTimeError = dirty?.dateTime && input?.dateTime === "";
 
   const fileTypes = ["JPG", "JPEG", "PNG"];
+  const router = useRouter();
 
   // Single image
-  const handleSingleChange = (file: File) => {
+  const handleSingleChange = async (file: File) => {
     if (file) {
       if (bannerImage?.url) URL.revokeObjectURL(bannerImage.url);
 
@@ -128,6 +134,21 @@ export function CreateEventModal({ groupName }: { groupName: string }) {
         file: file,
         url: URL.createObjectURL(file),
       };
+
+      // generate random filepath using a hash
+      const filePath = `event-banners/${Math.random()}-${file.name}`;
+
+      const { data, error } = await supabase.storage
+        .from("warrior-wives-test")
+        .upload(filePath, file);
+      if (error) {
+        console.log("Error uploading file: ", error.message);
+      } else {
+        console.log("File uploaded successfully: ", data);
+        setBannerImageUrl(
+          `${process.env.NEXT_PUBLIC_SUPABASE_BLOB_URL}/${data.fullPath}`
+        );
+      }
 
       setBannerImage(newFileWithUrl);
 
@@ -154,7 +175,29 @@ export function CreateEventModal({ groupName }: { groupName: string }) {
         url: URL.createObjectURL(file),
       })
     );
+    // generate random filepath using a hash
+    newFilesWithUrls.forEach(async (file) => {
+      const filePath = `event-photos/${Math.random()}-${file.file.name}`;
+
+      const { data, error } = await supabase.storage
+        .from("warrior-wives-test")
+        .upload(filePath, file.file);
+      if (error) {
+        console.log("Error uploading file: ", error.message);
+      } else {
+        console.log("File uploaded successfully: ", data);
+        setBannerImageUrl(
+          `${process.env.NEXT_PUBLIC_SUPABASE_BLOB_URL}/${data.fullPath}`
+        );
+      }
+
+      setPhotosUrl((prev) => [
+        ...prev,
+        `${process.env.NEXT_PUBLIC_SUPABASE_BLOB_URL}/${data.fullPath}`,
+      ]);
+    });
     setPhotos((prevFiles) => [...prevFiles, ...newFilesWithUrls]);
+
 
     // Get the blob
 
@@ -391,7 +434,28 @@ export function CreateEventModal({ groupName }: { groupName: string }) {
             <Button
               mr={3}
               isDisabled={isButtonDisabled()}
-              onClick={() => console.log(input)}
+              onClick={async () => {
+                console.log(input, bannerImageUrl);
+
+                const eventData = await apiClient("/events", {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify({
+                    ...input,
+                    displayPhoto: bannerImageUrl,
+                    photos: photosUrl,
+                    meetingLink: input.link,
+                    userId: 3,
+                    groupId,
+                  }),
+                });
+                console.log(eventData);
+                handleCloseModal();
+                // navigate to group page
+                router.push(`/groups/${groupId}/${eventData.id}`);
+              }}
             >
               Save
             </Button>

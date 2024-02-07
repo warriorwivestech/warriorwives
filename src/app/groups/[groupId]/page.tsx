@@ -228,7 +228,7 @@ function GroupData({ group }: { group: GroupData }) {
                   </Stack>
 
                   {groupAdmin ? (
-                    <CreateEventModal groupName={name} />
+                    <CreateEventModal groupName={name} groupId={id} />
                   ) : joined || justJoined ? (
                     <Button
                       rounded={"md"}
