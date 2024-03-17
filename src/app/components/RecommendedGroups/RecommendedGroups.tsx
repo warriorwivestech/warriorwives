@@ -12,7 +12,7 @@ function _RecommendedGroups() {
     data: groups,
     error,
     isLoading,
-  } = useSWR<Group[]>("/groups/recommended");
+  } = useSWR<Group[]>(["/groups/recommended"]);
   if (isLoading) return <RecommendedGroupsLoading />;
   if (error) return <div>Error...</div>;
   if (!groups)

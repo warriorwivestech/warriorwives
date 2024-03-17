@@ -15,7 +15,7 @@ function _OtherEvents({ groupId, eventId }: OtherEventsProps) {
     data: otherEvents,
     error,
     isLoading,
-  } = useSWR<Event[]>(`/groups/${groupId}/${eventId}`);
+  } = useSWR<Event[]>([`/groups/${groupId}/${eventId}`]);
 
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error loading events</div>;

@@ -136,7 +136,7 @@ function GroupData({ group }: { group: GroupData }) {
     branchOfService === "Any" ? "All Branches" : branchOfService;
   const [desktopSize] = useMediaQuery("(min-width: 1024px)");
 
-  const { data: eventsData, error, isLoading } = useSWR(`/groups/${id}/events`);
+  const { data: eventsData, error, isLoading } = useSWR([`/groups/${id}/events`]);
 
   const [justJoined, setJustJoined] = useState(false);
   const [isJoining, setIsJoining] = useState(false);
@@ -285,7 +285,7 @@ function _GroupPage({ params }: { params: { groupId: string } }) {
     data: group,
     error,
     isLoading,
-  } = useSWR<GroupData>(`/groups/${params.groupId}`);
+  } = useSWR<GroupData>([`/groups/${params.groupId}`]);
 
   if (isLoading) return <GroupLoading />;
   if (error) return <div>Error loading group</div>;

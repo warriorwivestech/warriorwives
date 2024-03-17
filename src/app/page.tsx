@@ -19,7 +19,6 @@ export default async function Home() {
     "🧘‍♀️",
   ];
 
-  // TODO: search by text api here
   return (
     <>
       <Flex className='flex-col gap-10 mb-4'>

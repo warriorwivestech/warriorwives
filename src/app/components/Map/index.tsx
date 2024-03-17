@@ -229,7 +229,8 @@ const _Map = () => {
   const selectedStateQuery = selectedState ? `state=${selectedState}` : "";
   const queryString = selectedCountyQuery ? `?${selectedCountyQuery}` : selectedStateQuery ? `?${selectedStateQuery}` : "";
 
-  const { data: groups, error, isLoading: isLoadingGroups } = useSWR<GroupData[]>(`/groups${queryString}`);
+  const requestOptions: RequestInit = { next: { tags: ["groups", queryString]} }
+  const { data: groups, error, isLoading: isLoadingGroups } = useSWR<GroupData[], any>([`/groups${queryString}`, requestOptions]);
 
   useEffect(() => {
     /* 
@@ -246,6 +247,25 @@ const _Map = () => {
       return;
     }
   }, [selectedState, selectedCounty]);
+
+  const GroupsBySelectedLocation = () => {
+    if (loading) return;
+    if (!selectedState) return <p className="text-sm font-normal text-gray-500">Click on a state/county to get started.</p>
+    if (isLoadingGroups) return <MapLoading />
+    if (error) return <p>{error.message}</p>
+    if (!groups || groups.length === 0) return <p>No groups found in {selectedCounty && `${selectedCounty}, `}{selectedState}.</p>
+
+    return (
+      <Flex className="flex-col gap-4">
+        <p className="text-base font-semibold">Groups in {selectedCounty && `${selectedCounty}, `}{selectedState}</p>
+        <SimpleGrid columns={[1, 2, 3]} spacing={5}>
+          {groups.map((group, index) => {
+            return <GroupCard key={group.id} {...group} />;
+          })}
+        </SimpleGrid>
+      </Flex>
+    );
+  };
 
   return (
     <Flex className="flex-col gap-2">
@@ -271,36 +291,7 @@ const _Map = () => {
             )}
           </Card>
         </Box>
-        {selectedState ? (
-          !isLoadingGroups ? (
-            groups.length > 0 ? (
-              <Flex className="flex-col gap-4">
-                <p className="text-base font-semibold">
-                  Groups in {selectedCounty && `${selectedCounty}, `}
-                  {selectedState}
-                </p>
-                <SimpleGrid columns={[1, 2, 3]} spacing={5}>
-                  {groups.map((group, index) => {
-                    return <GroupCard key={index} {...group} />;
-                  })}
-                </SimpleGrid>
-              </Flex>
-            ) : (
-              <p>
-                No groups found in {selectedCounty && `${selectedCounty}, `}
-                {selectedState}.
-              </p>
-            )
-          ) : (
-            <MapLoading />
-          )
-        ) : (
-          !loading && (
-            <p className="text-sm font-normal text-gray-500">
-              Click on a state/county to get started.
-            </p>
-          )
-        )}
+        <GroupsBySelectedLocation />
       </Flex>
     </Flex>
   );
