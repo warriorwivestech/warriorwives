@@ -22,9 +22,9 @@ const STATE_GEOJSON_URL =
 
 export function generateColorFromString(stateName: string, opacity: string) {
   let hash = 0;
-    for (let i = 0; i < stateName.length; i++) {
-        hash = stateName.charCodeAt(i) + ((hash << 5) - hash);
-    }
+  for (let i = 0; i < stateName.length; i++) {
+    hash = stateName.charCodeAt(i) + ((hash << 5) - hash);
+  }
   hash = hash * 31 + stateName.length;
   hash = hash * 17 + stateName.charCodeAt(stateName.length - 1);
   hash = hash & 0x7fffffff;
@@ -229,10 +229,21 @@ const _Map = () => {
 
   const selectedCountyQuery = selectedCounty ? `county=${selectedCounty}` : "";
   const selectedStateQuery = selectedState ? `state=${selectedState}` : "";
-  const queryString = selectedCountyQuery ? `?${selectedCountyQuery}` : selectedStateQuery ? `?${selectedStateQuery}` : "";
+  const queryString = selectedCountyQuery
+    ? `?${selectedCountyQuery}`
+    : selectedStateQuery
+    ? `?${selectedStateQuery}`
+    : "";
 
-  const requestOptions: RequestInit = { next: { tags: ["groups", queryString]} }
-  const { data: groups, error, isLoading: isLoadingGroups } = useSWR<GroupData[], any>([`/groups${queryString}`, requestOptions]);
+  const requestOptions: RequestInit = {
+    next: { tags: ["groups", queryString], revalidate: 60 * 5 },
+    cache: "force-cache",
+  };
+  const {
+    data: groups,
+    error,
+    isLoading: isLoadingGroups,
+  } = useSWR<GroupData[], any>([`/groups${queryString}`, requestOptions]);
 
   useEffect(() => {
     /* 
@@ -253,14 +264,28 @@ const _Map = () => {
 
   const GroupsBySelectedLocation = () => {
     if (loading) return;
-    if (!selectedState) return <p className="text-sm font-normal text-gray-500">Click on a state/county to get started.</p>
-    if (isLoadingGroups) return <MapLoading />
-    if (error) return <p>{error.message}</p>
-    if (!groups || groups.length === 0) return <p>No groups found in {selectedCounty && `${selectedCounty}, `}{selectedState}.</p>
+    if (!selectedState)
+      return (
+        <p className="text-sm font-normal text-gray-500">
+          Click on a state/county to get started.
+        </p>
+      );
+    if (isLoadingGroups) return <MapLoading />;
+    if (error) return <p>{error.message}</p>;
+    if (!groups || groups.length === 0)
+      return (
+        <p>
+          No groups found in {selectedCounty && `${selectedCounty}, `}
+          {selectedState}.
+        </p>
+      );
 
     return (
       <Flex className="flex-col gap-4">
-        <p className="text-base font-semibold">Groups in {selectedCounty && `${selectedCounty}, `}{selectedState}</p>
+        <p className="text-base font-semibold">
+          Groups in {selectedCounty && `${selectedCounty}, `}
+          {selectedState}
+        </p>
         <SimpleGrid columns={[1, 2, 3]} spacing={5}>
           {groups.map((group) => {
             return <GroupCard key={group.id} {...group} />;

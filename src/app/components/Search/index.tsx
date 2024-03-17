@@ -18,6 +18,7 @@ function _Search() {
   const [debounceLoading, setDebounceLoading] = useState(false);
 
   const fetchOptions: RequestInit = {
+    cache: "force-cache",
     next: { tags: ["groups", textSearch], revalidate: 60 * 5 },
   };
   const {
