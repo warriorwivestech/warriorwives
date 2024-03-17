@@ -8,10 +8,8 @@ import {
   Stack,
   Text,
   Image,
-  Tag,
   HStack,
   Flex,
-  Icon,
   Popover,
   PopoverContent,
   PopoverTrigger,
@@ -27,6 +25,7 @@ import Tags from "../common/tags";
 import IconText from "../common/icontext";
 import { preload } from "swr";
 import { fetcher } from "@/app/providers/swrProvider";
+import { getSingleGroupRequestOptions } from "@/app/groups/[groupId]/page";
 
 interface GroupCardProps {
   id: number;
@@ -63,7 +62,10 @@ export default function GroupCard({
     <Link
       href={`/groups/${id}`}
       onMouseEnter={() => {
-        preload([`/groups/${id}`], fetcher);
+        preload(
+          [`/groups/${id}`, getSingleGroupRequestOptions(id.toString())],
+          fetcher
+        );
       }}
     >
       <Card className="w-[100%] h-[100%] transition-all duration-300 ease-in-out hover:bg-gray-50 hover:shadow-lg">

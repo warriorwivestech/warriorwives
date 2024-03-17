@@ -27,10 +27,8 @@ import useSWR from "swr";
 import { GroupData } from "@/app/api/groups/[groupId]/types";
 import GroupLoading from "./loading";
 import { CreateEventModal } from "@/app/components/CreateEventModal";
-import { generateColorFromString } from "@/app/components/Map";
 import { Event } from "@/app/api/groups/[groupId]/events/types";
 import { apiClient } from "@/app/apiClient";
-import EventCardsLoading from "@/app/components/EventCards/loading";
 
 function EventsData({
   eventsData,
@@ -280,14 +278,17 @@ function GroupData({ group }: { group: GroupData }) {
   );
 }
 
+export function getSingleGroupRequestOptions(groupId: string): RequestInit {
+  return { next: { tags: ["groups", groupId], revalidate: 60 * 5 } };
+}
+
 function _GroupPage({ params }: { params: { groupId: string } }) {
   const groupId = params.groupId;
-  const requestOptions: RequestInit = { next: { tags: ["groups", groupId], revalidate: 60 * 5 } };
   const {
     data: group,
     error,
     isLoading,
-  } = useSWR<GroupData>([`/groups/${groupId}`, requestOptions]);
+  } = useSWR<GroupData>([`/groups/${groupId}`, getSingleGroupRequestOptions(groupId)]);
 
   if (isLoading) return <GroupLoading />;
   if (error) return <div>Error loading group</div>;
