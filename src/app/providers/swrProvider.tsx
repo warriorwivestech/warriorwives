@@ -3,7 +3,7 @@
 import { SWRConfig } from "swr";
 import { apiClient } from "../apiClient";
 
-const fetcher = async ([url, fetchOptions]: [
+export const fetcher = async ([url, fetchOptions]: [
   string,
   RequestInit | undefined
 ]) => await apiClient(url, fetchOptions);

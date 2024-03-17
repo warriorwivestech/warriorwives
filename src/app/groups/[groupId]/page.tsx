@@ -281,11 +281,13 @@ function GroupData({ group }: { group: GroupData }) {
 }
 
 function _GroupPage({ params }: { params: { groupId: string } }) {
+  const groupId = params.groupId;
+  const requestOptions: RequestInit = { next: { tags: ["groups", groupId], revalidate: 60 * 5 } };
   const {
     data: group,
     error,
     isLoading,
-  } = useSWR<GroupData>([`/groups/${params.groupId}`]);
+  } = useSWR<GroupData>([`/groups/${groupId}`, requestOptions]);
 
   if (isLoading) return <GroupLoading />;
   if (error) return <div>Error loading group</div>;

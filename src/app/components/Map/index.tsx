@@ -190,6 +190,7 @@ const _Map = () => {
       setLoading(false);
     };
     setupMap();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [map.current]);
 
   const removeSourceAndLayers = () => {
@@ -223,6 +224,7 @@ const _Map = () => {
     };
 
     addCountyBorders();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [byCounty]);
 
   const selectedCountyQuery = selectedCounty ? `county=${selectedCounty}` : "";
@@ -246,6 +248,7 @@ const _Map = () => {
       setSelectedCounty("");
       return;
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedState, selectedCounty]);
 
   const GroupsBySelectedLocation = () => {
@@ -259,7 +262,7 @@ const _Map = () => {
       <Flex className="flex-col gap-4">
         <p className="text-base font-semibold">Groups in {selectedCounty && `${selectedCounty}, `}{selectedState}</p>
         <SimpleGrid columns={[1, 2, 3]} spacing={5}>
-          {groups.map((group, index) => {
+          {groups.map((group) => {
             return <GroupCard key={group.id} {...group} />;
           })}
         </SimpleGrid>

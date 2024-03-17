@@ -23,8 +23,8 @@ export default function Carousel({ groups }: { groups: GroupTypes[] }) {
   }, [embla, onScroll]);
 
   return (
-    <Flex className='flex-col gap-2'>
-      <p className='flex gap-2 items-center text-heading5'>
+    <Flex className="flex-col gap-2">
+      <p className="flex gap-2 items-center text-heading5">
         <StarIcon boxSize={3} />
         Recommended Groups
       </p>
@@ -32,29 +32,30 @@ export default function Carousel({ groups }: { groups: GroupTypes[] }) {
         <Flex h={"30rem"}>
           {groups.map((group) => (
             <Box
-              className='flex-[0_0_100%] min-w-0 bg-center bg-no-repeat bg-cover'
+              key={group.id}
+              className="flex-[0_0_100%] min-w-0 bg-center bg-no-repeat bg-cover"
               bgImage={`url(${group.background})`}
             >
-              <Box className='absolute w-full h-full bg-gray-800 opacity-70' />
-              <Box className='px-24 py-14 relative z-10'>
-                <Box className='py-4'>
+              <Box className="absolute w-full h-full bg-gray-800 opacity-70" />
+              <Box className="px-24 py-14 relative z-10">
+                <Box className="py-4">
                   {group.isOnline && (
-                    <Tag className='mr-4' colorScheme='blue'>
+                    <Tag className="mr-4" colorScheme="blue">
                       Online Only
                     </Tag>
                   )}
-                  <Tag colorScheme='orange'>{group.name}</Tag>
+                  <Tag colorScheme="orange">{group.name}</Tag>
                 </Box>
-                <Text className='font-bold text-5xl text-white'>{`${group.name} Warrior Wives of ${group.location}`}</Text>
-                <Text className='font-semibold text-gray-200'>{`${group.location}`}</Text>
+                <Text className="font-bold text-5xl text-white">{`${group.name} Warrior Wives of ${group.location}`}</Text>
+                <Text className="font-semibold text-gray-200">{`${group.location}`}</Text>
                 {group.tags.map((tag) => (
-                  <Badge className='mr-2' colorScheme={tag.colour}>
+                  <Badge key={tag.name} className="mr-2" colorScheme={tag.colour}>
                     {tag.name}
                   </Badge>
                 ))}
-                <Text className='text-white mt-4'>{`${group.description}`}</Text>
-                <Box className='mt-4' as={"a"} href={`/groups/${group.id}`}>
-                  <Button className='mt-4 bg-slate-200' size='sm'>
+                <Text className="text-white mt-4">{`${group.description}`}</Text>
+                <Box className="mt-4" as={"a"} href={`/groups/${group.id}`}>
+                  <Button className="mt-4 bg-slate-200" size="sm">
                     View Group
                   </Button>
                 </Box>
@@ -74,10 +75,10 @@ export default function Carousel({ groups }: { groups: GroupTypes[] }) {
         </Flex>
       </Flex> */}
       </Card>
-      <Flex className='justify-center mt-2'>
-        <Box className='h-4 max-w-xl relative rounded-sm w-72 bg-gray-200 overflow-hidden'>
+      <Flex className="justify-center mt-2">
+        <Box className="h-4 max-w-xl relative rounded-sm w-72 bg-gray-200 overflow-hidden">
           <Box
-            className='absolute bg-cyan-300 w-full top-0 bottom-0 left-[-100%]'
+            className="absolute bg-cyan-300 w-full top-0 bottom-0 left-[-100%]"
             style={{ transform: `translateX(${scrollProgress}%)` }}
           />
         </Box>

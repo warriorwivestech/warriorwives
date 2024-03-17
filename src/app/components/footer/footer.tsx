@@ -1,6 +1,5 @@
 "use client";
 
-import { ReactNode } from "react";
 import {
   Box,
   Container,
@@ -11,7 +10,6 @@ import {
   chakra,
   useColorModeValue,
 } from "@chakra-ui/react";
-import { FaTwitter, FaYoutube, FaInstagram } from "react-icons/fa";
 import { usePathname } from "next/navigation";
 
 const ListHeader = ({ children }: { children: React.ReactNode }) => {
@@ -56,9 +54,14 @@ const SocialButton = ({
 
 export default function Footer() {
   const pathname = usePathname();
+  const detailsBgColor = useColorModeValue("gray.700", "gray.200");
+  const copyrightBgColor = useColorModeValue("gray.200", "gray.700");
+
+  // TODO: remove this when we have a login page
   if (pathname === "/login") return;
+
   return (
-    <Box bg="white" color={useColorModeValue("gray.700", "gray.200")}>
+    <Box bg="white" color={detailsBgColor}>
       <Container as={Stack} maxW={"6xl"} py={10}>
         <SimpleGrid columns={{ base: 1, sm: 2, md: 4 }} spacing={8}>
           <Stack align={"flex-start"}>
@@ -87,7 +90,7 @@ export default function Footer() {
       <Box
         borderTopWidth={1}
         borderStyle={"solid"}
-        borderColor={useColorModeValue("gray.200", "gray.700")}
+        borderColor={copyrightBgColor}
       >
         <Container
           as={Stack}

@@ -25,7 +25,8 @@ import { InfoOutlineIcon } from "@chakra-ui/icons";
 import { RiBaseStationLine } from "react-icons/ri";
 import Tags from "../common/tags";
 import IconText from "../common/icontext";
-import { generateColorFromString } from "../Map";
+import { preload } from "swr";
+import { fetcher } from "@/app/providers/swrProvider";
 
 interface GroupCardProps {
   id: number;
@@ -59,23 +60,28 @@ export default function GroupCard({
     branchOfService === "Any" ? "All Branches" : branchOfService;
 
   return (
-    <Link href={`/groups/${id}`}>
-      <Card className='w-[100%] h-[100%] transition-all duration-300 ease-in-out hover:bg-gray-50 hover:shadow-lg'>
+    <Link
+      href={`/groups/${id}`}
+      onMouseEnter={() => {
+        preload([`/groups/${id}`], fetcher);
+      }}
+    >
+      <Card className="w-[100%] h-[100%] transition-all duration-300 ease-in-out hover:bg-gray-50 hover:shadow-lg">
         <CardBody>
-          <HStack justifyContent={"space-between"} marginBottom='0.75rem'>
+          <HStack justifyContent={"space-between"} marginBottom="0.75rem">
             <span>
               <Badge
                 w={"auto"}
-                className='px-[4px] py-[2px] rounded-sm'
-                colorScheme='gray'
+                className="px-[4px] py-[2px] rounded-sm"
+                colorScheme="gray"
               >
                 {parsedBranchOfService}
               </Badge>
             </span>
             <IconText
               icon={FaMapMarkerAlt}
-              iconClassName='!text-red-700'
-              textClassName='whitespace-nowrap font-semibold'
+              iconClassName="!text-red-700"
+              textClassName="whitespace-nowrap font-semibold"
             >
               {location}
             </IconText>
@@ -83,17 +89,17 @@ export default function GroupCard({
           <Image
             src={displayPhotoUrl}
             alt={name}
-            borderRadius='lg'
-            className='w-full object-cover h-60'
+            borderRadius="lg"
+            className="w-full object-cover h-60"
           />
-          <Stack mt='6' spacing='3'>
-            <Flex flexDirection='row' justifyContent='space-between'>
+          <Stack mt="6" spacing="3">
+            <Flex flexDirection="row" justifyContent="space-between">
               <Tags tags={tags} />
               {online && (
-                <Popover trigger='hover' placement='top'>
+                <Popover trigger="hover" placement="top">
                   <PopoverTrigger>
                     <div>
-                      <RiBaseStationLine className='text-[1.5rem] text-green-500 mr-2 ml-2' />
+                      <RiBaseStationLine className="text-[1.5rem] text-green-500 mr-2 ml-2" />
                     </div>
                   </PopoverTrigger>
                   <PopoverContent>
@@ -113,8 +119,8 @@ export default function GroupCard({
               )}
             </Flex>
             {/* name */}
-            <Heading size='md'>{name}</Heading>
-            <Flex textOverflow='ellipsis' noOfLines={5}>
+            <Heading size="md">{name}</Heading>
+            <Flex textOverflow="ellipsis" noOfLines={5}>
               <Text>{description}</Text>
             </Flex>
           </Stack>

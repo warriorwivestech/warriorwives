@@ -36,8 +36,15 @@ import IconText from "../common/icontext";
 import { supabase } from "@/app/supabase";
 import { apiClient } from "@/app/apiClient";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
-export function CreateEventModal({ groupName, groupId }: { groupName: string, groupId: number }) {
+export function CreateEventModal({
+  groupName,
+  groupId,
+}: {
+  groupName: string;
+  groupId: number;
+}) {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const [bannerImage, setBannerImage] = useState<FileWithPreview | null>(null);
@@ -198,7 +205,6 @@ export function CreateEventModal({ groupName, groupId }: { groupName: string, gr
     });
     setPhotos((prevFiles) => [...prevFiles, ...newFilesWithUrls]);
 
-
     // Get the blob
 
     // Set
@@ -231,7 +237,7 @@ export function CreateEventModal({ groupName, groupId }: { groupName: string, gr
     <>
       <Button
         onClick={onOpen}
-        className='bg-black text-white hover:text-black mt-4'
+        className="bg-black text-white hover:text-black mt-4"
       >
         <IconText icon={RiAdminFill}>Create a new event</IconText>
       </Button>
@@ -241,25 +247,27 @@ export function CreateEventModal({ groupName, groupId }: { groupName: string, gr
         onClose={handleCloseModal}
       >
         <ModalOverlay />
-        <ModalContent minW='900px'>
+        <ModalContent minW="900px">
           <ModalHeader>Create new event for {groupName}</ModalHeader>
           <ModalCloseButton />
           <ModalBody pb={6} gap={6} display={"flex"} flexDirection={"column"}>
             {/* banner image */}
-            <div className='flex flex-col gap-2'>
+            <div className="flex flex-col gap-2">
               <FormLabel>Banner Image</FormLabel>
-              <div className='flex flex-col justify-center w-[100%] items-center gap-6'>
+              <div className="flex flex-col justify-center w-[100%] items-center gap-6">
                 {bannerImage && (
-                  <div className='flex flex-col gap-4 justify-center items-center'>
-                    <img
+                  <div className="flex flex-col gap-4 justify-center items-center">
+                    <Image
                       src={bannerImage.url}
                       alt={bannerImage.file.name}
+                      width={200}
+                      height={350}
                       style={{
-                        width: "100%",
                         height: "100%",
-                        maxHeight: "350px",
+                        width: "100%",
                         objectFit: "cover",
                         borderRadius: "4px",
+                        maxHeight: "350px",
                       }}
                     />
                     <Button
@@ -277,20 +285,20 @@ export function CreateEventModal({ groupName, groupId }: { groupName: string, gr
                 <FileUploader
                   multiple={false}
                   handleChange={handleSingleChange}
-                  name='file'
+                  name="file"
                   types={fileTypes}
                 />
               </div>
             </div>
             <Divider />
 
-            <div className='flex flex-row gap-8'>
+            <div className="flex flex-row gap-8">
               {/* name */}
               <FormControl isInvalid={isNameError}>
                 {/* <FormLabel>Name</FormLabel> */}
                 <Input
-                  placeholder='Name'
-                  type='name'
+                  placeholder="Name"
+                  type="name"
                   value={input?.name}
                   onChange={(e) =>
                     handleInputChange({ e: e, inputType: "name" })
@@ -305,8 +313,8 @@ export function CreateEventModal({ groupName, groupId }: { groupName: string, gr
               <FormControl isInvalid={isDateTimeError}>
                 {/* <FormLabel>Meeting Link</FormLabel> */}
                 <Input
-                  placeholder='Meeting Link'
-                  type='datetime-local'
+                  placeholder="Meeting Link"
+                  type="datetime-local"
                   value={input?.dateTime}
                   min={minDateTime}
                   onChange={(e) =>
@@ -328,7 +336,7 @@ export function CreateEventModal({ groupName, groupId }: { groupName: string, gr
               <Textarea
                 height={200}
                 resize={"none"}
-                placeholder='Description for the event'
+                placeholder="Description for the event"
                 value={input?.description}
                 onChange={(e) =>
                   handleInputChange({ e: e, inputType: "description" })
@@ -340,28 +348,25 @@ export function CreateEventModal({ groupName, groupId }: { groupName: string, gr
             </FormControl>
 
             {/* image */}
-            <div className='flex flex-col gap-2'>
+            <div className="flex flex-col gap-2">
               <FormLabel>Images</FormLabel>
 
-              <div className='flex flex-col justify-center w-[100%] items-center gap-6'>
+              <div className="flex flex-col justify-center w-[100%] items-center gap-6">
                 {photos.length > 0 && (
                   <SimpleGrid columns={3} spacing={10}>
                     {/* <button onClick={logFiles}>Log Uploaded Pictures</button> */}
                     {photos.map((photosObj, index) => (
                       <div
                         key={index}
-                        className='flex flex-col gap-4 justify-center items-center'
+                        className="flex flex-col gap-4 justify-center items-center"
                       >
                         {/* <p>File name: {fileObj.file.name}</p> */}
-                        <img
+                        <Image
                           src={photosObj.url}
                           alt={photosObj.file.name}
-                          style={{
-                            width: "200px",
-                            height: "100px",
-                            objectFit: "cover",
-                            borderRadius: "4px",
-                          }}
+                          width={200}
+                          height={100}
+                          style={{ objectFit: "cover", borderRadius: "4px" }}
                         />
                         <Button
                           onClick={() => handleDelete(index)}
@@ -380,25 +385,25 @@ export function CreateEventModal({ groupName, groupId }: { groupName: string, gr
                 <FileUploader
                   multiple={true}
                   handleChange={handleChange}
-                  name='file'
+                  name="file"
                   types={fileTypes}
                 />
               </div>
             </div>
 
             {/* online */}
-            <FormControl as='fieldset'>
-              <FormLabel as='legend'>Is this an online event?</FormLabel>
+            <FormControl as="fieldset">
+              <FormLabel as="legend">Is this an online event?</FormLabel>
               <RadioGroup
-                defaultValue='No'
+                defaultValue="No"
                 value={input?.online ? "Yes" : "No"}
                 onChange={(e) =>
                   handleInputChange({ e: e, inputType: "online" })
                 }
               >
-                <HStack spacing='24px'>
-                  <Radio value='Yes'>Yes</Radio>
-                  <Radio value='No'>No</Radio>
+                <HStack spacing="24px">
+                  <Radio value="Yes">Yes</Radio>
+                  <Radio value="No">No</Radio>
                 </HStack>
               </RadioGroup>
             </FormControl>
@@ -408,8 +413,8 @@ export function CreateEventModal({ groupName, groupId }: { groupName: string, gr
             {!input?.online ? (
               <FormControl>
                 <Input
-                  placeholder='Location'
-                  type='location'
+                  placeholder="Location"
+                  type="location"
                   value={input?.location}
                   onChange={(e) =>
                     handleInputChange({ e: e, inputType: "location" })
@@ -419,8 +424,8 @@ export function CreateEventModal({ groupName, groupId }: { groupName: string, gr
             ) : (
               <FormControl>
                 <Input
-                  placeholder='Meeting Link'
-                  type='link'
+                  placeholder="Meeting Link"
+                  type="link"
                   value={input?.link}
                   onChange={(e) =>
                     handleInputChange({ e: e, inputType: "link" })

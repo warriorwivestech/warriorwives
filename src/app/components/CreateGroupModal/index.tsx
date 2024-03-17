@@ -41,6 +41,7 @@ import { MdDelete } from "react-icons/md";
 import { supabase } from "@/app/supabase";
 import { useRouter } from "next/navigation";
 import { apiClient } from "@/app/apiClient";
+import Image from "next/image";
 
 export function CreateGroupModal() {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -265,17 +266,7 @@ export function CreateGroupModal() {
               <div className="flex flex-col justify-center w-[100%] items-center gap-6">
                 {bannerImage && (
                   <div className="flex flex-col gap-4 justify-center items-center">
-                    <img
-                      src={bannerImage.url}
-                      alt={bannerImage.file.name}
-                      style={{
-                        width: "100%",
-                        height: "100%",
-                        maxHeight: "350px",
-                        objectFit: "cover",
-                        borderRadius: "4px",
-                      }}
-                    />
+                    <Image src={bannerImage.url} alt={bannerImage.file.name} width={200} height={350} style={{ maxHeight: "350px", objectFit: "cover", borderRadius: "4px" }} />
                     <Button
                       onClick={() => handleSingleDelete()}
                       bgColor={"#FC8181 !important"}

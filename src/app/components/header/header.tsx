@@ -24,19 +24,23 @@ export default function NavBar() {
   const pathname = usePathname();
   const [desktopSize] = useMediaQuery("(min-width: 1024px)");
   const { isOpen, onToggle } = useDisclosure();
+  const bgColor = useColorModeValue("white", "gray.800");
+  const color = useColorModeValue("gray.600", "white");
+  const borderColor = useColorModeValue("gray.200", "gray.900");
+  
   if (pathname === "/login") return;
 
   return (
     <Box>
       <Flex
-        bg={useColorModeValue("white", "gray.800")}
-        color={useColorModeValue("gray.600", "white")}
+        bg={bgColor}
+        color={color}
         minH={"60px"}
         py={{ base: 2 }}
         px={{ base: 4 }}
         borderBottom={1}
         borderStyle={"solid"}
-        borderColor={useColorModeValue("gray.200", "gray.900")}
+        borderColor={borderColor}
         align={"center"}
       >
         <Flex
