@@ -1,12 +1,12 @@
-import React from "react";
+import RecommendedGroups from "../components/RecommendedGroups/RecommendedGroups";
 import GroupCard from "../components/GroupCards";
 import { Divider, SimpleGrid } from "@chakra-ui/react";
-import { getGroupsByUserId } from "../data/read";
-import RecommendedGroups from "../components/RecommendedGroups/RecommendedGroups";
+import { JoinedGroupsResponse } from "../api/users/[userId]/groups/route";
+import { apiClient } from "../apiClient";
 
 export default async function GroupsPage() {
   // TODO: update this to use the user's actual id
-  const groups = await getGroupsByUserId(1);
+  const groups: JoinedGroupsResponse = await apiClient(`/users/3/groups`)
 
   return (
     <div className="flex flex-col gap-12">
