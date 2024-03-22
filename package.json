@@ -17,7 +17,7 @@
     "@maptiler/sdk": "^1.2.1",
     "@prisma/client": "^5.9.1",
     "@supabase/supabase-js": "^2.39.3",
-    "@vercel/blob": "^0.15.1",
+    "@vercel/blob": "^0.22.1",
     "axios": "^1.6.0",
     "chakra-multiselect": "^0.4.13",
     "chakra-react-select": "^4.7.6",
