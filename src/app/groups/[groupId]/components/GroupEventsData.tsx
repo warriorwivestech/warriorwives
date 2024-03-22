@@ -1,16 +1,15 @@
 import { Flex, Skeleton } from "@chakra-ui/react";
-import { Event } from "@/app/api/groups/[groupId]/events/types";
-import EventCards from "@/app/components/EventCards";
+import EventCard from "@/app/components/EventCard";
+import { SWRResponse } from "swr";
+import { GroupEvents } from "@/app/api/groups/[groupId]/events/route";
 
 export default function GroupEventsData({
-  eventsData,
-  isLoading,
-  error,
+  events
 }: {
-  eventsData: Event[];
-  isLoading: boolean;
-  error: any;
+  events: SWRResponse<GroupEvents, any, any>;
 }) {
+  const { data: eventsData, error, isLoading } = events;
+
   if (isLoading)
     return (
       <div className="w-[100%] md:w-[65%] flex flex-col gap-8">
@@ -20,14 +19,12 @@ export default function GroupEventsData({
       </div>
     );
   if (error) return <div>Error loading events</div>;
-  if (!eventsData) return <div>No events found for this group.</div>;
-  if (eventsData.length === 0)
-    return <div>No events found for this group.</div>;
+  if (!eventsData || eventsData.length === 0) return <div>No events found for this group.</div>;
 
   return (
     <Flex className='flex-col w-[100%] md:w-[65%]' gap={6}>
       {eventsData.map((event) => (
-        <EventCards
+        <EventCard
           key={event.id}
           id={event.id}
           groupId={event.groupId}

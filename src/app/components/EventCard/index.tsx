@@ -1,10 +1,8 @@
-// EventCards.tsx
-
 import { Text, Image, Button } from "@chakra-ui/react";
 import Link from "next/link";
 import { FaLocationArrow } from "react-icons/fa";
 
-interface EventCardsProps {
+interface EventCardProps {
   id: number;
   name: string;
   description: string;
@@ -18,7 +16,7 @@ interface EventCardsProps {
   longCard?: boolean;
 }
 
-export default function EventCards({
+export default function EventCard({
   id,
   name,
   description,
@@ -30,7 +28,7 @@ export default function EventCards({
   attendeesCount,
   groupId,
   longCard = false,
-}: EventCardsProps) {
+}: EventCardProps) {
   const displayPhotoUrl =
     displayPhoto || "https://startup.mp.gov.in/assets/img/img-not-found.png";
 
@@ -65,7 +63,6 @@ export default function EventCards({
             </div>
           </div>
 
-          {/* image */}
           <div className="w-[100%] max-w-[200px]">
             <Image
               rounded={"xl"}
@@ -80,7 +77,6 @@ export default function EventCards({
         </div>
 
         <div className="flex flex-col gap-6">
-          {/* description */}
           <div>
             <Text noOfLines={3} textOverflow="ellipsis" className="text-[14px]">
               {description}

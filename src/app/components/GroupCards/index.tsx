@@ -61,6 +61,29 @@ export default function GroupCard({
   const parsedBranchOfService =
     branchOfService === "Any" ? "All Branches" : branchOfService;
 
+  const OnlinePopover = () => {
+    if (!online) return null;
+
+    return (
+      <Popover trigger="hover" placement="top">
+        <PopoverTrigger>
+          <div>
+            <RiBaseStationLine className="text-[1.5rem] text-green-500 mr-2 ml-2" />
+          </div>
+        </PopoverTrigger>
+        <PopoverContent>
+          <PopoverArrow />
+          <PopoverBody>
+            <Flex justifyContent={"center"} alignItems={"center"} gap={2}>
+              <InfoOutlineIcon />
+              This group is conducted online.
+            </Flex>
+          </PopoverBody>
+        </PopoverContent>
+      </Popover>
+    );
+  };
+
   return (
     <Link
       href={`/groups/${id}`}
@@ -104,30 +127,8 @@ export default function GroupCard({
           <Stack mt="6" spacing="3">
             <Flex flexDirection="row" justifyContent="space-between">
               <Tags tags={tags} />
-              {online && (
-                <Popover trigger="hover" placement="top">
-                  <PopoverTrigger>
-                    <div>
-                      <RiBaseStationLine className="text-[1.5rem] text-green-500 mr-2 ml-2" />
-                    </div>
-                  </PopoverTrigger>
-                  <PopoverContent>
-                    <PopoverArrow />
-                    <PopoverBody>
-                      <Flex
-                        justifyContent={"center"}
-                        alignItems={"center"}
-                        gap={2}
-                      >
-                        <InfoOutlineIcon />
-                        This group is conducted online.
-                      </Flex>
-                    </PopoverBody>
-                  </PopoverContent>
-                </Popover>
-              )}
+              <OnlinePopover />
             </Flex>
-            {/* name */}
             <Heading size="md">{name}</Heading>
             <Flex textOverflow="ellipsis" noOfLines={5}>
               <Text>{description}</Text>

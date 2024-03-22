@@ -1,9 +1,9 @@
 "use client";
 
-import { Event } from "@/app/api/groups/[groupId]/events/types";
 import { SWRProvider } from "@/app/providers/swrProvider";
 import useSWR from "swr";
-import EventCards from "../EventCards";
+import EventCard from "../EventCard";
+import { GroupEvents } from "@/app/api/groups/[groupId]/events/route";
 
 interface OtherEventsProps {
   groupId: number;
@@ -15,7 +15,7 @@ function _OtherEvents({ groupId, eventId }: OtherEventsProps) {
     data: otherEvents,
     error,
     isLoading,
-  } = useSWR<Event[]>([`/groups/${groupId}/${eventId}`]);
+  } = useSWR<GroupEvents>([`/groups/${groupId}/${eventId}`]);
 
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error loading events</div>;
@@ -26,19 +26,10 @@ function _OtherEvents({ groupId, eventId }: OtherEventsProps) {
     <div className="flex flex-row gap-4 overflow-x-scroll">
       {otherEvents.map((event) => {
         return (
-          <EventCards
+          <EventCard
             key={event.id}
-            id={event.id}
-            name={event.name}
-            description={event.description}
-            displayPhoto={event.displayPhoto}
-            online={event.online}
-            meetingLink={event.meetingLink}
-            location={event.location}
-            dateTime={event.dateTime}
-            attendeesCount={event._count.attendees}
-            groupId={event.groupId}
             longCard={true}
+            {...event}
           />
         );
       })}

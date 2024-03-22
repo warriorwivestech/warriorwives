@@ -1,6 +1,6 @@
 import { Flex } from "@chakra-ui/react";
 import React from "react";
-import EventCards from "../components/EventCards";
+import EventCard from "../components/EventCard";
 import { getJoinedEvents } from "../data/joinedEvents";
 
 export default async function EventsPage() {
@@ -15,7 +15,7 @@ export default async function EventsPage() {
     return (
       <Flex className="flex-col w-[100%]" gap={6}>
         {events.map((event) => (
-          <EventCards
+          <EventCard
             key={event.id}
             {...event}
           />

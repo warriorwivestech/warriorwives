@@ -21,18 +21,21 @@ import IconText from "@/app/components/common/icontext";
 import { BsPersonRaisedHand } from "react-icons/bs";
 import { RiBaseStationFill } from "react-icons/ri";
 import { SWRProvider } from "@/app/providers/swrProvider";
-import useSWR from "swr";
+import useSWR, { SWRResponse } from "swr";
 import { GroupData } from "@/app/api/groups/[groupId]/types";
 import GroupLoading from "./loading";
 import { CreateEventModal } from "@/app/components/CreateEventModal";
 import { apiClient } from "@/app/apiClient";
 import GroupEventsData from "./components/GroupEventsData";
+import { GroupEvents } from "@/app/api/groups/[groupId]/events/route";
 
-export function getGroupEventsRequestOptions(groupId: string): RequestInit {
-  return { next: { tags: ["group", groupId, "events"], revalidate: 60 * 5 } };
-}
-
-function GroupData({ group }: { group: GroupData }) {
+function GroupData({
+  group,
+  events,
+}: {
+  group: GroupData;
+  events: SWRResponse<GroupEvents, any, any>;
+}) {
   const [isSticky, setIsSticky] = useState(false);
   const [scrollPosition, setScrollPosition] = useState(70);
   const [scrollSpeed, setScrollSpeed] = useState(0);
@@ -92,15 +95,6 @@ function GroupData({ group }: { group: GroupData }) {
   const parsedBranchOfService =
     branchOfService === "Any" ? "All Branches" : branchOfService;
   const [desktopSize] = useMediaQuery("(min-width: 1024px)");
-
-  const {
-    data: eventsData,
-    error,
-    isLoading,
-  } = useSWR([
-    `/groups/${id}/events`,
-    getGroupEventsRequestOptions(id.toString()),
-  ]);
 
   const [justJoined, setJustJoined] = useState(false);
   const [isJoining, setIsJoining] = useState(false);
@@ -233,11 +227,7 @@ function GroupData({ group }: { group: GroupData }) {
         </Stack>
         <Stack gap={4}>
           <p className="text-heading4">Events from {name}</p>
-          <GroupEventsData
-            eventsData={eventsData}
-            isLoading={isLoading}
-            error={error}
-          />
+          <GroupEventsData events={events} />
         </Stack>
       </div>
     </div>
@@ -246,8 +236,15 @@ function GroupData({ group }: { group: GroupData }) {
 
 export function getSingleGroupRequestOptions(groupId: string): RequestInit {
   return {
-    cache: "force-cache",
+    // cache: "force-cache",
     next: { tags: ["group", groupId], revalidate: 60 * 5 },
+  };
+}
+
+export function getGroupEventsRequestOptions(groupId: string): RequestInit {
+  return {
+    // cache: "force-cache",
+    next: { tags: ["group", groupId, "events"], revalidate: 60 * 5 },
   };
 }
 
@@ -261,12 +258,16 @@ function _GroupPage({ params }: { params: { groupId: string } }) {
     `/groups/${groupId}`,
     getSingleGroupRequestOptions(groupId),
   ]);
+  const events = useSWR<GroupEvents>([
+    `/groups/${groupId}/events`,
+    getGroupEventsRequestOptions(groupId),
+  ]);
 
   if (isLoading) return <GroupLoading />;
   if (error) return <div>Error loading group</div>;
   if (!group) return <div>Not found</div>;
 
-  return <GroupData group={group} />;
+  return <GroupData group={group} events={events} />;
 }
 
 export default function GroupPage({ params }: { params: { groupId: string } }) {

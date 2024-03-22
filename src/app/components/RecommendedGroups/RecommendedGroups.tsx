@@ -19,7 +19,7 @@ function _RecommendedGroups() {
   } = useSWR<Group[]>(["/groups/recommended", fetchOptions]);
   if (isLoading) return <RecommendedGroupsLoading />;
   if (error) return <div>Error loading recommended groups</div>;
-  if (!groups)
+  if (!groups || groups.length === 0)
     return (
       <div>You have joined all available groups based on your interests!</div>
     );
