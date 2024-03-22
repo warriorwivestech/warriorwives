@@ -1,6 +1,5 @@
 "use client";
 
-import EventCards from "@/app/components/EventCards";
 import Tags from "@/app/components/common/tags";
 import {
   Button,
@@ -14,7 +13,6 @@ import {
   useMediaQuery,
   Badge,
   Spinner,
-  Skeleton,
 } from "@chakra-ui/react";
 import { MdPeopleAlt } from "react-icons/md";
 import React, { useEffect, useState, useRef } from "react";
@@ -27,50 +25,11 @@ import useSWR from "swr";
 import { GroupData } from "@/app/api/groups/[groupId]/types";
 import GroupLoading from "./loading";
 import { CreateEventModal } from "@/app/components/CreateEventModal";
-import { Event } from "@/app/api/groups/[groupId]/events/types";
 import { apiClient } from "@/app/apiClient";
+import GroupEventsData from "./components/GroupEventsData";
 
-function EventsData({
-  eventsData,
-  isLoading,
-  error,
-}: {
-  eventsData: Event[];
-  isLoading: boolean;
-  error: any;
-}) {
-  if (isLoading)
-    return (
-      <div className="w-[100%] md:w-[65%] flex flex-col gap-8">
-        <Skeleton height="150px" className="rounded-xl" />
-        <Skeleton height="150px" className="rounded-xl" />
-        <Skeleton height="150px" className="rounded-xl" />
-      </div>
-    );
-  if (error) return <div>Error loading events</div>;
-  if (!eventsData) return <div>No events found for this group.</div>;
-  if (eventsData.length === 0)
-    return <div>No events found for this group.</div>;
-
-  return (
-    <Flex className='flex-col w-[100%] md:w-[65%]' gap={6}>
-      {eventsData.map((event) => (
-        <EventCards
-          key={event.id}
-          id={event.id}
-          groupId={event.groupId}
-          name={event.name}
-          description={event.description}
-          displayPhoto={event.displayPhoto}
-          online={event.online}
-          meetingLink={event.meetingLink}
-          location={event.location}
-          dateTime={event.dateTime}
-          attendeesCount={event._count.attendees}
-        />
-      ))}
-    </Flex>
-  );
+export function getGroupEventsRequestOptions(groupId: string): RequestInit {
+  return { next: { tags: ["group", groupId, "events"], revalidate: 60 * 5 } };
 }
 
 function GroupData({ group }: { group: GroupData }) {
@@ -134,7 +93,14 @@ function GroupData({ group }: { group: GroupData }) {
     branchOfService === "Any" ? "All Branches" : branchOfService;
   const [desktopSize] = useMediaQuery("(min-width: 1024px)");
 
-  const { data: eventsData, error, isLoading } = useSWR([`/groups/${id}/events`]);
+  const {
+    data: eventsData,
+    error,
+    isLoading,
+  } = useSWR([
+    `/groups/${id}/events`,
+    getGroupEventsRequestOptions(id.toString()),
+  ]);
 
   const [justJoined, setJustJoined] = useState(false);
   const [isJoining, setIsJoining] = useState(false);
@@ -155,15 +121,15 @@ function GroupData({ group }: { group: GroupData }) {
   };
 
   return (
-    <div className='flex flex-col-reverse md:flex-row gap-8 justify-between'>
-      <div className='flex flex-col gap-16'>
+    <div className="flex flex-col-reverse md:flex-row gap-8 justify-between">
+      <div className="flex flex-col gap-16">
         <Stack gap={8}>
           <SimpleGrid columns={[1, 1, 2]} spacing={8}>
             <Image
               src={displayPhotoUrl}
               alt={name}
-              borderRadius='lg'
-              className='w-full object-cover h-64 md:h-96'
+              borderRadius="lg"
+              className="w-full object-cover h-64 md:h-96"
             />
             <Box
               className={`${
@@ -177,7 +143,7 @@ function GroupData({ group }: { group: GroupData }) {
                   ? `calc(110px - ${scrollSpeed}px)`
                   : "48px"
               }
-              right='48px'
+              right="48px"
               width={`${
                 desktopSize &&
                 (cardWidth > cardMinWidth ? cardWidth : cardMinWidth)
@@ -189,37 +155,37 @@ function GroupData({ group }: { group: GroupData }) {
                     <span>
                       <Badge
                         w={"auto"}
-                        className='px-[4px] py-[2px] rounded-sm'
-                        colorScheme='gray'
+                        className="px-[4px] py-[2px] rounded-sm"
+                        colorScheme="gray"
                       >
                         {parsedBranchOfService}
                       </Badge>
                     </span>
-                    <Heading className='heading mb-2'>{name}</Heading>
+                    <Heading className="heading mb-2">{name}</Heading>
                     <Tags tags={tags} />
                   </Stack>
                   <Stack spacing={2}>
                     {online && (
                       <IconText
                         icon={RiBaseStationFill}
-                        iconClassName='text-green-500'
-                        textClassName='uppercase text-green-500 tracking-wider font-bold'
+                        iconClassName="text-green-500"
+                        textClassName="uppercase text-green-500 tracking-wider font-bold"
                       >
                         ONLINE ONLY
                       </IconText>
                     )}
                     <IconText
                       icon={FaMapMarkerAlt}
-                      iconClassName='text-red-700'
+                      iconClassName="text-red-700"
                     >
                       {location}
                     </IconText>
-                    <IconText icon={MdPeopleAlt} iconClassName='text-blue-400'>
+                    <IconText icon={MdPeopleAlt} iconClassName="text-blue-400">
                       {`${membersCount} members`}
                     </IconText>
                     <IconText
                       icon={BsPersonRaisedHand}
-                      iconClassName='text-gray-500'
+                      iconClassName="text-gray-500"
                     >
                       Organised by {parsedAdmins}
                     </IconText>
@@ -230,7 +196,7 @@ function GroupData({ group }: { group: GroupData }) {
                   ) : joined || justJoined ? (
                     <Button
                       rounded={"md"}
-                      className='w-full mt-4 border'
+                      className="w-full mt-4 border"
                       isDisabled={true}
                     >
                       Joined
@@ -238,7 +204,7 @@ function GroupData({ group }: { group: GroupData }) {
                   ) : (
                     <Button
                       rounded={"md"}
-                      className='bg-black text-white hover:text-black w-full mt-4'
+                      className="bg-black text-white hover:text-black w-full mt-4"
                       onClick={joinEventHandler}
                       disabled={isJoining}
                     >
@@ -249,8 +215,8 @@ function GroupData({ group }: { group: GroupData }) {
               </Box>
             </Box>
           </SimpleGrid>
-          <Flex className='flex-col gap-4'>
-            <p className='text-heading5'>Description</p>
+          <Flex className="flex-col gap-4">
+            <p className="text-heading5">Description</p>
             <Text
               textOverflow={"ellipsis"}
               width={`${
@@ -259,15 +225,15 @@ function GroupData({ group }: { group: GroupData }) {
               }%`}
               transition={"width 0.25s ease"}
               ref={descriptionRef}
-              className='break-words'
+              className="break-words"
             >
               {description}
             </Text>
           </Flex>
         </Stack>
         <Stack gap={4}>
-          <p className='text-heading4'>Events from {name}</p>
-          <EventsData
+          <p className="text-heading4">Events from {name}</p>
+          <GroupEventsData
             eventsData={eventsData}
             isLoading={isLoading}
             error={error}
@@ -279,7 +245,10 @@ function GroupData({ group }: { group: GroupData }) {
 }
 
 export function getSingleGroupRequestOptions(groupId: string): RequestInit {
-  return { next: { tags: ["groups", groupId], revalidate: 60 * 5 } };
+  return {
+    cache: "force-cache",
+    next: { tags: ["group", groupId], revalidate: 60 * 5 },
+  };
 }
 
 function _GroupPage({ params }: { params: { groupId: string } }) {
@@ -288,7 +257,10 @@ function _GroupPage({ params }: { params: { groupId: string } }) {
     data: group,
     error,
     isLoading,
-  } = useSWR<GroupData>([`/groups/${groupId}`, getSingleGroupRequestOptions(groupId)]);
+  } = useSWR<GroupData>([
+    `/groups/${groupId}`,
+    getSingleGroupRequestOptions(groupId),
+  ]);
 
   if (isLoading) return <GroupLoading />;
   if (error) return <div>Error loading group</div>;

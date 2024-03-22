@@ -235,7 +235,7 @@ const _Map = () => {
     ? `?${selectedStateQuery}`
     : "";
 
-  const requestOptions: RequestInit = {
+  const fetchOptions: RequestInit = {
     next: { tags: ["groups", queryString], revalidate: 60 * 5 },
     cache: "force-cache",
   };
@@ -243,7 +243,7 @@ const _Map = () => {
     data: groups,
     error,
     isLoading: isLoadingGroups,
-  } = useSWR<GroupData[], any>([`/groups${queryString}`, requestOptions]);
+  } = useSWR<GroupData[], any>([`/groups${queryString}`, fetchOptions]);
 
   useEffect(() => {
     /* 

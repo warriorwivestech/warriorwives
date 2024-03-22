@@ -25,7 +25,10 @@ import Tags from "../common/tags";
 import IconText from "../common/icontext";
 import { preload } from "swr";
 import { fetcher } from "@/app/providers/swrProvider";
-import { getSingleGroupRequestOptions } from "@/app/groups/[groupId]/page";
+import {
+  getGroupEventsRequestOptions,
+  getSingleGroupRequestOptions,
+} from "@/app/groups/[groupId]/page";
 
 interface GroupCardProps {
   id: number;
@@ -64,6 +67,10 @@ export default function GroupCard({
       onMouseEnter={() => {
         preload(
           [`/groups/${id}`, getSingleGroupRequestOptions(id.toString())],
+          fetcher
+        );
+        preload(
+          [`/groups/${id}/events`, getGroupEventsRequestOptions(id.toString())],
           fetcher
         );
       }}

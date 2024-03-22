@@ -8,13 +8,17 @@ import { Group } from "./types";
 import RecommendedGroupsLoading from "./loading";
 
 function _RecommendedGroups() {
+  const fetchOptions: RequestInit = {
+    cache: "force-cache",
+    next: { tags: ["groups", "recommended"], revalidate: 60 * 5 },
+  };
   const {
     data: groups,
     error,
     isLoading,
-  } = useSWR<Group[]>(["/groups/recommended"]);
+  } = useSWR<Group[]>(["/groups/recommended", fetchOptions]);
   if (isLoading) return <RecommendedGroupsLoading />;
-  if (error) return <div>Error...</div>;
+  if (error) return <div>Error loading recommended groups</div>;
   if (!groups)
     return (
       <div>You have joined all available groups based on your interests!</div>

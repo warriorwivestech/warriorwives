@@ -1,12 +1,7 @@
 // EventCards.tsx
 
-import {
-  Text,
-  Image,
-  Button,
-} from "@chakra-ui/react";
+import { Text, Image, Button } from "@chakra-ui/react";
 import Link from "next/link";
-import { EventType } from "@/app/types/events";
 import { FaLocationArrow } from "react-icons/fa";
 
 interface EventCardsProps {
@@ -36,7 +31,6 @@ export default function EventCards({
   groupId,
   longCard = false,
 }: EventCardsProps) {
-  const joinEventHandler = () => {};
   const displayPhotoUrl =
     displayPhoto || "https://startup.mp.gov.in/assets/img/img-not-found.png";
 
@@ -47,22 +41,10 @@ export default function EventCards({
     >
       <div className="bg-white rounded-xl p-4 flex flex-col gap-6">
         <div className="flex flex-row justify-between gap-4 w-[100%]">
-          {/* details */}
           <div className="flex flex-col gap-2 w-[100%]">
-            {/* dateTime */}
-            {/* "2024-02-08T12:00:00.000Z" convert this to "Feb 8, 2024, 12:00 PM" */}
             <p className="font-bold text-[14px] text-green-800 tracking-wider">
-              {new Date(dateTime).toLocaleString("en-US", {
-                month: "short",
-                day: "numeric",
-                year: "numeric",
-                hour: "numeric",
-                minute: "numeric",
-                hour12: true,
-              })}
+              {dateTime}
             </p>
-
-            {/* name */}
             <Text
               noOfLines={2}
               textOverflow="ellipsis"
@@ -71,7 +53,6 @@ export default function EventCards({
               {name}
             </Text>
 
-            {/* location */}
             <div className="flex flex-row gap-4 items-start text-gray-500">
               <FaLocationArrow
                 style={{

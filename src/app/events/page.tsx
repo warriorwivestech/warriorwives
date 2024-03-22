@@ -1,39 +1,34 @@
 import { Flex } from "@chakra-ui/react";
 import React from "react";
 import EventCards from "../components/EventCards";
-import { apiClient } from "../apiClient";
-import { Event } from "../api/groups/[groupId]/events/types";
+import { getJoinedEvents } from "../data/joinedEvents";
 
 export default async function EventsPage() {
-  const events: Event[] = await apiClient("/users/3/events", {
-    cache: "no-store",
-  });
+  // TODO: update this to use the user's actual id
+  const { data: events, error } = await getJoinedEvents(3);
+
+  const EventsData = () => {
+    if (error) return <div>Error loading events</div>;
+    if (!events || events.length === 0)
+      return <div>You have not joined any events yet.</div>;
+
+    return (
+      <Flex className="flex-col w-[100%]" gap={6}>
+        {events.map((event) => (
+          <EventCards
+            key={event.id}
+            {...event}
+          />
+        ))}
+      </Flex>
+    );
+  };
 
   return (
     <>
       <div className="flex flex-col gap-8">
         <p className="text-heading4">Joined events</p>
-        {events.length === 0 ? (
-          <p>No events joined yet</p>
-        ) : (
-          <Flex className="flex-col w-[100%]" gap={6}>
-            {events.map((event) => (
-              <EventCards
-                key={event.id}
-                id={event.id}
-                groupId={event.groupId}
-                name={event.name}
-                description={event.description}
-                displayPhoto={event.displayPhoto}
-                online={event.online}
-                meetingLink={event.meetingLink}
-                location={event.location}
-                dateTime={event.dateTime}
-                attendeesCount={event._count.attendees}
-              />
-            ))}
-          </Flex>
-        )}
+        <EventsData />
       </div>
     </>
   );
