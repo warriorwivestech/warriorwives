@@ -1,0 +1,10 @@
+# Build artifacts
+.next/
+_next/
+__tmp__/
+dist/
+node_modules/
+compiled/
+
+packages/next/src/bundles/webpack/packages/*.runtime.js
+packages/next/src/bundles/webpack/packages/lazy-compilation-*.js
