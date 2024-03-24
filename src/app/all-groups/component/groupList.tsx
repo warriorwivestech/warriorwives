@@ -1,8 +1,8 @@
-import DataTable from '@/app/components/DataTable'
-import React from 'react'
+import DataTable from "@/app/components/DataTable";
+import React from "react";
 
 export default function GroupList() {
-    return (
-        <DataTable />
-    )
+  // test linter
+
+  return <DataTable />;
 }
