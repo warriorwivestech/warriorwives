@@ -35,4 +35,6 @@ export type GroupData = {
   groupAdmin: boolean
   admins: string[]
   membersCount: number
+  password?: string
+  archived: boolean
 }

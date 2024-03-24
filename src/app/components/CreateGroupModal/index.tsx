@@ -22,6 +22,9 @@ import {
   Divider,
   SimpleGrid,
   Select,
+  InputRightElement,
+  InputGroup,
+  Switch,
 } from "@chakra-ui/react";
 import React, { ChangeEvent, useEffect, useState } from "react";
 import { FileUploader } from "react-drag-drop-files";
@@ -42,10 +45,15 @@ import { supabase } from "@/app/supabase";
 import { useRouter } from "next/navigation";
 import { apiClient } from "@/app/apiClient";
 import Image from "next/image";
+import { GroupData } from "@/app/api/groups/[groupId]/types";
 
-export function CreateGroupModal() {
+interface CreateGroupModalType {
+  data?: GroupData;
+}
+
+export function CreateGroupModal(props: CreateGroupModalType) {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [bannerImage, setBannerImage] = useState<FileWithPreview | null>(null);
+  const [bannerImage, setBannerImage] = useState<any | null>(null);
   const [bannerImageUrl, setBannerImageUrl] = useState<string | null>(null);
   const [dirty, setDirty] = useState<requiredGroupField>({
     name: false,
@@ -53,7 +61,7 @@ export function CreateGroupModal() {
     branchOfService: false,
     tags: false,
   });
-  const router = useRouter()
+  const router = useRouter();
 
   const [input, setInput] = useState<NewGroup>({
     name: "",
@@ -64,7 +72,27 @@ export function CreateGroupModal() {
     displayPhoto: "",
     branchOfService: [],
     tags: [],
+    password: "",
+    archived: false,
   });
+
+  useEffect(() => {
+    setBannerImage(props?.data?.displayPhoto as any);
+
+    setInput((prevInput: any) => ({
+      ...prevInput,
+      name: props?.data?.name || "",
+      description: props?.data?.description || "",
+      online: props?.data?.online || false,
+      displayPhoto: props?.data?.displayPhoto || "",
+      county: props?.data?.county || "",
+      state: props?.data?.state || "",
+      branchOfService: props?.data?.branchOfService || [],
+      tags: props?.data?.tags || [],
+      password: props?.data?.password || "",
+      archived: props?.data?.archived || false,
+    }));
+  }, [props?.data, isOpen]);
 
   const handleCloseModal = () => {
     onClose();
@@ -84,16 +112,30 @@ export function CreateGroupModal() {
       displayPhoto: "",
       branchOfService: [],
       tags: [],
+      password: "",
+      archived: false,
     });
   };
 
-  const handleInputChange = ({ e, inputType, multi, single }: any) => {
+  const handleInputChange = ({ e, inputType, multi, single, toggle }: any) => {
     // If multi selector
     if (multi) {
       let value;
       value = e?.map((e: any) => {
         return e?.label;
       });
+
+      setInput((prev) => ({
+        ...prev,
+        [inputType]: value,
+      }));
+
+      return;
+    }
+
+    if (toggle) {
+      let value;
+      value = e?.target?.checked;
 
       setInput((prev) => ({
         ...prev,
@@ -151,9 +193,10 @@ export function CreateGroupModal() {
       // generate random filepath using a hash
       const filePath = `group-banners/${Math.random()}-${file.name}`;
 
-      const { data, error } = await supabase.storage
+      const { data, error }: { data: any; error: any } = await supabase.storage
         .from("warrior-wives-test")
         .upload(filePath, file);
+
       if (error) {
         console.log("Error uploading file: ", error.message);
       } else {
@@ -175,7 +218,7 @@ export function CreateGroupModal() {
   };
 
   const handleSingleDelete = () => {
-    if (bannerImage) URL.revokeObjectURL(bannerImage.url);
+    if (bannerImage) URL.revokeObjectURL(bannerImage.url as any);
     setBannerImage(null);
   };
   const sample = [
@@ -246,9 +289,14 @@ export function CreateGroupModal() {
     return conditions.some((condition) => condition);
   };
 
+  const [show, setShow] = React.useState(false);
+  const handleClick = () => setShow(!show);
+
   return (
     <>
-      <Button onClick={onOpen}>Create new group</Button>
+      <Button onClick={onOpen}>
+        {props?.data ? `Edit group` : "Create new group"}
+      </Button>
 
       <Modal
         closeOnOverlayClick={false}
@@ -257,16 +305,48 @@ export function CreateGroupModal() {
       >
         <ModalOverlay />
         <ModalContent minW="900px">
-          <ModalHeader>Create new group</ModalHeader>
+          <ModalHeader>
+            {props?.data ? `Edit ${props?.data?.name}` : "Create new group"}
+          </ModalHeader>
           <ModalCloseButton />
           <ModalBody pb={6} gap={6} display={"flex"} flexDirection={"column"}>
+            <div>
+              <FormControl>
+                <FormLabel htmlFor="isChecked">Archieve group</FormLabel>
+                <Switch
+                  name="archived"
+                  checked={input?.archived}
+                  onChange={(e) =>
+                    handleInputChange({
+                      e: e,
+                      toggle: true,
+                      inputType: "archived",
+                    })
+                  }
+                />
+              </FormControl>
+            </div>
+
             {/* banner image */}
             <div className="flex flex-col gap-2">
               <FormLabel>Banner Image</FormLabel>
               <div className="flex flex-col justify-center w-[100%] items-center gap-6">
                 {bannerImage && (
                   <div className="flex flex-col gap-4 justify-center items-center">
-                    <Image src={bannerImage.url} alt={bannerImage.file.name} width={200} height={350} style={{ maxHeight: "350px", objectFit: "cover", borderRadius: "4px" }} />
+                    <Image
+                      src={(bannerImage as string) || (bannerImage?.url as any)}
+                      alt={
+                        (bannerImage as string) ||
+                        (bannerImage?.file.name as any)
+                      }
+                      width={200}
+                      height={350}
+                      style={{
+                        maxHeight: "350px",
+                        objectFit: "cover",
+                        borderRadius: "4px",
+                      }}
+                    />
                     <Button
                       onClick={() => handleSingleDelete()}
                       bgColor={"#FC8181 !important"}
@@ -342,6 +422,9 @@ export function CreateGroupModal() {
               <FormControl>
                 <MultiSelect
                   options={states}
+                  value={states.find(
+                    (option: { value: string }) => option.value === input?.state
+                  )}
                   placeholder="Select state"
                   onChange={(e: any) => handleStateChange(e)}
                   variant="outline"
@@ -354,6 +437,9 @@ export function CreateGroupModal() {
                 <MultiSelect
                   isDisabled={!selectedState}
                   options={filteredCounties}
+                  value={filteredCounties.find(
+                    (option) => option.County === input?.county
+                  )}
                   placeholder="Select county"
                   onChange={(e) =>
                     handleInputChange({
@@ -373,6 +459,7 @@ export function CreateGroupModal() {
               <FormControl isInvalid={isTagsError}>
                 <CreatableSelect
                   isMulti
+                  value={input?.tags.map((tag) => ({ label: tag, value: tag }))}
                   name="interest"
                   placeholder="Select interest"
                   variant="outline"
@@ -398,6 +485,9 @@ export function CreateGroupModal() {
                 <MultiSelect
                   name="branchOfService"
                   options={sample}
+                  value={sample.find(
+                    (option) => option.label === (input?.branchOfService as any)
+                  )}
                   placeholder="Select branch of service"
                   variant="outline"
                   useBasicStyles
@@ -424,6 +514,31 @@ export function CreateGroupModal() {
                 )}
               </FormControl>
             </div>
+
+            <div>
+              {/* password */}
+              <FormControl isInvalid={isNameError}>
+                <FormLabel as="legend">
+                  Do you want to lock the group with a password? (Optional)
+                </FormLabel>
+                <InputGroup size="md">
+                  {/* <FormLabel>Name</FormLabel> */}
+                  <Input
+                    placeholder="Password"
+                    type={show ? "text" : "password"}
+                    value={input?.password}
+                    onChange={(e) =>
+                      handleInputChange({ e: e, inputType: "password" })
+                    }
+                  />
+                  <InputRightElement width="4.5rem">
+                    <Button h="1.75rem" size="sm" onClick={handleClick}>
+                      {show ? "Hide" : "Show"}
+                    </Button>
+                  </InputRightElement>
+                </InputGroup>
+              </FormControl>
+            </div>
           </ModalBody>
 
           <ModalFooter>
@@ -431,8 +546,6 @@ export function CreateGroupModal() {
               mr={3}
               isDisabled={isButtonDisabled()}
               onClick={async () => {
-                console.log(input, bannerImageUrl);
-
                 const groupData = await apiClient("/groups", {
                   method: "POST",
                   headers: {
@@ -441,7 +554,7 @@ export function CreateGroupModal() {
                   body: JSON.stringify({
                     ...input,
                     displayPhoto: bannerImageUrl,
-                    userId: 3
+                    userId: 3,
                   }),
                 });
                 console.log(groupData);

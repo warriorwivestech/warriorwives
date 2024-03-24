@@ -28,7 +28,7 @@ import {
   Divider,
   SimpleGrid,
 } from "@chakra-ui/react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FileUploader } from "react-drag-drop-files";
 import { MdDelete } from "react-icons/md";
 import { RiAdminFill } from "react-icons/ri";
@@ -38,18 +38,37 @@ import { apiClient } from "@/app/apiClient";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 
+interface EventDetailsProps {
+  id: number;
+  name: string;
+  description: string;
+  displayPhoto: string | null;
+  location: string | null;
+  meetingLink: string | null;
+  dateTime: string;
+  online: boolean;
+  attendees: string[];
+  photos: string[];
+  organizers: string[];
+  joined: boolean;
+  groupName: string;
+  groupId: number;
+}
+
 export function CreateEventModal({
   groupName,
   groupId,
+  eventData
 }: {
   groupName: string;
   groupId: number;
+  eventData?: EventDetailsProps
 }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const [bannerImage, setBannerImage] = useState<FileWithPreview | null>(null);
+  const [bannerImage, setBannerImage] = useState<any | null>(null);
   const [bannerImageUrl, setBannerImageUrl] = useState<string | null>(null);
-  const [photos, setPhotos] = useState<FileWithPreview[]>([]);
+  const [photos, setPhotos] = useState<any[] | string[]>([]);
   const [photosUrl, setPhotosUrl] = useState<string[]>([]);
   const [dirty, setDirty] = useState<requiredEventField>({
     name: false,
@@ -88,6 +107,24 @@ export function CreateEventModal({
       photos: [],
     });
   };
+
+  useEffect(() => {
+    setBannerImage(eventData?.displayPhoto as string);
+    setPhotos(eventData?.photos as string[])
+
+    setInput((prevInput: any) => ({
+      ...prevInput,
+      name: eventData?.name,
+      description: eventData?.description,
+      location: eventData?.location,
+      online: eventData?.online,
+      link: eventData?.meetingLink,
+      dateTime: eventData?.dateTime,
+      displayPhoto: eventData?.displayPhoto,
+      photos: eventData?.photos
+
+    }));
+  }, [eventData, isOpen]);
 
   const getFormattedCurrentDateTime = () => {
     const now = new Date();
@@ -145,7 +182,7 @@ export function CreateEventModal({
       // generate random filepath using a hash
       const filePath = `event-banners/${Math.random()}-${file.name}`;
 
-      const { data, error } = await supabase.storage
+      const { data, error }: { data: any, error: any } = await supabase.storage
         .from("warrior-wives-test")
         .upload(filePath, file);
       if (error) {
@@ -186,7 +223,7 @@ export function CreateEventModal({
     newFilesWithUrls.forEach(async (file) => {
       const filePath = `event-photos/${Math.random()}-${file.file.name}`;
 
-      const { data, error } = await supabase.storage
+      const { data, error }: { data: any, error: any } = await supabase.storage
         .from("warrior-wives-test")
         .upload(filePath, file.file);
       if (error) {
@@ -239,7 +276,7 @@ export function CreateEventModal({
         onClick={onOpen}
         className="bg-black text-white hover:text-black mt-4"
       >
-        <IconText icon={RiAdminFill}>Create a new event</IconText>
+        <IconText icon={RiAdminFill}>{eventData?.name ? `Edit event ` : "Create new event"}</IconText>
       </Button>
       <Modal
         closeOnOverlayClick={false}
@@ -248,7 +285,7 @@ export function CreateEventModal({
       >
         <ModalOverlay />
         <ModalContent minW="900px">
-          <ModalHeader>Create new event for {groupName}</ModalHeader>
+          <ModalHeader>{eventData?.name ? `Edit ${eventData?.name} ` : `Create new event for ${groupName}`}</ModalHeader>
           <ModalCloseButton />
           <ModalBody pb={6} gap={6} display={"flex"} flexDirection={"column"}>
             {/* banner image */}
@@ -258,8 +295,11 @@ export function CreateEventModal({
                 {bannerImage && (
                   <div className="flex flex-col gap-4 justify-center items-center">
                     <Image
-                      src={bannerImage.url}
-                      alt={bannerImage.file.name}
+                      src={(bannerImage as string) || (bannerImage?.url as any)}
+                      alt={
+                        (bannerImage as string) ||
+                        (bannerImage?.file.name as any)
+                      }
                       width={200}
                       height={350}
                       style={{
@@ -315,7 +355,7 @@ export function CreateEventModal({
                 <Input
                   placeholder="Meeting Link"
                   type="datetime-local"
-                  value={input?.dateTime}
+                  value={input?.dateTime?.slice(0, 16)}
                   min={minDateTime}
                   onChange={(e) =>
                     handleInputChange({ e: e, inputType: "dateTime" })
@@ -362,8 +402,8 @@ export function CreateEventModal({
                       >
                         {/* <p>File name: {fileObj.file.name}</p> */}
                         <Image
-                          src={photosObj.url}
-                          alt={photosObj.file.name}
+                          src={photosObj || photosObj.url}
+                          alt={photosObj || photosObj.file.name}
                           width={200}
                           height={100}
                           style={{ objectFit: "cover", borderRadius: "4px" }}

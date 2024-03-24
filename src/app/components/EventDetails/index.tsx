@@ -12,6 +12,7 @@ import { FaPeopleGroup } from "react-icons/fa6";
 import OtherEvents from "./OtherEvents";
 import { apiClient } from "@/app/apiClient";
 import { useState } from "react";
+import { CreateEventModal } from "../CreateEventModal";
 
 // Define the props interface
 interface EventDetailsProps {
@@ -202,9 +203,8 @@ export default function EventDetails({
             <FaPeopleGroup
               style={{ minHeight: "18px", minWidth: "18px", marginTop: "4px" }}
             />
-            <p>{`Organized by ${
-              organizersString ? organizersString : "Jackson"
-            }`}</p>
+            <p>{`Organized by ${organizersString ? organizersString : "Jackson"
+              }`}</p>
           </div>
 
           <div className="flex flex-row gap-4 items-start">
@@ -248,6 +248,24 @@ export default function EventDetails({
             </div>
           )}
         </div>
+
+        {/* TODO: Only show for admin */}
+        <CreateEventModal groupName={groupName} groupId={groupId} eventData={{
+          id,
+          name,
+          description,
+          displayPhoto,
+          location,
+          meetingLink,
+          online,
+          dateTime,
+          attendees,
+          photos,
+          organizers,
+          joined,
+          groupName,
+          groupId,
+        }} />
 
         <Divider />
         {joined || justJoined ? (

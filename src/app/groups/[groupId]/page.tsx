@@ -22,18 +22,20 @@ import { BsPersonRaisedHand } from "react-icons/bs";
 import { RiBaseStationFill } from "react-icons/ri";
 import { SWRProvider } from "@/app/providers/swrProvider";
 import useSWR, { SWRResponse } from "swr";
-import { GroupData } from "@/app/api/groups/[groupId]/types";
+import { GroupData as GroupDataType } from "@/app/api/groups/[groupId]/types";
 import GroupLoading from "./loading";
 import { CreateEventModal } from "@/app/components/CreateEventModal";
 import { apiClient } from "@/app/apiClient";
 import GroupEventsData from "./components/GroupEventsData";
 import { GroupEvents } from "@/app/api/groups/[groupId]/events/route";
+import { CreateGroupModal } from "@/app/components/CreateGroupModal";
+
 
 function GroupData({
   group,
   events,
 }: {
-  group: GroupData;
+  group: GroupDataType;
   events: SWRResponse<GroupEvents, any, any>;
 }) {
   const [isSticky, setIsSticky] = useState(false);
@@ -126,9 +128,8 @@ function GroupData({
               className="w-full object-cover h-64 md:h-96"
             />
             <Box
-              className={`${
-                isSticky && desktopSize ? "bg-white rounded-xl border" : ""
-              } ${!desktopSize && "bg-white"}  lg:fixed p-7 rounded-xl `}
+              className={`${isSticky && desktopSize ? "bg-white rounded-xl border" : ""
+                } ${!desktopSize && "bg-white"}  lg:fixed p-7 rounded-xl `}
               transition={
                 "width 0.25s ease, background 0.5s ease, top 0.2s ease"
               }
@@ -138,10 +139,9 @@ function GroupData({
                   : "48px"
               }
               right="48px"
-              width={`${
-                desktopSize &&
+              width={`${desktopSize &&
                 (cardWidth > cardMinWidth ? cardWidth : cardMinWidth)
-              }%`}
+                }%`}
             >
               <Box>
                 <Stack spacing={5}>
@@ -185,8 +185,14 @@ function GroupData({
                     </IconText>
                   </Stack>
 
-                  {groupAdmin ? (
-                    <CreateEventModal groupName={name} groupId={id} />
+
+                  {!groupAdmin ? (
+                    // TODO: change to super admin to edit group only
+                    <div className="flex flex-col gap-2">
+                      <CreateGroupModal data={group} />
+                      <CreateEventModal groupName={name} groupId={id} />
+                    </div>
+
                   ) : joined || justJoined ? (
                     <Button
                       rounded={"md"}
@@ -213,10 +219,9 @@ function GroupData({
             <p className="text-heading5">Description</p>
             <Text
               textOverflow={"ellipsis"}
-              width={`${
-                desktopSize &&
+              width={`${desktopSize &&
                 (descWidth > descMinWidth ? descWidth : descMinWidth)
-              }%`}
+                }%`}
               transition={"width 0.25s ease"}
               ref={descriptionRef}
               className="break-words"
@@ -254,7 +259,7 @@ function _GroupPage({ params }: { params: { groupId: string } }) {
     data: group,
     error,
     isLoading,
-  } = useSWR<GroupData>([
+  } = useSWR<GroupDataType>([
     `/groups/${groupId}`,
     getSingleGroupRequestOptions(groupId),
   ]);

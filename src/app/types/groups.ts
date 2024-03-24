@@ -22,6 +22,8 @@ export interface NewGroup {
   state: string;
   branchOfService: string[];
   tags: string[];
+  password?: string
+  archived: boolean
 }
 
 export interface requiredGroupField {
