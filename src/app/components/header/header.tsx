@@ -27,7 +27,7 @@ export default function NavBar() {
   const bgColor = useColorModeValue("white", "gray.800");
   const color = useColorModeValue("gray.600", "white");
   const borderColor = useColorModeValue("gray.200", "gray.900");
-  
+
   if (pathname === "/login") return;
 
   return (
@@ -206,4 +206,8 @@ const NAV_ITEMS = [
     label: "My Events",
     href: "/events",
   },
+  {
+    label: "All Groups",
+    href: '/all-groups'
+  }
 ];

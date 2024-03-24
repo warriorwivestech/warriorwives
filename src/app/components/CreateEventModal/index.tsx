@@ -392,10 +392,10 @@ export function CreateEventModal({
               <FormLabel>Images</FormLabel>
 
               <div className="flex flex-col justify-center w-[100%] items-center gap-6">
-                {photos.length > 0 && (
+                {photos?.length > 0 && (
                   <SimpleGrid columns={3} spacing={10}>
                     {/* <button onClick={logFiles}>Log Uploaded Pictures</button> */}
-                    {photos.map((photosObj, index) => (
+                    {photos?.map((photosObj, index) => (
                       <div
                         key={index}
                         className="flex flex-col gap-4 justify-center items-center"
