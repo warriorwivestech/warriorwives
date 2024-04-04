@@ -1,4 +1,4 @@
-import prisma from "@/app/prisma";
+import prisma from "@/prisma";
 import { parseGroupData } from "./helpers";
 
 function getGroupData(groupId: number) {
@@ -55,7 +55,7 @@ export async function GET(
   { params }: { params: { groupId: string } }
 ) {
   // TODO: get userId from session
-  const groupId = Number(params.groupId)
+  const groupId = Number(params.groupId);
 
   const [groupData, memberData, adminData] = await Promise.all([
     getGroupData(groupId),
@@ -63,7 +63,9 @@ export async function GET(
     getAdminData(groupId),
   ]);
 
-  const parsedData = groupData ? parseGroupData(groupData, memberData, adminData) : groupData;
+  const parsedData = groupData
+    ? parseGroupData(groupData, memberData, adminData)
+    : groupData;
 
   return Response.json(parsedData);
 }

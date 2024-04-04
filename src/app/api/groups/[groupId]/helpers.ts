@@ -1,4 +1,4 @@
-import { parseBranchOfService } from "@/app/data/helpers";
+import { parseBranchOfService } from "@/data/helpers";
 import { GroupResponse } from "./types";
 
 export function parseGroupData(

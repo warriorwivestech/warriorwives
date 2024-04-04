@@ -1,6 +1,6 @@
 "use client";
 
-import Tags from "@/app/components/common/tags";
+import Tags from "@/components/common/tags";
 import {
   Button,
   Flex,
@@ -17,19 +17,18 @@ import {
 import { MdPeopleAlt } from "react-icons/md";
 import React, { useEffect, useState, useRef } from "react";
 import { FaMapMarkerAlt } from "react-icons/fa";
-import IconText from "@/app/components/common/icontext";
+import IconText from "@/components/common/icontext";
 import { BsPersonRaisedHand } from "react-icons/bs";
 import { RiBaseStationFill } from "react-icons/ri";
-import { SWRProvider } from "@/app/providers/swrProvider";
+import { SWRProvider } from "@/providers/swrProvider";
 import useSWR, { SWRResponse } from "swr";
 import { GroupData as GroupDataType } from "@/app/api/groups/[groupId]/types";
 import GroupLoading from "./loading";
-import { CreateEventModal } from "@/app/components/CreateEventModal";
-import { apiClient } from "@/app/apiClient";
+import { CreateEventModal } from "@/components/CreateEventModal";
+import { apiClient } from "@/apiClient";
 import GroupEventsData from "./components/GroupEventsData";
 import { GroupEvents } from "@/app/api/groups/[groupId]/events/route";
-import { CreateGroupModal } from "@/app/components/CreateGroupModal";
-
+import { CreateGroupModal } from "@/components/CreateGroupModal";
 
 function GroupData({
   group,
@@ -128,8 +127,9 @@ function GroupData({
               className="w-full object-cover h-64 md:h-96"
             />
             <Box
-              className={`${isSticky && desktopSize ? "bg-white rounded-xl border" : ""
-                } ${!desktopSize && "bg-white"}  lg:fixed p-7 rounded-xl `}
+              className={`${
+                isSticky && desktopSize ? "bg-white rounded-xl border" : ""
+              } ${!desktopSize && "bg-white"}  lg:fixed p-7 rounded-xl `}
               transition={
                 "width 0.25s ease, background 0.5s ease, top 0.2s ease"
               }
@@ -139,9 +139,10 @@ function GroupData({
                   : "48px"
               }
               right="48px"
-              width={`${desktopSize &&
+              width={`${
+                desktopSize &&
                 (cardWidth > cardMinWidth ? cardWidth : cardMinWidth)
-                }%`}
+              }%`}
             >
               <Box>
                 <Stack spacing={5}>
@@ -185,14 +186,12 @@ function GroupData({
                     </IconText>
                   </Stack>
 
-
                   {!groupAdmin ? (
                     // TODO: change to super admin to edit group only
                     <div className="flex flex-col gap-2">
                       <CreateGroupModal data={group} />
                       <CreateEventModal groupName={name} groupId={id} />
                     </div>
-
                   ) : joined || justJoined ? (
                     <Button
                       rounded={"md"}
@@ -219,9 +218,10 @@ function GroupData({
             <p className="text-heading5">Description</p>
             <Text
               textOverflow={"ellipsis"}
-              width={`${desktopSize &&
+              width={`${
+                desktopSize &&
                 (descWidth > descMinWidth ? descWidth : descMinWidth)
-                }%`}
+              }%`}
               transition={"width 0.25s ease"}
               ref={descriptionRef}
               className="break-words"

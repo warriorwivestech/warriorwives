@@ -1,5 +1,5 @@
-import { parseBranchOfService } from "@/app/data/helpers";
-import prisma from "@/app/prisma";
+import { parseBranchOfService } from "@/data/helpers";
+import prisma from "@/prisma";
 
 // get recommended groups based on user interests
 export async function GET(request: Request) {

@@ -1,4 +1,4 @@
-import prisma from "@/app/prisma";
+import prisma from "@/prisma";
 
 export async function GET(
   request: Request,

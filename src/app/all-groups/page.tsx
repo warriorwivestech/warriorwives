@@ -1,8 +1,6 @@
-import React from 'react'
-import GroupList from './component/groupList'
+import React from "react";
+import GroupList from "./components/groupList";
 
 export default function AllGroups() {
-    return (
-        <GroupList />
-    )
+  return <GroupList />;
 }

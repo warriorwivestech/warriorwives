@@ -1,5 +1,5 @@
-import { parseBranchOfService } from "@/app/data/helpers";
-import prisma from "@/app/prisma";
+import { parseBranchOfService } from "@/data/helpers";
+import prisma from "@/prisma";
 
 // get groups based on location
 export async function GET(request: Request) {
@@ -118,7 +118,7 @@ export async function POST(request: Request) {
       .trim();
   });
 
-  console.log("trying to create group...")
+  console.log("trying to create group...");
   const groupData = await prisma.group.create({
     data: {
       name,
@@ -147,7 +147,7 @@ export async function POST(request: Request) {
       },
     },
   });
-  console.log("group created", groupData)
+  console.log("group created", groupData);
   // const tagsData = await prisma.tagsOnGroups.createMany({
   //   data: parsedTags.map((tag: string) => {
   //     return {

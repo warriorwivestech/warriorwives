@@ -1,6 +1,6 @@
 import { Event } from "@/app/api/events/[eventId]/route";
-import { apiClient } from "@/app/apiClient";
-import EventDetails from "@/app/components/EventDetails";
+import { apiClient } from "@/apiClient";
+import EventDetails from "@/components/EventDetails";
 import { Avatar } from "@chakra-ui/react";
 import React from "react";
 
@@ -9,7 +9,9 @@ export default async function EventPage({
 }: {
   params: { groupId: string; eventId: string };
 }) {
-  const event: Event = await apiClient(`/events/${params?.eventId}`, { cache: "no-store" });
+  const event: Event = await apiClient(`/events/${params?.eventId}`, {
+    cache: "no-store",
+  });
 
   return (
     <div className="flex flex-col gap-12">
@@ -29,9 +31,7 @@ export default async function EventPage({
         {/* Header */}
         <div className="bg-white py-[24px] w-[100%] absolute left-0 top-[60px]">
           <div className="max-w-[1440px] m-auto flex gap-4 flex-col px-[24px] md:px-[48px]">
-            <p className="text-heading4 font-bold">
-              {event.name}
-            </p>
+            <p className="text-heading4 font-bold">{event.name}</p>
 
             <div className="flex flex-row gap-4">
               <Avatar name="Host" src={""} />

@@ -12,7 +12,7 @@
 //   attendees    AttendeesOnEvents[]
 //   organizers   OrganizersOnEvents[]
 
-import prisma from "@/app/prisma";
+import prisma from "@/prisma";
 
 export async function POST(request: Request) {
   const req = await request.json();
@@ -26,7 +26,7 @@ export async function POST(request: Request) {
     photos,
     meetingLink,
     userId,
-    displayPhoto
+    displayPhoto,
   } = req;
   const parsedDateTime = new Date(dateTime);
 

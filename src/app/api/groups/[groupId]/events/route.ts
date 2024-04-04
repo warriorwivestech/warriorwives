@@ -1,4 +1,4 @@
-import prisma from "@/app/prisma";
+import prisma from "@/prisma";
 
 export async function GET(
   _request: Request,
@@ -54,4 +54,4 @@ async function queryGroupEvents(groupId: number) {
   return parsedEvents;
 }
 
-export type GroupEvents = Awaited<ReturnType<typeof queryGroupEvents>>
+export type GroupEvents = Awaited<ReturnType<typeof queryGroupEvents>>;

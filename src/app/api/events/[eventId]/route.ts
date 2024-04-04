@@ -1,4 +1,4 @@
-import prisma from "@/app/prisma";
+import prisma from "@/prisma";
 
 export type Event = {
   id: number;
@@ -67,7 +67,7 @@ function getEventData(eventId: number) {
         select: {
           name: true,
         },
-      }
+      },
     },
   });
 }

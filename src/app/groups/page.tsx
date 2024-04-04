@@ -1,7 +1,7 @@
-import RecommendedGroups from "../components/RecommendedGroups/RecommendedGroups";
-import GroupCard from "../components/GroupCards";
+import RecommendedGroups from "../../components/RecommendedGroups/RecommendedGroups";
+import GroupCard from "../../components/GroupCards";
 import { Divider, SimpleGrid } from "@chakra-ui/react";
-import { getJoinedGroups } from "../data/joinedGroups";
+import { getJoinedGroups } from "../../data/joinedGroups";
 
 export default async function GroupsPage() {
   // TODO: update this to use the user's actual id
