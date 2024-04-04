@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import "./globals.css";
 import NavBar from "./components/header/header";
 import Footer from "./components/footer/footer";
 import { ChakraProviders } from "./providers/chakraProvider";
 import PageLayout from "./components/pagelayout/pagelayout";
+import { ClerkProvider } from "@clerk/nextjs";
+import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -23,14 +24,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning suppressContentEditableWarning>
-      <body className={inter.className}>
-        <ChakraProviders>
-          <NavBar />
-          <PageLayout>{children}</PageLayout>
-          <Footer />
-        </ChakraProviders>
-      </body>
-    </html>
+    <ClerkProvider>
+      <html lang="en" suppressHydrationWarning suppressContentEditableWarning>
+        <body className={inter.className}>
+          <ChakraProviders>
+            <NavBar />
+            <PageLayout>{children}</PageLayout>
+            <Footer />
+          </ChakraProviders>
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }
