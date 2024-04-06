@@ -1,12 +1,3 @@
-import { ClerkLoaded, ClerkLoading, SignIn } from "@clerk/nextjs";
-
 export default function SignInPage() {
-  return (
-    <>
-      <ClerkLoading>Loading ...</ClerkLoading>
-      <ClerkLoaded>
-        <SignIn />
-      </ClerkLoaded>
-    </>
-  );
+  return <div>Sign In Page</div>;
 }
