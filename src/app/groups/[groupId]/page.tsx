@@ -205,7 +205,7 @@ function GroupData({
                       rounded={"md"}
                       className="bg-black text-white hover:text-black w-full mt-4"
                       onClick={joinEventHandler}
-                      disabled={isJoining}
+                      isDisabled={isJoining}
                     >
                       {isJoining ? <Spinner /> : "Join Group"}
                     </Button>

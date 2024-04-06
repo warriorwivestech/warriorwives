@@ -121,7 +121,7 @@ export default function EventDetails({
         {/* Attendees */}
         {attendees && (
           <div className="flex flex-col gap-4">
-            <p className="text-heading5">Attendees {attendees.length}</p>
+            <p className="text-heading5">{attendees.length} Attendees</p>
             <div className="bg-white rounded-xl w-[100%] flex flex-row p-6 gap-4 overflow-x-scroll">
               {attendees.map((attendee) => {
                 return (
@@ -147,7 +147,7 @@ export default function EventDetails({
         {/* Pictures */}
         {photos.length > 0 && (
           <div className="flex flex-col gap-4">
-            <p className="text-heading5">Pictures {photos.length}</p>
+            <p className="text-heading5">{photos.length} Pictures</p>
             <div className="rounded-xl w-[100%] flex flex-row gap-4 overflow-x-scroll">
               {photos.map((photos, index) => {
                 return (
@@ -282,7 +282,7 @@ export default function EventDetails({
             rounded={"md"}
             className="bg-black text-white hover:text-black"
             onClick={joinEventHandler}
-            disabled={isJoining}
+            isDisabled={isJoining}
           >
             {isJoining ? <Spinner /> : "Join Event"}
           </Button>

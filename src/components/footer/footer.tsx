@@ -102,7 +102,7 @@ export default function Footer() {
           align={{ md: "center" }}
         >
           <Text>
-            © 2023 ReactEnjoyers for Warrior Wives. All rights reserved
+            © 2024 ReactEnjoyers for Warrior Wives. All rights reserved
           </Text>
         </Container>
       </Box>
