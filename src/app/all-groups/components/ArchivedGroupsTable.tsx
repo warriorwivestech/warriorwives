@@ -11,16 +11,21 @@ import {
 import { AllGroupsDataType } from "@/data/allGroups";
 import Link from "next/link";
 
-interface AllGroupsTableProps {
+interface ArchivedGroupsTableProps {
   groups: AllGroupsDataType | undefined;
   error: any;
 }
 
-export default function AllGroupsTable({ groups, error }: AllGroupsTableProps) {
+export default function ArchivedGroupsTable({
+  groups,
+  error,
+}: ArchivedGroupsTableProps) {
   if (error) return <div>Error loading groups</div>;
   if (!groups || groups.length === 0) return <div>No groups found.</div>;
 
-  const sortedGroups = groups.sort((a, b) => a.id - b.id);
+  const sortedGroups = groups
+    .sort((a, b) => a.id - b.id)
+    .filter((group) => group.archived);
 
   return (
     <Table>
@@ -29,7 +34,6 @@ export default function AllGroupsTable({ groups, error }: AllGroupsTableProps) {
         <TableRow>
           <TableHead>ID</TableHead>
           <TableHead>Name</TableHead>
-          <TableHead>Status</TableHead>
           <TableHead>Branch of Service</TableHead>
           <TableHead>County</TableHead>
           <TableHead>State</TableHead>
@@ -44,7 +48,6 @@ export default function AllGroupsTable({ groups, error }: AllGroupsTableProps) {
             <TableRow key={group.id}>
               <TableCell>{group.id}</TableCell>
               <TableCell>{group.name}</TableCell>
-              <TableCell>{group.archived ? "Archived" : "Active"}</TableCell>
               <TableCell>{group.branchOfService}</TableCell>
               <TableCell>{group.county}</TableCell>
               <TableCell>{group.state}</TableCell>

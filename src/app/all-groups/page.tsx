@@ -2,6 +2,8 @@ import React from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getAllGroups } from "@/data/allGroups";
 import AllGroupsTable from "./components/AllGroupsTable";
+import ActiveGroupsTable from "./components/ActiveGroupsTable";
+import ArchivedGroupsTable from "./components/ArchivedGroupsTable";
 
 export default async function AllGroups() {
   const { data: groups, error } = await getAllGroups();
@@ -16,8 +18,12 @@ export default async function AllGroups() {
       <TabsContent value="all-groups">
         <AllGroupsTable groups={groups} error={error} />
       </TabsContent>
-      <TabsContent value="active">Active</TabsContent>
-      <TabsContent value="archived">Active</TabsContent>
+      <TabsContent value="active">
+        <ActiveGroupsTable groups={groups} error={error} />
+      </TabsContent>
+      <TabsContent value="archived">
+        <ArchivedGroupsTable groups={groups} error={error} />
+      </TabsContent>
     </Tabs>
   );
 }
