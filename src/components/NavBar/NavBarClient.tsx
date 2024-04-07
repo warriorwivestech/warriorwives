@@ -5,7 +5,6 @@ import {
   Flex,
   Text,
   IconButton,
-  Button,
   Stack,
   Collapse,
   Popover,
@@ -20,7 +19,7 @@ import { CreateGroupModal } from "../CreateGroupModal";
 import { UserDataType } from "@/data/user";
 import UnauthenticatedNavBar from "./UnauthenticatedNavBar";
 import Link from "next/link";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import UserAvatar from "./UserAvatar";
 
 const NAV_ITEMS = [
   {
@@ -113,15 +112,11 @@ export default function NavBarClient({ user }: NavBarClientProps) {
         >
           {/* TODO: remove this */}
           {desktopSize && <CreateGroupModal />}
-          <Avatar className={desktopSize ? "mr-8" : ""}>
-            <AvatarImage src={userData.image as string} />
-            <AvatarFallback>
-              {userData.name
-                ?.split(" ")
-                .map((name) => name[0])
-                .join("")}
-            </AvatarFallback>
-          </Avatar>
+          <UserAvatar
+            name={userData.name}
+            image={userData.image}
+            desktopSize={desktopSize}
+          />
         </Stack>
       </Flex>
 
