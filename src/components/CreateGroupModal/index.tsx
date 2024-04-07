@@ -45,10 +45,10 @@ import { supabase } from "@/supabase";
 import { useRouter } from "next/navigation";
 import { apiClient } from "@/apiClient";
 import Image from "next/image";
-import { GroupData } from "@/app/api/groups/[groupId]/types";
+import { GroupDataType } from "@/app/api/groups/[groupId]/route";
 
 interface CreateGroupModalType {
-  data?: GroupData;
+  data?: GroupDataType;
 }
 
 export function CreateGroupModal(props: CreateGroupModalType) {

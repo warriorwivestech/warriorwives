@@ -1,7 +1,9 @@
 import prisma from "@/prisma";
-import { parseGroupData } from "./helpers";
+import { auth } from "@/auth";
+import { Prisma } from "@prisma/client";
+import { parseBranchOfService } from "@/data/helpers";
 
-function getGroupData(groupId: number) {
+function queryGroup(groupId: number) {
   return prisma.group.findUnique({
     where: {
       id: groupId,
@@ -24,17 +26,21 @@ function getGroupData(groupId: number) {
     },
   });
 }
+type UnparsedGroup = Prisma.PromiseReturnType<typeof queryGroup>;
 
-function getMemberData(groupId: number, userId: number) {
+function queryMemberJoined(groupId: number, userEmail: string) {
   return prisma.membersOnGroups.findFirst({
     where: {
       groupId,
-      userId,
+      user: {
+        email: userEmail,
+      },
     },
   });
 }
+type UnparsedMemberJoined = Prisma.PromiseReturnType<typeof queryMemberJoined>;
 
-function getAdminData(groupId: number) {
+function queryGroupAdmins(groupId: number) {
   return prisma.membersOnGroups.findMany({
     where: {
       groupId,
@@ -49,19 +55,52 @@ function getAdminData(groupId: number) {
     },
   });
 }
+type UnparsedGroupAdmins = Prisma.PromiseReturnType<typeof queryGroupAdmins>;
+
+function parseGroupData(
+  groupData: UnparsedGroup,
+  memberData: UnparsedMemberJoined,
+  adminData: UnparsedGroupAdmins
+) {
+  if (!groupData) {
+    return null;
+  }
+
+  return {
+    ...groupData,
+    password: undefined,
+    branchOfService: parseBranchOfService(groupData.branchOfService),
+    tags: groupData.tags.map((tag: any) => tag.interest.name),
+    membersCount: groupData._count.members,
+    joined: memberData ? true : false,
+    groupAdmin: memberData ? memberData.admin : false,
+    admins: adminData.map((admin) => admin.user.name),
+  };
+}
+
+export type GroupDataType = NonNullable<ReturnType<typeof parseGroupData>>;
 
 export async function GET(
   request: Request,
   { params }: { params: { groupId: string } }
 ) {
-  // TODO: get userId from session
+  const session = await auth();
+  const user = session?.user;
+  if (!user) {
+    throw new Error("User not authenticated");
+  }
+
   const groupId = Number(params.groupId);
 
   const [groupData, memberData, adminData] = await Promise.all([
-    getGroupData(groupId),
-    getMemberData(groupId, 3),
-    getAdminData(groupId),
+    queryGroup(groupId),
+    queryMemberJoined(groupId, user.email as string),
+    queryGroupAdmins(groupId),
   ]);
+
+  if (!groupData) {
+    return Response.json(null);
+  }
 
   const parsedData = groupData
     ? parseGroupData(groupData, memberData, adminData)

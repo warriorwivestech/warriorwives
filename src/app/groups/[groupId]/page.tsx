@@ -2,7 +2,6 @@
 
 import Tags from "@/components/common/tags";
 import {
-  Button,
   Flex,
   SimpleGrid,
   Text,
@@ -22,20 +21,21 @@ import { BsPersonRaisedHand } from "react-icons/bs";
 import { RiBaseStationFill } from "react-icons/ri";
 import { SWRProvider } from "@/providers/swrProvider";
 import useSWR, { SWRResponse } from "swr";
-import { GroupData as GroupDataType } from "@/app/api/groups/[groupId]/types";
 import GroupLoading from "./loading";
-import { CreateEventModal } from "@/components/CreateEventModal";
-import { apiClient } from "@/apiClient";
 import GroupEventsData from "./components/GroupEventsData";
 import { GroupEvents } from "@/app/api/groups/[groupId]/events/route";
-import { CreateGroupModal } from "@/components/CreateGroupModal";
+import { GroupDataType } from "@/app/api/groups/[groupId]/route";
+import GroupActionButtons from "./components/GroupActionButtons";
+import { UserType } from "@/app/api/user/route";
 
 function GroupData({
   group,
   events,
+  user,
 }: {
   group: GroupDataType;
   events: SWRResponse<GroupEvents, any, any>;
+  user: SWRResponse<UserType, any, any>;
 }) {
   const [isSticky, setIsSticky] = useState(false);
   const [scrollPosition, setScrollPosition] = useState(70);
@@ -64,7 +64,6 @@ function GroupData({
   }, []);
 
   const {
-    id,
     name,
     branchOfService,
     description,
@@ -74,13 +73,9 @@ function GroupData({
     state,
     online,
     membersCount,
-    groupAdmin,
-    joined,
     admins,
   } = group;
-  const displayPhotoUrl =
-    displayPhoto ||
-    "https://t4.ftcdn.net/jpg/03/40/52/49/360_F_340524914_pzOWCq4I0WjytxaW8DTVFujrck1gjvvO.jpg";
+  const displayPhotoUrl = displayPhoto || "/defaultGroupImage.jpg";
   const location = county ? `${county}, ${state}` : state;
   const parsedAdmins =
     admins.length > 2
@@ -96,24 +91,6 @@ function GroupData({
   const parsedBranchOfService =
     branchOfService === "Any" ? "All Branches" : branchOfService;
   const [desktopSize] = useMediaQuery("(min-width: 1024px)");
-
-  const [justJoined, setJustJoined] = useState(false);
-  const [isJoining, setIsJoining] = useState(false);
-  const joinEventHandler = async () => {
-    // join group
-    // TODO: UPDATE USER ID
-    setIsJoining(true);
-    const response = await apiClient("/groups/join", {
-      method: "POST",
-      body: JSON.stringify({ groupId: id, userId: 3 }),
-    });
-
-    // if success, set joined to true
-    if (response) {
-      setJustJoined(true);
-    }
-    setIsJoining(false);
-  };
 
   return (
     <div className="flex flex-col-reverse md:flex-row gap-8 justify-between">
@@ -182,34 +159,10 @@ function GroupData({
                       icon={BsPersonRaisedHand}
                       iconClassName="text-gray-500"
                     >
-                      Organised by {parsedAdmins}
+                      Organized by {parsedAdmins}
                     </IconText>
                   </Stack>
-
-                  {!groupAdmin ? (
-                    // TODO: change to super admin to edit group only
-                    <div className="flex flex-col gap-2">
-                      <CreateGroupModal data={group} />
-                      <CreateEventModal groupName={name} groupId={id} />
-                    </div>
-                  ) : joined || justJoined ? (
-                    <Button
-                      rounded={"md"}
-                      className="w-full mt-4 border"
-                      isDisabled={true}
-                    >
-                      Joined
-                    </Button>
-                  ) : (
-                    <Button
-                      rounded={"md"}
-                      className="bg-black text-white hover:text-black w-full mt-4"
-                      onClick={joinEventHandler}
-                      isDisabled={isJoining}
-                    >
-                      {isJoining ? <Spinner /> : "Join Group"}
-                    </Button>
-                  )}
+                  <GroupActionButtons group={group} user={user} />
                 </Stack>
               </Box>
             </Box>
@@ -253,6 +206,13 @@ export function getGroupEventsRequestOptions(groupId: string): RequestInit {
   };
 }
 
+export function getUserRequestOptions(): RequestInit {
+  return {
+    // cache: "force-cache",
+    next: { tags: ["user"], revalidate: 60 * 5 },
+  };
+}
+
 function _GroupPage({ params }: { params: { groupId: string } }) {
   const groupId = params.groupId;
   const {
@@ -267,12 +227,13 @@ function _GroupPage({ params }: { params: { groupId: string } }) {
     `/groups/${groupId}/events`,
     getGroupEventsRequestOptions(groupId),
   ]);
+  const user = useSWR<UserType>(["/user", getUserRequestOptions()]);
 
   if (isLoading) return <GroupLoading />;
   if (error) return <div>Error loading group</div>;
   if (!group) return <div>Not found</div>;
 
-  return <GroupData group={group} events={events} />;
+  return <GroupData group={group} events={events} user={user} />;
 }
 
 export default function GroupPage({ params }: { params: { groupId: string } }) {
