@@ -13,7 +13,6 @@ export default async function Home() {
         <Search />
         <Divider />
         <Map />
-        {/* <Carousel groups={RECOMMENDED_GROUPS} /> */}
       </Flex>
     </>
   );

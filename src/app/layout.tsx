@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import NavBar from "../components/header/header";
+import NavBar from "../components/NavBar/NavBar";
 import Footer from "../components/footer/footer";
 import { ChakraProviders } from "../providers/chakraProvider";
 import PageLayout from "../components/pagelayout/pagelayout";

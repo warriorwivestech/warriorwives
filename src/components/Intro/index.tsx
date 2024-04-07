@@ -24,11 +24,11 @@ const Intro = () => {
         Welcome back to WarriorWives!{" "}
         {emojis[Math.round(Math.random() * emojis.length)]}
       </TypographyH1>
-      <Card className="bg-gray-100 mt-4">
+      <Card className="bg-gray-100 mt-6">
         <CardHeader>
           <CardTitle className="flex">
             <TargetIcon className="mr-2 h-4 w-4" />
-            <div>Vision</div>
+            <div>Purpose</div>
           </CardTitle>
           <CardDescription>
             To be an outreach organization in support of military wives; To
