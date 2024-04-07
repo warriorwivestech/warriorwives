@@ -9,8 +9,7 @@ import RecommendedGroupsLoading from "./loading";
 
 function _RecommendedGroups() {
   const fetchOptions: RequestInit = {
-    cache: "force-cache",
-    next: { tags: ["groups", "recommended"], revalidate: 60 * 5 },
+    next: { tags: ["groups", "recommended"] },
   };
   const {
     data: groups,

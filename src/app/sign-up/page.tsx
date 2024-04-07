@@ -1,4 +1,4 @@
-import { signIn } from "@/auth";
+import { auth, signIn } from "@/auth";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -8,8 +8,15 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 
-export default function SignUpPage() {
+export default async function SignUpPage() {
+  const session = await auth();
+
+  if (!!session?.user) {
+    redirect("/");
+  }
+
   return (
     <div className="min-h-[60vh] flex justify-center items-center">
       <Card className="w-[350px]">

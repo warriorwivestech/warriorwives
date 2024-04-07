@@ -1,14 +1,18 @@
+import { auth } from "@/auth";
 import { parseBranchOfService } from "@/data/helpers";
 import prisma from "@/prisma";
 
 // get recommended groups based on user interests
 export async function GET(request: Request) {
-  // TODO: get userId from session
-  const userId = 3;
+  const session = await auth();
+  const user = session?.user;
+  if (!user) {
+    throw new Error("User not authenticated");
+  }
 
   const userData = await prisma.user.findUnique({
     where: {
-      id: userId,
+      email: user.email as string | undefined,
     },
     select: {
       branch: true,
@@ -70,6 +74,7 @@ export async function GET(request: Request) {
   const parsedGroups = recommendedGroups.map((group) => {
     return {
       ...group,
+      password: undefined,
       tags: group.tags.map((tag) => tag.interest.name),
       branchOfService: parseBranchOfService(group.branchOfService),
     };

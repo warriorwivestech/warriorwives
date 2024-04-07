@@ -6,7 +6,9 @@ import prisma from "./prisma";
 export const { handlers, auth, signIn, signOut } = NextAuth({
   adapter: PrismaAdapter(prisma),
   providers: [Google],
+  session: { strategy: "jwt" },
   pages: {
-    // signIn: "/sign-in",
+    signIn: "/sign-in",
   },
+  debug: process.env.NODE_ENV === "development",
 });
