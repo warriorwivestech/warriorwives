@@ -29,7 +29,7 @@ export default function ActiveGroupsTable({
 
   return (
     <Table>
-      <TableCaption>All created groups.</TableCaption>
+      <TableCaption>All active groups.</TableCaption>
       <TableHeader>
         <TableRow>
           <TableHead>ID</TableHead>
