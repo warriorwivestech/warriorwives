@@ -40,15 +40,11 @@ const SUPER_USER_NAV_ITEMS = [
 ];
 
 interface NavBarClientProps {
-  user: {
-    data: UserDataType | undefined;
-    error: any;
-  };
+  user: UserDataType | undefined;
   signOut: () => Promise<never>;
 }
 
 export default function NavBarClient({ user, signOut }: NavBarClientProps) {
-  const { data: userData } = user;
   const [desktopSize] = useMediaQuery("(min-width: 1024px)");
   const { isOpen, onToggle } = useDisclosure();
 
@@ -56,11 +52,11 @@ export default function NavBarClient({ user, signOut }: NavBarClientProps) {
   const color = useColorModeValue("gray.600", "gray.200");
   const borderColor = useColorModeValue("gray.200", "gray.900");
 
-  if (!userData) {
+  if (!user) {
     return <UnauthenticatedNavBar />;
   }
 
-  const allNavItems = userData?.superUser
+  const allNavItems = user?.superUser
     ? [...NAV_ITEMS, ...SUPER_USER_NAV_ITEMS]
     : NAV_ITEMS;
 
@@ -113,11 +109,7 @@ export default function NavBarClient({ user, signOut }: NavBarClientProps) {
         >
           {/* TODO: remove this */}
           {desktopSize && <CreateGroupModal />}
-          <UserAvatar
-            name={userData.name}
-            image={userData.image}
-            signOut={signOut}
-          />
+          <UserAvatar name={user.name} image={user.image} signOut={signOut} />
         </Stack>
       </Flex>
 
@@ -169,12 +161,10 @@ function MobileNav({
 }: {
   navItems: { href: string; label: string }[];
 }) {
+  const bgColor = useColorModeValue("white", "gray.800");
+
   return (
-    <Stack
-      bg={useColorModeValue("white", "gray.800")}
-      p={4}
-      display={{ md: "none" }}
-    >
+    <Stack bg={bgColor} p={4} display={{ md: "none" }}>
       {navItems.map((navItem) => (
         <MobileNavItem key={navItem.label} {...navItem} />
       ))}
@@ -192,6 +182,7 @@ function MobileNavItem({
   subLabel?: string;
 }) {
   const { isOpen, onToggle } = useDisclosure();
+  const color = useColorModeValue("gray.600", "gray.200");
 
   return (
     <Stack spacing={4} onClick={onToggle}>
@@ -204,10 +195,7 @@ function MobileNavItem({
             textDecoration: "none",
           }}
         >
-          <Text
-            fontWeight={600}
-            color={useColorModeValue("gray.600", "gray.200")}
-          >
+          <Text fontWeight={600} color={color}>
             {label}
           </Text>
         </Box>

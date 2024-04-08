@@ -1,7 +1,7 @@
 import { auth } from "@/auth";
 import { NextResponse } from "next/server";
 
-const protectedDirectories = ["/groups"];
+const protectedDirectories = ["/groups", "/all-groups"];
 
 export default auth((req) => {
   if (!req.auth?.user) {
@@ -19,5 +19,6 @@ export const config = {
     "/((?!api|_next/static|_next/image|favicon.ico).*)",
     "/",
     "/groups/:path*",
+    "/all-groups",
   ],
 };
