@@ -11,18 +11,14 @@ import {
 interface UserAvatarProps {
   name: string | null;
   image: string | null;
-  desktopSize: boolean;
+  signOut: () => Promise<never>;
 }
 
-export default function UserAvatar({
-  name,
-  image,
-  desktopSize,
-}: UserAvatarProps) {
+export default function UserAvatar({ name, image, signOut }: UserAvatarProps) {
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger>
-        <Avatar className={desktopSize ? "mr-8" : ""}>
+      <DropdownMenuTrigger className="md:mr-8">
+        <Avatar>
           <AvatarImage src={image as string} />
           <AvatarFallback>
             {name
@@ -32,12 +28,18 @@ export default function UserAvatar({
           </AvatarFallback>
         </Avatar>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="mr-4">
+      <DropdownMenuContent align="end">
         <DropdownMenuLabel>My Account</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem>Profile</DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>Log out</DropdownMenuItem>
+        <DropdownMenuItem
+          onClick={() => {
+            signOut();
+          }}
+        >
+          Sign Out
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );

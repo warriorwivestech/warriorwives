@@ -44,9 +44,10 @@ interface NavBarClientProps {
     data: UserDataType | undefined;
     error: any;
   };
+  signOut: () => Promise<never>;
 }
 
-export default function NavBarClient({ user }: NavBarClientProps) {
+export default function NavBarClient({ user, signOut }: NavBarClientProps) {
   const { data: userData } = user;
   const [desktopSize] = useMediaQuery("(min-width: 1024px)");
   const { isOpen, onToggle } = useDisclosure();
@@ -115,7 +116,7 @@ export default function NavBarClient({ user }: NavBarClientProps) {
           <UserAvatar
             name={userData.name}
             image={userData.image}
-            desktopSize={desktopSize}
+            signOut={signOut}
           />
         </Stack>
       </Flex>
