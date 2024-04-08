@@ -39,20 +39,43 @@ export default function ArchivedGroupsTable({
           <TableHead>State</TableHead>
           <TableHead>Online?</TableHead>
           <TableHead>Password Enabled?</TableHead>
+          <TableHead>Archived At</TableHead>
           <TableHead>Action</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
         {sortedGroups.map((group) => {
+          const {
+            id,
+            name,
+            branchOfService,
+            county,
+            state,
+            online,
+            passwordEnabled,
+            archivedAt,
+          } = group;
+          const parsedArchivedAt = archivedAt
+            ? new Date(archivedAt).toLocaleString("en-US", {
+                month: "short",
+                day: "numeric",
+                year: "numeric",
+                hour: "numeric",
+                minute: "numeric",
+                hour12: true,
+              })
+            : "N/A";
+
           return (
-            <TableRow key={group.id}>
-              <TableCell>{group.id}</TableCell>
-              <TableCell>{group.name}</TableCell>
-              <TableCell>{group.branchOfService}</TableCell>
-              <TableCell>{group.county}</TableCell>
-              <TableCell>{group.state}</TableCell>
-              <TableCell>{group.online ? "✅" : "❌"}</TableCell>
-              <TableCell>{group.passwordEnabled ? "✅" : "❌"}</TableCell>
+            <TableRow key={id}>
+              <TableCell>{id}</TableCell>
+              <TableCell>{name}</TableCell>
+              <TableCell>{branchOfService}</TableCell>
+              <TableCell>{county}</TableCell>
+              <TableCell>{state}</TableCell>
+              <TableCell>{online ? "✅" : "❌"}</TableCell>
+              <TableCell>{passwordEnabled ? "✅" : "❌"}</TableCell>
+              <TableCell>{parsedArchivedAt}</TableCell>
               <TableCell>
                 <Link href={`/groups/${group.id}`}>
                   <Button>View</Button>
