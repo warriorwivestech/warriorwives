@@ -4,6 +4,7 @@ import NavBar from "../components/NavBar/NavBar";
 import Footer from "../components/footer/footer";
 import { ChakraProviders } from "../providers/chakraProvider";
 import PageLayout from "../components/pagelayout/pagelayout";
+import { Toaster } from "@/components/ui/toaster";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -29,6 +30,7 @@ export default function RootLayout({
           <NavBar />
           <PageLayout>{children}</PageLayout>
           <Footer />
+          <Toaster />
         </ChakraProviders>
       </body>
     </html>
