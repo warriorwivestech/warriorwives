@@ -10,6 +10,7 @@ export async function GET(request: Request) {
   // use text search for branch of service, group name, county, state, and tags
   const groupsBySearch = await prisma.group.findMany({
     where: {
+      archived: false,
       OR: [
         {
           name: {

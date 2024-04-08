@@ -15,6 +15,9 @@ export async function queryJoinedGroups() {
       user: {
         email: user.email,
       },
+      group: {
+        archived: false,
+      },
     },
     include: {
       group: {

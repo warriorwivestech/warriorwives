@@ -37,6 +37,7 @@ export async function GET(request: Request) {
   const recommendedGroups = await prisma.group.findMany({
     take: 10,
     where: {
+      archived: false,
       OR: [
         {
           tags: {
