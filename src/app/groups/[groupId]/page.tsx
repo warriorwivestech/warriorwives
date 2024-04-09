@@ -27,7 +27,8 @@ import GroupEventsData from "./components/GroupEventsData";
 import { GroupEvents } from "@/app/api/groups/[groupId]/events/route";
 import { GroupDataType } from "@/app/api/groups/[groupId]/route";
 import GroupActionButtons from "./components/GroupActionButtons";
-import { UserType } from "@/app/api/user/route";
+import { getUserRequestOptions } from "@/app/api/user/helper";
+import { UserDataType } from "@/app/api/user/route";
 import GroupPasswordModal from "./components/GroupPasswordModal";
 
 function GroupData({
@@ -37,7 +38,7 @@ function GroupData({
 }: {
   group: GroupDataType;
   events: SWRResponse<GroupEvents, any, any>;
-  user: SWRResponse<UserType, any, any>;
+  user: SWRResponse<UserDataType, any, any>;
 }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [correctPassword, setCorrectPassword] = useState(false);
@@ -221,13 +222,6 @@ export function getGroupEventsRequestOptions(groupId: string): RequestInit {
   };
 }
 
-export function getUserRequestOptions(): RequestInit {
-  return {
-    // cache: "force-cache",
-    next: { tags: ["user"], revalidate: 60 * 5 },
-  };
-}
-
 function _GroupPage({ params }: { params: { groupId: string } }) {
   const groupId = params.groupId;
   const {
@@ -242,7 +236,7 @@ function _GroupPage({ params }: { params: { groupId: string } }) {
     `/groups/${groupId}/events`,
     getGroupEventsRequestOptions(groupId),
   ]);
-  const user = useSWR<UserType>(["/user", getUserRequestOptions()]);
+  const user = useSWR<UserDataType>(["/user", getUserRequestOptions()]);
 
   if (isLoading) return <GroupLoading />;
   if (error) return <div>Error loading group</div>;

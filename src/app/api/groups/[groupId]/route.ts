@@ -2,6 +2,7 @@ import prisma from "@/prisma";
 import { auth } from "@/auth";
 import { Prisma } from "@prisma/client";
 import { parseBranchOfService } from "@/data/helpers";
+import { UnparsedUserData, queryUser } from "@/data/user";
 
 function queryGroup(groupId: number) {
   return prisma.group.findUnique({
@@ -60,15 +61,17 @@ type UnparsedGroupAdmins = Prisma.PromiseReturnType<typeof queryGroupAdmins>;
 function parseGroupData(
   groupData: UnparsedGroup,
   memberData: UnparsedMemberJoined,
-  adminData: UnparsedGroupAdmins
+  adminData: UnparsedGroupAdmins,
+  userData: UnparsedUserData
 ) {
   if (!groupData) {
     return null;
   }
+  const isAdminOrSuperUser = memberData?.admin || userData?.superUser;
 
   return {
     ...groupData,
-    password: groupData?.password,
+    password: isAdminOrSuperUser ? groupData.password : undefined,
     branchOfService: parseBranchOfService(groupData.branchOfService),
     tags: groupData.tags.map((tag: any) => tag.interest.name),
     membersCount: groupData._count.members,
@@ -92,10 +95,11 @@ export async function GET(
 
   const groupId = Number(params.groupId);
 
-  const [groupData, memberData, adminData] = await Promise.all([
+  const [groupData, memberData, adminData, userData] = await Promise.all([
     queryGroup(groupId),
     queryMemberJoined(groupId, user.email as string),
     queryGroupAdmins(groupId),
+    queryUser(),
   ]);
 
   if (!groupData) {
@@ -103,7 +107,7 @@ export async function GET(
   }
 
   const parsedData = groupData
-    ? parseGroupData(groupData, memberData, adminData)
+    ? parseGroupData(groupData, memberData, adminData, userData)
     : groupData;
 
   return Response.json(parsedData);

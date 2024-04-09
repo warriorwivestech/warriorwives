@@ -39,19 +39,11 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Cross2Icon } from "@radix-ui/react-icons";
-
-const availableInterests = [
-  { value: "Christian", label: "Christian" },
-  { value: "Gardening", label: "Gardening" },
-  { value: "Cooking", label: "Cooking" },
-  { value: "Reading", label: "Reading" },
-  { value: "Fitness", label: "Fitness" },
-  { value: "Music", label: "Music" },
-  { value: "Art", label: "Art" },
-  { value: "Sports", label: "Sports" },
-  { value: "Travel", label: "Travel" },
-  { value: "Photography", label: "Photography" },
-];
+import { InterestsType } from "@/app/api/interests/route";
+import { UserDataType } from "@/app/api/user/route";
+import useSWRMutation from "swr/mutation";
+import { apiClient } from "@/apiClient";
+import { Spinner } from "@chakra-ui/react";
 
 const profileFormSchema = z.object({
   name: z
@@ -73,6 +65,9 @@ const profileFormSchema = z.object({
   interests: z
     .array(
       z.object({
+        id: z.number({
+          required_error: "Please select an interest",
+        }),
         value: z
           .string({ required_error: "Please select an interest" })
           .min(1, {
@@ -83,18 +78,60 @@ const profileFormSchema = z.object({
     .optional(),
 });
 
-type ProfileFormValues = z.infer<typeof profileFormSchema>;
+export type ProfileFormValues = z.infer<typeof profileFormSchema>;
 
-// This can come from your database or API.
-const defaultValues: Partial<ProfileFormValues> = {
-  name: "Jane Doe",
-  branch: "Army",
-  email: "warriorwivestech@gmail.com",
-  interests: [{ value: "Christian" }, { value: "Gardening" }],
-};
+async function updateUser(url: string, { arg }: { arg: ProfileFormValues }) {
+  await apiClient(url, {
+    method: "PUT",
+    body: JSON.stringify(arg),
+  });
+}
 
-export function ProfileForm() {
+export default function ProfileForm({
+  user,
+  interests,
+}: {
+  user: UserDataType;
+  interests: InterestsType;
+}) {
   const { toast } = useToast();
+  const { trigger, isMutating } = useSWRMutation("/user", updateUser, {
+    onSuccess: () => {
+      toast({
+        title: "Profile updated",
+        description: "Your profile has been successfully updated.",
+      });
+    },
+    onError: (error) => {
+      toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description: "There was a problem with your request.",
+      });
+    },
+  });
+
+  const availableInterests = interests
+    .map((interest) => ({
+      id: interest.id,
+      value: interest.name,
+      label: interest.name,
+    }))
+    .sort((a, b) => a.label.localeCompare(b.label));
+  const { name, email, branch, interests: userInterests } = user;
+
+  const defaultValues: Partial<ProfileFormValues> = {
+    name: name || "",
+    branch,
+    email: email || "",
+    interests:
+      userInterests
+        .sort((a, b) => a.name.localeCompare(b.name))
+        .map((interest) => ({
+          id: interest.id,
+          value: interest.name,
+        })) || [],
+  };
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileFormSchema),
     defaultValues,
@@ -106,15 +143,25 @@ export function ProfileForm() {
     control: form.control,
   });
 
-  function onSubmit(data: ProfileFormValues) {
-    toast({
-      title: "You submitted the following values:",
-      description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-        </pre>
-      ),
+  function removeDuplicatedInterests() {
+    const uniqueInterests = new Set();
+    const indexesToRemove: number[] = [];
+
+    const fieldsCopy = [...fields];
+    fieldsCopy.forEach((field, index) => {
+      if (uniqueInterests.has(field.value)) {
+        indexesToRemove.push(index);
+      } else {
+        uniqueInterests.add(field.value);
+      }
     });
+
+    remove(indexesToRemove);
+  }
+
+  function onSubmit(data: ProfileFormValues) {
+    removeDuplicatedInterests();
+    trigger(data);
   }
 
   return (
@@ -127,7 +174,7 @@ export function ProfileForm() {
             <FormItem>
               <FormLabel>Name</FormLabel>
               <FormControl>
-                <Input placeholder="Jane Doe" {...field} />
+                <Input placeholder="Jane Doe" {...field} className="bg-white" />
               </FormControl>
               <FormDescription>
                 This is your public display name.
@@ -143,7 +190,12 @@ export function ProfileForm() {
             <FormItem>
               <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input placeholder="example@google.com" {...field} disabled />
+                <Input
+                  placeholder="example@google.com"
+                  {...field}
+                  disabled
+                  className="bg-white"
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -157,14 +209,16 @@ export function ProfileForm() {
               <FormLabel>Branch of Service</FormLabel>
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
-                  <SelectTrigger>
+                  <SelectTrigger className="bg-white">
                     <SelectValue placeholder="Select a branch of service" />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
                   <SelectItem value="Army">Army</SelectItem>
+                  <SelectItem value="Navy">Navy</SelectItem>
                   <SelectItem value="Air Force">Air Force</SelectItem>
-                  <SelectItem value="Marine">Marine</SelectItem>
+                  <SelectItem value="Marines">Marines</SelectItem>
+                  <SelectItem value="Coast Guard">Coast Guard</SelectItem>
                 </SelectContent>
               </Select>
               <FormDescription>
@@ -194,6 +248,7 @@ export function ProfileForm() {
                       <FormControl>
                         <div className="flex items-center">
                           <Button
+                            type="button"
                             variant="outline"
                             role="combobox"
                             className={cn(
@@ -240,6 +295,10 @@ export function ProfileForm() {
                                     `interests.${index}.value`,
                                     interest.value
                                   );
+                                  form.setValue(
+                                    `interests.${index}.id`,
+                                    interest.id
+                                  );
                                 }}
                               >
                                 {interest.label}
@@ -268,12 +327,14 @@ export function ProfileForm() {
             variant="outline"
             size="sm"
             className="mt-2"
-            onClick={() => append({ value: "" })}
+            onClick={() => append({ id: 0, value: "" })}
           >
             Add Interest
           </Button>
         </div>
-        <Button type="submit">Update profile</Button>
+        <Button type="submit" className="w-24" disabled={isMutating}>
+          {isMutating ? <Spinner size="sm" /> : "Update"}
+        </Button>
       </form>
     </Form>
   );

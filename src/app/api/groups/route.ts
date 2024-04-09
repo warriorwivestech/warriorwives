@@ -1,4 +1,7 @@
-import { parseBranchOfService } from "@/data/helpers";
+import {
+  parseBranchOfService,
+  parseReverseBranchOfService,
+} from "@/data/helpers";
 import prisma from "@/prisma";
 
 // get groups based on location
@@ -63,36 +66,6 @@ export async function GET(request: Request) {
   });
 
   return Response.json(parsedGroups);
-}
-
-// const sample = [
-//   { value: "ALL", label: "All Branch" },
-//   { value: "ARMY", label: "Army" },
-//   { value: "NAVY", label: "Navy" },
-//   { value: "AIR_FORCE", label: "Air Force" },
-//   { value: "COAST_GUARD", label: "Coast Guard" },
-//   { value: "MARINE_CORPS", label: "Marine Corps" },
-//   { value: "SPACE_FORCE", label: "Space Force" },
-// ];
-
-// parse back label to value from example above in sample
-function parseReverseBranchOfService(branchOfService: string) {
-  switch (branchOfService) {
-    case "Army":
-      return "ARMY";
-    case "Navy":
-      return "NAVY";
-    case "Air Force":
-      return "AIR_FORCE";
-    case "Coast Guard":
-      return "COAST_GUARD";
-    case "Marine Corps":
-      return "MARINE_CORPS";
-    case "Space Force":
-      return "SPACE_FORCE";
-    default:
-      return "ANY";
-  }
 }
 
 export async function POST(request: Request) {

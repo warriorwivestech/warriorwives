@@ -34,7 +34,7 @@ export async function queryUser() {
   return userData;
 }
 
-type UnparsedUserData = Prisma.PromiseReturnType<typeof queryUser>;
+export type UnparsedUserData = Prisma.PromiseReturnType<typeof queryUser>;
 export type UserType = NonNullable<UnparsedUserData>;
 
 function parseUserData(user: UserType) {

@@ -4,16 +4,9 @@ import Link from "next/link";
 
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { notFound, usePathname } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { Separator } from "@/components/ui/separator";
-import ProfileForm from "./components/ProfileForm";
-import { SWRProvider } from "@/providers/swrProvider";
-import useSWR from "swr";
-import { getUserRequestOptions } from "../api/user/helper";
-import { InterestsType } from "../api/interests/route";
-import { getInterestsRequestOptions } from "../api/interests/helper";
-import { UserDataType } from "../api/user/route";
-import LoadingProfileForm from "./components/LoadingProfileForm";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const sidebarNavItems = [
   {
@@ -22,27 +15,8 @@ const sidebarNavItems = [
   },
 ];
 
-function _ProfilePage() {
-  const {
-    data: userData,
-    error: userError,
-    isLoading: userIsLoading,
-  } = useSWR<UserDataType>(["/user", getUserRequestOptions()]);
-  const {
-    data: interestsData,
-    error: interestsError,
-    isLoading: interestsAreLoading,
-  } = useSWR<InterestsType>(["/interests", getInterestsRequestOptions()]);
-
+export default function LoadingProfileForm() {
   const pathname = usePathname();
-
-  const isLoading = userIsLoading || interestsAreLoading;
-  const error = userError || interestsError;
-
-  if (isLoading) {
-    return <LoadingProfileForm />;
-  }
-  if (error || !userData || !interestsData) return notFound();
 
   return (
     <div className="space-y-6 px-10 pb-16 pt-4 md:px-0">
@@ -86,18 +60,13 @@ function _ProfilePage() {
               </p>
             </div>
             <Separator />
-            <ProfileForm user={userData} interests={interestsData} />
+            <Skeleton className="h-4 w-1/5" />
+            <Skeleton className="h-8 w-full" />
+            <Skeleton className="h-4 w-1/5 mt-4" />
+            <Skeleton className="h-8 w-full" />
           </div>
         </div>
       </div>
     </div>
-  );
-}
-
-export default function ProfilePage() {
-  return (
-    <SWRProvider>
-      <_ProfilePage />
-    </SWRProvider>
   );
 }
