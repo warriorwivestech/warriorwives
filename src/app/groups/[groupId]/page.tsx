@@ -12,6 +12,7 @@ import {
   useMediaQuery,
   Badge,
   Spinner,
+  useDisclosure,
 } from "@chakra-ui/react";
 import { MdPeopleAlt } from "react-icons/md";
 import React, { useEffect, useState, useRef } from "react";
@@ -27,6 +28,7 @@ import { GroupEvents } from "@/app/api/groups/[groupId]/events/route";
 import { GroupDataType } from "@/app/api/groups/[groupId]/route";
 import GroupActionButtons from "./components/GroupActionButtons";
 import { UserType } from "@/app/api/user/route";
+import GroupPasswordModal from "./components/GroupPasswordModal";
 
 function GroupData({
   group,
@@ -37,6 +39,8 @@ function GroupData({
   events: SWRResponse<GroupEvents, any, any>;
   user: SWRResponse<UserType, any, any>;
 }) {
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [correctPassword, setCorrectPassword] = useState(false);
   const [isSticky, setIsSticky] = useState(false);
   const [scrollPosition, setScrollPosition] = useState(70);
   const [scrollSpeed, setScrollSpeed] = useState(0);
@@ -162,7 +166,12 @@ function GroupData({
                       Organized by {parsedAdmins}
                     </IconText>
                   </Stack>
-                  <GroupActionButtons group={group} user={user} />
+                  <GroupActionButtons
+                    group={group}
+                    user={user}
+                    onOpen={onOpen}
+                    correctPassword={correctPassword}
+                  />
                 </Stack>
               </Box>
             </Box>
@@ -188,6 +197,12 @@ function GroupData({
           <GroupEventsData events={events} />
         </Stack>
       </div>
+      <GroupPasswordModal
+        onClose={onClose}
+        isOpen={isOpen}
+        password={group?.password as string}
+        setCorrectPassword={setCorrectPassword}
+      />
     </div>
   );
 }

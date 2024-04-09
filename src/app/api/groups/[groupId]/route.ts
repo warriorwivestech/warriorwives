@@ -68,7 +68,7 @@ function parseGroupData(
 
   return {
     ...groupData,
-    password: undefined,
+    password: groupData?.password,
     branchOfService: parseBranchOfService(groupData.branchOfService),
     tags: groupData.tags.map((tag: any) => tag.interest.name),
     membersCount: groupData._count.members,

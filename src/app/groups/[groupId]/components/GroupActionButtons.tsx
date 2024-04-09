@@ -5,13 +5,15 @@ import { CreateEventModal } from "@/components/CreateEventModal";
 import { CreateGroupModal } from "@/components/CreateGroupModal";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@chakra-ui/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { SWRResponse } from "swr";
 import useSWRMutation from "swr/mutation";
 
 interface GroupActionButtonsProps {
   group: GroupDataType;
   user: SWRResponse<UserType, any, any>;
+  correctPassword: boolean;
+  onOpen: () => void;
 }
 
 async function joinGroup(url: string, { arg }: { arg: { groupId: number } }) {
@@ -24,6 +26,8 @@ async function joinGroup(url: string, { arg }: { arg: { groupId: number } }) {
 export default function GroupActionButtons({
   group,
   user,
+  correctPassword,
+  onOpen,
 }: GroupActionButtonsProps) {
   const { data: userData, isLoading } = user;
   const { id, name, groupAdmin, joined } = group;
@@ -34,6 +38,12 @@ export default function GroupActionButtons({
       setJustJoined(true);
     },
   });
+
+  useEffect(() => {
+    if (correctPassword) {
+      trigger({ groupId: id });
+    }
+  }, [correctPassword]);
 
   if (groupAdmin || userData?.superUser) {
     return (
@@ -51,6 +61,11 @@ export default function GroupActionButtons({
   return (
     <Button
       onClick={() => {
+        if (group?.passwordEnabled) {
+          onOpen();
+          return;
+        }
+
         trigger({ groupId: id });
       }}
       disabled={isLoading || isMutating}
