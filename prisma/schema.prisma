@@ -94,22 +94,23 @@ model Group {
 }
 
 model Event {
-  id           Int                  @id @default(autoincrement())
-  name         String
-  description  String
-  displayPhoto String?
-  location     String?
-  online       Boolean              @default(false)
-  dateTime     DateTime
-  group        Group                @relation(fields: [groupId], references: [id])
-  groupId      Int
-  photos       EventPhoto[]
-  materials    EventMaterial[]
-  meetingLink  String?
-  attendees    AttendeesOnEvents[]
-  organizers   OrganizersOnEvents[]
-  createdAt    DateTime             @default(now())
-  updatedAt    DateTime             @updatedAt
+  id            Int                  @id @default(autoincrement())
+  name          String
+  description   String
+  displayPhoto  String?
+  location      String?
+  online        Boolean              @default(false)
+  startdateTime DateTime
+  endDateTime   DateTime
+  group         Group                @relation(fields: [groupId], references: [id])
+  groupId       Int
+  photos        EventPhoto[]
+  materials     EventMaterial[]
+  meetingLink   String?
+  attendees     AttendeesOnEvents[]
+  organizers    OrganizersOnEvents[]
+  createdAt     DateTime             @default(now())
+  updatedAt     DateTime             @updatedAt
 }
 
 model InterestsOnUsers {
