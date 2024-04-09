@@ -41,6 +41,7 @@ interface GroupCardProps {
   online: boolean;
   tags: string[];
   admin?: boolean;
+  passwordEnabled?: boolean;
 }
 
 export default function GroupCard({
