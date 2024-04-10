@@ -14,6 +14,7 @@ import { InterestsType } from "../api/interests/route";
 import { getInterestsRequestOptions } from "../api/interests/helper";
 import { UserDataType } from "../api/user/route";
 import LoadingProfileForm from "./components/LoadingProfileForm";
+import { TypographyH3 } from "@/components/ui/typography/h3";
 
 const sidebarNavItems = [
   {
@@ -45,9 +46,9 @@ function _ProfilePage() {
   if (error || !userData || !interestsData) return notFound();
 
   return (
-    <div className="space-y-6 px-10 pb-16 pt-4 md:px-0">
+    <div className="space-y-6 px-10 pb-16 pt-0 md:px-0">
       <div className="space-y-0.5">
-        <h2 className="text-2xl font-bold tracking-tight">My Account</h2>
+        <TypographyH3>My Account</TypographyH3>
         <p className="text-muted-foreground pt-2">
           Manage your profile and interests
         </p>

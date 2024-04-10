@@ -15,7 +15,7 @@ export async function GET(
     include: {
       events: {
         where: {
-          dateTime: {
+          startDateTime: {
             gte: new Date(),
           },
           id: {
@@ -23,7 +23,7 @@ export async function GET(
           },
         },
         orderBy: {
-          dateTime: "asc",
+          startDateTime: "asc",
         },
         include: {
           _count: {

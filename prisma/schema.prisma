@@ -100,7 +100,7 @@ model Event {
   displayPhoto  String?
   location      String?
   online        Boolean              @default(false)
-  startdateTime DateTime
+  startDateTime DateTime            @default(now())
   endDateTime   DateTime
   group         Group                @relation(fields: [groupId], references: [id])
   groupId       Int
@@ -144,7 +144,7 @@ model MembersOnGroups {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@id([groupId, userId])
+  @@id(name: "memberGroupId", fields: [groupId, userId])
 }
 
 model AttendeesOnEvents {

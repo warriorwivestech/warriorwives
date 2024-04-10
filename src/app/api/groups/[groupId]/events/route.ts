@@ -19,12 +19,12 @@ async function queryGroupEvents(groupId: number) {
     include: {
       events: {
         where: {
-          dateTime: {
+          startDateTime: {
             gte: new Date(),
           },
         },
         orderBy: {
-          dateTime: "asc",
+          startDateTime: "asc",
         },
         include: {
           _count: {
@@ -40,7 +40,7 @@ async function queryGroupEvents(groupId: number) {
   const events = data?.events || [];
   const parsedEvents = events.map((event) => ({
     ...event,
-    dateTime: new Date(event.dateTime).toLocaleString("en-US", {
+    dateTime: new Date(event.startDateTime).toLocaleString("en-US", {
       month: "short",
       day: "numeric",
       year: "numeric",

@@ -7,7 +7,7 @@ export async function queryJoinedEvents(userId: number) {
     where: {
       userId: userId,
       event: {
-        dateTime: {
+        startDateTime: {
           gte: new Date(),
         },
       },
@@ -25,7 +25,7 @@ export async function queryJoinedEvents(userId: number) {
     },
     orderBy: {
       event: {
-        dateTime: "asc",
+        startDateTime: "asc",
       },
     },
   });
@@ -39,7 +39,7 @@ function parseJoinedEventsResponse(attendeesOnEvents: UnparsedJoinedEvents) {
   return attendeesOnEvents.map((attendeesOnEvent) => ({
     ...attendeesOnEvent.event,
     // "2024-02-08T12:00:00.000Z" convert this to "Feb 8, 2024, 12:00 PM"
-    dateTime: new Date(attendeesOnEvent.event.dateTime).toLocaleString(
+    dateTime: new Date(attendeesOnEvent.event.startDateTime).toLocaleString(
       "en-US",
       {
         month: "short",
