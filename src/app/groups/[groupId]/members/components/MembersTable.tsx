@@ -54,12 +54,12 @@ function _MembersTables({ user, userIsAdmin, groupData }: MembersTableProps) {
       <TableCaption>All members.</TableCaption>
       <TableHeader>
         <TableRow>
-          <TableHead>Name</TableHead>
+          <TableHead className="min-w-[100px]">Name</TableHead>
           <TableHead>Email</TableHead>
           <TableHead>Role</TableHead>
           <TableHead>Branch of Service</TableHead>
-          <TableHead>Joined On</TableHead>
-          <TableHead>Actions</TableHead>
+          <TableHead className="min-w-[140px]">Joined On</TableHead>
+          <TableHead className="min-w-[240px]">Actions</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>

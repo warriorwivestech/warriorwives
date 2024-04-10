@@ -34,14 +34,14 @@ export default function ArchivedGroupsTable({
       <TableHeader>
         <TableRow>
           <TableHead>ID</TableHead>
-          <TableHead>Name</TableHead>
+          <TableHead className="min-w-[120px]">Name</TableHead>
           <TableHead>Branch of Service</TableHead>
           <TableHead>County</TableHead>
           <TableHead>State</TableHead>
           <TableHead>Online?</TableHead>
           <TableHead>Password Enabled?</TableHead>
-          <TableHead>Archived At</TableHead>
-          <TableHead>Actions</TableHead>
+          <TableHead className="min-w-[140px]">Archived At</TableHead>
+          <TableHead className="min-w-[190px]">Actions</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>

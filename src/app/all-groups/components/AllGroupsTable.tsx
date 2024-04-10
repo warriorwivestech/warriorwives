@@ -26,7 +26,7 @@ export default function AllGroupsTable({ groups }: AllGroupsTableProps) {
       <TableHeader>
         <TableRow>
           <TableHead>ID</TableHead>
-          <TableHead>Name</TableHead>
+          <TableHead className="min-w-[120px]">Name</TableHead>
           <TableHead>Status</TableHead>
           <TableHead>Branch of Service</TableHead>
           <TableHead>County</TableHead>
