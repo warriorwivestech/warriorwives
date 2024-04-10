@@ -43,7 +43,10 @@ function _ProfilePage() {
   if (isLoading) {
     return <LoadingProfileForm />;
   }
-  if (error || !userData || !interestsData) return notFound();
+  if (error) {
+    return <div className="mt-4">Error loading profile</div>;
+  }
+  if (!userData || !interestsData) return notFound();
 
   return (
     <div className="space-y-6 px-10 pb-16 pt-0 md:px-0">

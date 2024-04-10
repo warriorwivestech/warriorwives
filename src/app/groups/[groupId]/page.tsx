@@ -30,6 +30,7 @@ import GroupActionButtons from "./components/GroupActionButtons";
 import { getUserRequestOptions } from "@/app/api/user/helper";
 import { UserDataType } from "@/app/api/user/route";
 import GroupPasswordModal from "./components/GroupPasswordModal";
+import { notFound } from "next/navigation";
 
 function GroupData({
   group,
@@ -240,7 +241,7 @@ function _GroupPage({ params }: { params: { groupId: string } }) {
 
   if (isLoading) return <GroupLoading />;
   if (error) return <div>Error loading group</div>;
-  if (!group) return <div>Not found</div>;
+  if (!group) return notFound();
 
   return <GroupData group={group} events={events} user={user} />;
 }

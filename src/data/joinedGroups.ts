@@ -45,7 +45,7 @@ function parseJoinedGroupsResponse(groups: UnparsedJoinedGroups) {
   return groups.map((group) => {
     return {
       ...group.group,
-      // don't add the password for the group
+      // DO NOT expose the password to the client
       password: undefined,
       branchOfService: parseBranchOfService(group.group.branchOfService),
       tags: group.group.tags.map((tag) => tag.interest.name),

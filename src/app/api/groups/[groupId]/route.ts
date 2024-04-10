@@ -71,6 +71,7 @@ function parseGroupData(
 
   return {
     ...groupData,
+    // DO NOT expose the password to the client unless the user is an admin or super user
     password: isAdminOrSuperUser ? groupData.password : undefined,
     branchOfService: parseBranchOfService(groupData.branchOfService),
     tags: groupData.tags.map((tag: any) => tag.interest.name),

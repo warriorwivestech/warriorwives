@@ -75,6 +75,7 @@ export async function GET(request: Request) {
   const parsedGroups = recommendedGroups.map((group) => {
     return {
       ...group,
+      // DO NOT expose password
       password: undefined,
       tags: group.tags.map((tag) => tag.interest.name),
       branchOfService: parseBranchOfService(group.branchOfService),

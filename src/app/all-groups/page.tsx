@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { getUser } from "@/data/user";
 import GroupsTables from "./components/GroupsTables";
+import { TypographyH3 } from "@/components/ui/typography/h3";
 
 export default async function AllGroups() {
   const user = await getUser();
@@ -9,5 +10,10 @@ export default async function AllGroups() {
     return notFound();
   }
 
-  return <GroupsTables />;
+  return (
+    <>
+      <TypographyH3>All Groups</TypographyH3>
+      <GroupsTables />
+    </>
+  );
 }
