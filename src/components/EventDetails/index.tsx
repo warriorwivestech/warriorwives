@@ -12,7 +12,7 @@ import { FaPeopleGroup } from "react-icons/fa6";
 import OtherEvents from "./OtherEvents";
 import { apiClient } from "@/apiClient";
 import { useState } from "react";
-import { CreateEventModal } from "../CreateEventModal";
+import { CreateEventModal } from "../EventModal/AddEvent";
 
 // Define the props interface
 interface EventDetailsProps {

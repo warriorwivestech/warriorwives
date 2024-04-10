@@ -19,7 +19,7 @@ export interface NewGroup {
   online: boolean;
   displayPhoto: string;
   county: string;
-  state: string;
+  state: string | { value: string };
   branchOfService: string[];
   tags: string[];
   password?: string;
