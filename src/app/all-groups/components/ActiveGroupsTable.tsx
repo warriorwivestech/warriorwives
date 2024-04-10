@@ -1,3 +1,4 @@
+import { AllGroupsDataType } from "@/app/api/groups/all/route";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -8,21 +9,17 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { AllGroupsDataType } from "@/data/allGroups";
 import Link from "next/link";
+import ArchiveGroupModal from "./ArchiveGroupModal";
+import { KeyedMutator, mutate } from "swr";
+import BranchBadge, { BranchType } from "./BranchBadge";
 
 interface ActiveGroupsTableProps {
-  groups: AllGroupsDataType | undefined;
-  error: any;
+  groups: AllGroupsDataType;
+  revalidateData: KeyedMutator<AllGroupsDataType>;
 }
 
-export default function ActiveGroupsTable({
-  groups,
-  error,
-}: ActiveGroupsTableProps) {
-  if (error) return <div>Error loading groups</div>;
-  if (!groups || groups.length === 0) return <div>No groups found.</div>;
-
+export default function ActiveGroupsTable({ groups }: ActiveGroupsTableProps) {
   const sortedGroups = groups
     .sort((a, b) => a.id - b.id)
     .filter((group) => !group.archived);
@@ -39,7 +36,7 @@ export default function ActiveGroupsTable({
           <TableHead>State</TableHead>
           <TableHead>Online?</TableHead>
           <TableHead>Password Enabled?</TableHead>
-          <TableHead>Action</TableHead>
+          <TableHead>Actions</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -48,15 +45,18 @@ export default function ActiveGroupsTable({
             <TableRow key={group.id}>
               <TableCell>{group.id}</TableCell>
               <TableCell>{group.name}</TableCell>
-              <TableCell>{group.branchOfService}</TableCell>
+              <TableCell>
+                <BranchBadge branch={group.branchOfService as BranchType} />
+              </TableCell>
               <TableCell>{group.county}</TableCell>
               <TableCell>{group.state}</TableCell>
               <TableCell>{group.online ? "✅" : "❌"}</TableCell>
               <TableCell>{group.passwordEnabled ? "✅" : "❌"}</TableCell>
               <TableCell>
-                <Link href={`/groups/${group.id}`}>
+                <Link href={`/groups/${group.id}`} className="mr-2">
                   <Button>View</Button>
                 </Link>
+                <ArchiveGroupModal group={group} revalidateData={mutate} />
               </TableCell>
             </TableRow>
           );

@@ -1,3 +1,5 @@
+import { AllGroupsDataType } from "@/app/api/groups/all/route";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -8,18 +10,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { AllGroupsDataType } from "@/data/allGroups";
 import Link from "next/link";
+import BranchBadge, { BranchType } from "./BranchBadge";
 
 interface AllGroupsTableProps {
-  groups: AllGroupsDataType | undefined;
-  error: any;
+  groups: AllGroupsDataType;
 }
 
-export default function AllGroupsTable({ groups, error }: AllGroupsTableProps) {
-  if (error) return <div>Error loading groups</div>;
-  if (!groups || groups.length === 0) return <div>No groups found.</div>;
-
+export default function AllGroupsTable({ groups }: AllGroupsTableProps) {
   const sortedGroups = groups.sort((a, b) => a.id - b.id);
 
   return (
@@ -34,18 +32,27 @@ export default function AllGroupsTable({ groups, error }: AllGroupsTableProps) {
           <TableHead>County</TableHead>
           <TableHead>State</TableHead>
           <TableHead>Online?</TableHead>
-          <TableHead>Password Enabled?</TableHead>
+          <TableHead>Password Protected?</TableHead>
           <TableHead>Action</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
         {sortedGroups.map((group) => {
+          const archived = group.archived;
+          const badgeVariant = archived ? "destructive" : "default";
+
           return (
             <TableRow key={group.id}>
               <TableCell>{group.id}</TableCell>
               <TableCell>{group.name}</TableCell>
-              <TableCell>{group.archived ? "Archived" : "Active"}</TableCell>
-              <TableCell>{group.branchOfService}</TableCell>
+              <TableCell>
+                <Badge variant={badgeVariant}>
+                  {archived ? "Archived" : "Active"}
+                </Badge>
+              </TableCell>
+              <TableCell>
+                <BranchBadge branch={group.branchOfService as BranchType} />
+              </TableCell>
               <TableCell>{group.county}</TableCell>
               <TableCell>{group.state}</TableCell>
               <TableCell>{group.online ? "✅" : "❌"}</TableCell>

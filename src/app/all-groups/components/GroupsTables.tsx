@@ -1,12 +1,24 @@
+"use client";
+
 import React from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { getAllGroups } from "@/data/allGroups";
 import AllGroupsTable from "../components/AllGroupsTable";
 import ActiveGroupsTable from "../components/ActiveGroupsTable";
 import ArchivedGroupsTable from "../components/ArchivedGroupsTable";
+import { SWRProvider } from "@/providers/swrProvider";
+import { AllGroupsDataType } from "@/app/api/groups/all/route";
+import useSWR from "swr";
+import AllGroupsLoading from "./AllGroupsLoading";
 
-export default async function GroupsTables() {
-  const { data: groups, error } = await getAllGroups();
+function _GroupsTables() {
+  const { data, error, isLoading, mutate } = useSWR<AllGroupsDataType>([
+    `/groups/all`,
+  ]);
+
+  if (isLoading) return <AllGroupsLoading />;
+  if (error) return <div className="mt-4">Error loading groups</div>;
+
+  const groups = data || [];
 
   return (
     <Tabs defaultValue="all-groups" className="w-full mt-4">
@@ -16,14 +28,22 @@ export default async function GroupsTables() {
         <TabsTrigger value="archived">Archived</TabsTrigger>
       </TabsList>
       <TabsContent value="all-groups">
-        <AllGroupsTable groups={groups} error={error} />
+        <AllGroupsTable groups={groups} />
       </TabsContent>
       <TabsContent value="active">
-        <ActiveGroupsTable groups={groups} error={error} />
+        <ActiveGroupsTable groups={groups} revalidateData={mutate} />
       </TabsContent>
       <TabsContent value="archived">
-        <ArchivedGroupsTable groups={groups} error={error} />
+        <ArchivedGroupsTable groups={groups} revalidateData={mutate} />
       </TabsContent>
     </Tabs>
+  );
+}
+
+export default function GroupsTables() {
+  return (
+    <SWRProvider>
+      <_GroupsTables />
+    </SWRProvider>
   );
 }

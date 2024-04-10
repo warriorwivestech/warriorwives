@@ -1,3 +1,4 @@
+import { AllGroupsDataType } from "@/app/api/groups/all/route";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -8,21 +9,21 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { AllGroupsDataType } from "@/data/allGroups";
+import { parseDate } from "@/helpers/dateParser";
 import Link from "next/link";
+import ActivateGroupModal from "./ActivateGroupModal";
+import { KeyedMutator } from "swr";
+import BranchBadge, { BranchType } from "./BranchBadge";
 
 interface ArchivedGroupsTableProps {
-  groups: AllGroupsDataType | undefined;
-  error: any;
+  groups: AllGroupsDataType;
+  revalidateData: KeyedMutator<AllGroupsDataType>;
 }
 
 export default function ArchivedGroupsTable({
   groups,
-  error,
+  revalidateData,
 }: ArchivedGroupsTableProps) {
-  if (error) return <div>Error loading groups</div>;
-  if (!groups || groups.length === 0) return <div>No groups found.</div>;
-
   const sortedGroups = groups
     .sort((a, b) => a.id - b.id)
     .filter((group) => group.archived);
@@ -40,7 +41,7 @@ export default function ArchivedGroupsTable({
           <TableHead>Online?</TableHead>
           <TableHead>Password Enabled?</TableHead>
           <TableHead>Archived At</TableHead>
-          <TableHead>Action</TableHead>
+          <TableHead>Actions</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -55,31 +56,28 @@ export default function ArchivedGroupsTable({
             passwordEnabled,
             archivedAt,
           } = group;
-          const parsedArchivedAt = archivedAt
-            ? new Date(archivedAt).toLocaleString("en-US", {
-                month: "short",
-                day: "numeric",
-                year: "numeric",
-                hour: "numeric",
-                minute: "numeric",
-                hour12: true,
-              })
-            : "N/A";
+          const parsedArchivedAt = archivedAt ? parseDate(archivedAt) : "N/A";
 
           return (
             <TableRow key={id}>
               <TableCell>{id}</TableCell>
               <TableCell>{name}</TableCell>
-              <TableCell>{branchOfService}</TableCell>
+              <TableCell>
+                <BranchBadge branch={branchOfService as BranchType} />
+              </TableCell>
               <TableCell>{county}</TableCell>
               <TableCell>{state}</TableCell>
               <TableCell>{online ? "✅" : "❌"}</TableCell>
               <TableCell>{passwordEnabled ? "✅" : "❌"}</TableCell>
               <TableCell>{parsedArchivedAt}</TableCell>
               <TableCell>
-                <Link href={`/groups/${group.id}`}>
+                <Link href={`/groups/${group.id}`} className="mr-2">
                   <Button>View</Button>
                 </Link>
+                <ActivateGroupModal
+                  group={group}
+                  revalidateData={revalidateData}
+                />
               </TableCell>
             </TableRow>
           );
