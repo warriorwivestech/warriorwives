@@ -2,6 +2,7 @@ import { Flex, Skeleton } from "@chakra-ui/react";
 import EventCard from "@/components/EventCard";
 import { SWRResponse } from "swr";
 import { GroupEvents } from "@/app/api/groups/[groupId]/events/route";
+import { EventType } from "@/types/events";
 
 export default function GroupEventsData({
   events,
@@ -24,7 +25,7 @@ export default function GroupEventsData({
 
   return (
     <Flex className="flex-col w-[100%] md:w-[65%]" gap={6}>
-      {eventsData.map((event) => (
+      {eventsData.map((event: EventType) => (
         <EventCard
           key={event.id}
           id={event.id}
@@ -33,10 +34,10 @@ export default function GroupEventsData({
           description={event.description}
           displayPhoto={event.displayPhoto}
           online={event.online}
-          meetingLink={event.meetingLink}
+          meetingLink={event.meetingLink as string}
           location={event.location}
-          dateTime={event.dateTime}
-          attendeesCount={event._count.attendees}
+          dateTime={event.dateTime as string}
+          attendeesCount={event?.attendees.length}
         />
       ))}
     </Flex>

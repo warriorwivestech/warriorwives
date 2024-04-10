@@ -46,3 +46,18 @@ export const getBranchOfService = () => {
     { value: "SPACE_FORCE", label: "Space Force" },
   ];
 };
+
+export const getInterest = () => {
+  return [
+    { value: "Cooking", label: "Cooking" },
+    { value: "Gardening", label: "Gardening" },
+    { value: "Reading", label: "Reading" },
+    { value: "Painting", label: "Painting" },
+    { value: "Photography", label: "Photography" },
+    { value: "Hiking", label: "Hiking" },
+    { value: "Playing an Instrument", label: "Playing an Instrument" },
+    { value: "Yoga", label: "Yoga" },
+    { value: "Knitting", label: "Knitting" },
+    { value: "Woodworking", label: "Woodworking" },
+  ];
+};

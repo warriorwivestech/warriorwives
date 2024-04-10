@@ -20,13 +20,14 @@ export interface EventType {
   displayPhoto: string;
   location: string;
   online: boolean;
-  dateTime: Date | null;
+  dateTime: Date | null | string;
   photos: EventPhotoType[] | null;
   materials: EventMaterialType[] | null;
   group: GroupTypes | null;
-  groupId: string;
-  meetingLink?: string;
+  groupId: number;
+  meetingLink?: string | null | undefined;
   longCard?: Boolean;
+  attendees: any[];
 }
 
 export interface NewEvent {

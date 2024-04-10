@@ -1,9 +1,10 @@
 import { apiClient } from "@/apiClient";
 import { GroupDataType } from "@/app/api/groups/[groupId]/route";
-import { UserType } from "@/app/api/user/route";
+import { UserDataType } from "@/app/api/user/route";
 import { CreateEventModal } from "@/components/EventModal/AddEvent";
 import EditGroup from "@/components/GroupModal/EditGroup";
 import { Button } from "@/components/ui/button";
+import { UserType } from "@/data/user";
 import { Spinner } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { SWRResponse } from "swr";
@@ -11,7 +12,7 @@ import useSWRMutation from "swr/mutation";
 
 interface GroupActionButtonsProps {
   group: GroupDataType;
-  user: SWRResponse<UserType, any, any>;
+  user: SWRResponse<UserDataType, any, any>;
   correctPassword: boolean;
   onOpen: () => void;
 }
@@ -43,7 +44,7 @@ export default function GroupActionButtons({
     if (correctPassword) {
       trigger({ groupId: id });
     }
-  }, [correctPassword]);
+  }, [correctPassword, id, trigger]);
 
   if (groupAdmin || userData?.superUser) {
     return (

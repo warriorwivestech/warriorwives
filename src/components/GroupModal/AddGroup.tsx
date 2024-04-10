@@ -47,7 +47,12 @@ import { useRouter } from "next/navigation";
 import { apiClient } from "@/apiClient";
 import Image from "next/image";
 import { GroupDataType } from "@/app/api/groups/[groupId]/route";
-import { getBranchOfService, getCounty, getStates } from "./helper/getData";
+import {
+  getBranchOfService,
+  getCounty,
+  getInterest,
+  getStates,
+} from "./helper/getData";
 import { z } from "zod";
 
 interface CreateGroupModalType {
@@ -69,7 +74,7 @@ const GroupSchema = z.object({
     value: z.string().min(1),
     label: z.string().min(1),
   }),
-  county: z.string(),
+  county: z.object({}),
   tags: z.array(z.string()).min(1),
   branchOfService: z.string().min(1),
   password: z.string().optional(),
@@ -81,6 +86,7 @@ export function AddGroup(props: CreateGroupModalType) {
   const [loading, setLoading] = useState(false);
   const branchOfService = getBranchOfService();
   const states = getStates();
+  const interest = getInterest();
   const [validationErrors, setValidationErrors] = useState<any>([]);
   const [input, setInput] = useState<NewGroup>();
   const [filteredCounties, setFilteredCounties] = useState<LocationType[]>([]);
@@ -139,9 +145,7 @@ export function AddGroup(props: CreateGroupModalType) {
           `${process.env.NEXT_PUBLIC_SUPABASE_BLOB_URL}/${data?.fullPath}`
         );
 
-        setTimeout(() => {
-          setLoading(false);
-        }, 5000);
+        setLoading(false);
       }
     }
   };
@@ -166,6 +170,7 @@ export function AddGroup(props: CreateGroupModalType) {
   const handleSubmit = async () => {
     try {
       GroupSchema.parse(input);
+      console.log(input);
 
       const groupData = await apiClient("/groups", {
         method: "POST",
@@ -185,6 +190,7 @@ export function AddGroup(props: CreateGroupModalType) {
       // navigate to group page
       // router.push(`/groups/${groupData.id}`);
     } catch (error) {
+      console.log("testing");
       // Handle validation errors
       if (error instanceof z.ZodError) {
         const errorMap: Record<string, string> = {};
@@ -207,7 +213,7 @@ export function AddGroup(props: CreateGroupModalType) {
       <Modal closeOnOverlayClick={false} isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent minW="900px">
-          <ModalHeader>{`Edit ${props?.data?.name}`}</ModalHeader>
+          <ModalHeader>{`Create new group`}</ModalHeader>
           <ModalCloseButton />
           <ModalBody pb={6} gap={6} display={"flex"} flexDirection={"column"}>
             {/* banner image */}
@@ -353,8 +359,9 @@ export function AddGroup(props: CreateGroupModalType) {
 
             <div className="flex flex-row gap-6">
               <FormControl isInvalid={validationErrors["tags"]}>
-                <CreatableSelect
+                <MultiSelect
                   isMulti
+                  options={interest}
                   value={input?.tags.map((tag) => ({ label: tag, value: tag }))}
                   name="interest"
                   placeholder="Select interest"

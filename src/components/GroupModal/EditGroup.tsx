@@ -32,7 +32,12 @@ import { supabase } from "@/supabase";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { GroupDataType } from "@/app/api/groups/[groupId]/route";
-import { getBranchOfService, getCounty, getStates } from "./helper/getData";
+import {
+  getBranchOfService,
+  getCounty,
+  getInterest,
+  getStates,
+} from "./helper/getData";
 import { z } from "zod";
 import { useToast } from "../ui/use-toast";
 
@@ -55,7 +60,6 @@ const GroupSchema = z.object({
     value: z.string().min(1),
     label: z.string().min(1),
   }),
-  county: z.string(),
   tags: z.array(z.string()).min(1),
   branchOfService: z.string().min(1),
   password: z.string().optional(),
@@ -67,6 +71,7 @@ export default function EditGroup(props: CreateGroupModalType) {
   const [loading, setLoading] = useState(false);
   const branchOfService = getBranchOfService();
   const states = getStates();
+  const interest = getInterest();
   const [validationErrors, setValidationErrors] = useState<any>([]);
   const [input, setInput] = useState<NewGroup>();
   const [filteredCounties, setFilteredCounties] = useState<LocationType[]>([]);
@@ -326,8 +331,9 @@ export default function EditGroup(props: CreateGroupModalType) {
 
             <div className="flex flex-row gap-6">
               <FormControl isInvalid={validationErrors["tags"]}>
-                <CreatableSelect
+                <MultiSelect
                   isMulti
+                  options={interest}
                   value={input?.tags.map((tag) => ({ label: tag, value: tag }))}
                   name="interest"
                   placeholder="Select interest"
