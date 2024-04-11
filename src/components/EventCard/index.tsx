@@ -20,6 +20,7 @@ export default function EventCard({ event, longCard = false }: EventCardProps) {
     online,
     location,
     startDateTime,
+    endDateTime,
     attendeesCount,
     groupId,
   } = event;
@@ -38,7 +39,7 @@ export default function EventCard({ event, longCard = false }: EventCardProps) {
           <div className="flex flex-col-reverse sm:flex-row justify-between gap-4 w-full">
             <div className="flex flex-col gap-2 w-full">
               <p className="font-semibold text-md text-gray-500">
-                {startDateTime}
+                {startDateTime} - {endDateTime}
               </p>
               <Text
                 noOfLines={2}
