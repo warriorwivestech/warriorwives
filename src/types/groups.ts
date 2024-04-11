@@ -23,7 +23,7 @@ export interface NewGroup {
   branchOfService: string[];
   tags: string[];
   password?: string;
-  archived: boolean;
+  archived?: boolean;
 }
 
 export interface requiredGroupField {

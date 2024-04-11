@@ -13,22 +13,25 @@
 //   organizers   OrganizersOnEvents[]
 
 import prisma from "@/prisma";
+import { Event } from "./[eventId]/route";
 
 export async function POST(request: Request) {
-  const req = await request.json();
+  const req: Event = await request.json();
   const {
     name,
     description,
     location,
     online,
-    dateTime,
+    startDateTime,
+    endDateTime,
     groupId,
     photos,
     meetingLink,
     userId,
     displayPhoto,
   } = req;
-  const parsedDateTime = new Date(dateTime);
+  const parsedStartDateTime = new Date(startDateTime);
+  const parsedEndDateTime = new Date(endDateTime);
 
   console.log("trying to create event...");
   const eventData = await prisma.event.create({
@@ -37,8 +40,9 @@ export async function POST(request: Request) {
       description,
       location,
       online,
-      startDateTime: parsedDateTime,
-      endDateTime: parsedDateTime,
+      dateTime: parsedStartDateTime as any,
+      // startDateTime: parsedStartDateTime as any,
+      // endDateTime: parsedEndDateTime as any,
       groupId,
       meetingLink,
       displayPhoto,
@@ -51,12 +55,12 @@ export async function POST(request: Request) {
       },
       attendees: {
         create: {
-          userId,
+          userId: userId as number,
         },
       },
       organizers: {
         create: {
-          userId,
+          userId: userId as number,
         },
       },
     },

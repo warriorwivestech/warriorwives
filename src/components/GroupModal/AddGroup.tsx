@@ -88,7 +88,17 @@ export function AddGroup(props: CreateGroupModalType) {
   const states = getStates();
   const interest = getInterest();
   const [validationErrors, setValidationErrors] = useState<any>([]);
-  const [input, setInput] = useState<NewGroup>();
+  const [input, setInput] = useState<NewGroup>({
+    name: "",
+    description: "",
+    online: false,
+    displayPhoto: "",
+    county: "",
+    state: "",
+    branchOfService: [],
+    tags: [],
+    password: "",
+  });
   const [filteredCounties, setFilteredCounties] = useState<LocationType[]>([]);
   const [show, setShow] = useState(false);
   const handleClick = () => setShow(!show);
@@ -96,19 +106,6 @@ export function AddGroup(props: CreateGroupModalType) {
   useEffect(() => {
     setValidationErrors([]);
     setLoading(false);
-
-    setInput((prevInput: any) => ({
-      ...prevInput,
-      name: "",
-      description: "",
-      online: false,
-      displayPhoto: "",
-      county: "",
-      state: "",
-      branchOfService: [],
-      tags: [],
-      password: "",
-    }));
   }, [isOpen]);
 
   useEffect(() => {

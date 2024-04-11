@@ -12,7 +12,7 @@ import { FaPeopleGroup } from "react-icons/fa6";
 import OtherEvents from "./OtherEvents";
 import { apiClient } from "@/apiClient";
 import { useState } from "react";
-import { CreateEventModal } from "../EventModal/AddEvent";
+import { EditEvent } from "../EventModal/EditEvent";
 
 // Define the props interface
 interface EventDetailsProps {
@@ -22,7 +22,8 @@ interface EventDetailsProps {
   displayPhoto: string | null;
   location: string | null;
   meetingLink: string | null;
-  dateTime: string;
+  startDateTime: string;
+  endDateTime: string;
   online: boolean;
   attendees: string[];
   photos: string[];
@@ -40,7 +41,8 @@ export default function EventDetails({
   location,
   meetingLink,
   online,
-  dateTime,
+  startDateTime,
+  endDateTime,
   attendees,
   photos,
   organizers,
@@ -55,7 +57,7 @@ export default function EventDetails({
   const otherOrganizers = organizers.slice(0, -1).join(", ");
   const organizersString =
     organizers.length === 0 ? "" : `${otherOrganizers} and ${lastOrganizer}`;
-  const startDateTime = new Date(dateTime).toLocaleString("en-US", {
+  const startDateTimeFormat = new Date(startDateTime).toLocaleString("en-US", {
     month: "long",
     day: "numeric",
     year: "numeric",
@@ -64,8 +66,8 @@ export default function EventDetails({
     hour12: true,
   });
   // endDateTime is one hour after startDateTime
-  const endDateTime = new Date(
-    new Date(dateTime).getTime() + 60 * 60 * 1000
+  const endDateTimeFormat = new Date(
+    new Date(endDateTime).getTime() + 60 * 60 * 1000
   ).toLocaleString("en-US", {
     month: "long",
     day: "numeric",
@@ -251,7 +253,7 @@ export default function EventDetails({
         </div>
 
         {/* TODO: Only show for admin */}
-        <CreateEventModal
+        <EditEvent
           groupName={groupName}
           groupId={groupId}
           eventData={{
@@ -262,7 +264,8 @@ export default function EventDetails({
             location,
             meetingLink,
             online,
-            dateTime,
+            startDateTime: startDateTimeFormat as unknown as Date,
+            endDateTime: endDateTimeFormat as unknown as Date,
             attendees,
             photos,
             organizers,

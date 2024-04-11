@@ -1,7 +1,7 @@
 import { apiClient } from "@/apiClient";
 import { GroupDataType } from "@/app/api/groups/[groupId]/route";
 import { UserDataType } from "@/app/api/user/route";
-import { CreateEventModal } from "@/components/EventModal/AddEvent";
+import { AddEvent } from "@/components/EventModal/AddEvent";
 import EditGroup from "@/components/GroupModal/EditGroup";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@chakra-ui/react";
@@ -107,7 +107,7 @@ export default function GroupActionButtons({
     return (
       <div className="flex flex-col gap-2">
         <EditGroup data={group} />
-        <CreateEventModal groupName={name} groupId={id} />
+        <AddEvent groupName={name} groupId={id} />
         <JoinGroupButton
           groupId={id}
           joined={joined}

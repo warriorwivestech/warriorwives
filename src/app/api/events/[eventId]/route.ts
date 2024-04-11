@@ -7,7 +7,8 @@ export type Event = {
   displayPhoto: string | null;
   location: string | null;
   meetingLink: string | null;
-  dateTime: string;
+  startDateTime: string;
+  endDateTime: string;
   online: boolean;
   createdAt: string;
   updatedAt: string;
@@ -17,18 +18,19 @@ export type Event = {
   organizers: string[];
   joined: boolean;
   groupName: string;
+  userId: number | undefined;
 };
 
-function parseEventData(eventData, memberData) {
+function parseEventData(eventData: any, memberData: any) {
   const parsedData = {
     ...eventData,
-    attendees: eventData.attendees.map((attendee) => {
+    attendees: eventData.attendees.map((attendee: any) => {
       return attendee.user.name;
     }),
-    organizers: eventData.organizers.map((organizer) => {
+    organizers: eventData.organizers.map((organizer: any) => {
       return organizer.user.name;
     }),
-    photos: eventData.photos.map((photo) => {
+    photos: eventData.photos.map((photo: any) => {
       return photo.photo;
     }),
     joined: memberData ? true : false,

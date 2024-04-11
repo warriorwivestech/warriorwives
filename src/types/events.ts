@@ -30,15 +30,22 @@ export interface EventType {
   attendees: any[];
 }
 
-export interface NewEvent {
+export interface EventDetailsProps {
+  id?: number;
   name: string;
   description: string;
-  location: string;
+  displayPhoto: string | null;
+  location: string | null;
+  meetingLink: string | null;
+  startDateTime: Date | null;
+  endDateTime: Date | null;
   online: boolean;
-  link: string;
-  dateTime: any;
-  displayPhoto: string;
+  attendees?: string[];
   photos: string[];
+  organizers?: string[];
+  joined?: boolean;
+  groupName?: string;
+  groupId?: number;
 }
 
 export interface requiredEventField {
