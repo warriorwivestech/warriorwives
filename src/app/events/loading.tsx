@@ -1,14 +1,11 @@
-import {
-  Flex,
-  Skeleton,
-  SkeletonText,
-} from "@chakra-ui/react";
+import { TypographyH3 } from "@/components/ui/typography/h3";
+import { Flex, Skeleton, SkeletonText } from "@chakra-ui/react";
 
 export default function EventsLoading() {
   return (
     <>
       <div className="flex flex-col gap-8">
-        <p className="text-heading4">Joined events</p>
+        <TypographyH3>My Events</TypographyH3>
         <Flex className="flex-col w-[100%]" gap={6}>
           <div className={"min-w-[340px]"}>
             <div className="bg-white rounded-xl p-4 flex flex-col gap-6">
