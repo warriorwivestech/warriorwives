@@ -34,7 +34,7 @@ export default function EventCard({
 
   return (
     <Link
-      href={`/groups/${groupId}/${id}`}
+      href={`/groups/${groupId}/events/${id}`}
       className={`${longCard ? "min-w-[450px]" : "min-w-[340px]"} `}
     >
       <div className="bg-white rounded-xl p-4 flex flex-col gap-6">

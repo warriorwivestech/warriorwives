@@ -504,7 +504,7 @@ export function CreateEventModal({
                 console.log(eventData);
                 handleCloseModal();
                 // navigate to group page
-                router.push(`/groups/${groupId}/${eventData.id}`);
+                router.push(`/groups/${groupId}/events/${eventData.id}`);
               }}
             >
               Save
