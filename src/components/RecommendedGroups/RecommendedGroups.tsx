@@ -27,7 +27,7 @@ function _RecommendedGroups() {
     <div className="flex flex-row gap-8 overflow-scroll overflow-y-hidden">
       {groups.map((group) => {
         return (
-          <div key={group.id} className="min-w-[330px] sm:min-w-[500px] mb-4">
+          <div key={group.id} className="w-[330px] sm:w-[500px] mb-4">
             <GroupCard {...group} />
           </div>
         );

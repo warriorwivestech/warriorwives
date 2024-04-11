@@ -30,6 +30,8 @@ import GroupActionButtons from "./components/GroupActionButtons";
 import { getUserRequestOptions } from "@/app/api/user/helper";
 import { UserDataType } from "@/app/api/user/route";
 import { notFound } from "next/navigation";
+import { TypographyH1 } from "@/components/ui/typography/h1";
+import { TypographyH2 } from "@/components/ui/typography/h2";
 
 function GroupData({
   group,
@@ -40,8 +42,6 @@ function GroupData({
   events: SWRResponse<GroupEvents, any, any>;
   user: SWRResponse<UserDataType, any, any>;
 }) {
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const [correctPassword, setCorrectPassword] = useState(false);
   const [isSticky, setIsSticky] = useState(false);
   const [scrollPosition, setScrollPosition] = useState(70);
   const [scrollSpeed, setScrollSpeed] = useState(0);
@@ -167,12 +167,7 @@ function GroupData({
                       Organized by {parsedAdmins}
                     </IconText>
                   </Stack>
-                  <GroupActionButtons
-                    group={group}
-                    user={user}
-                    onOpen={onOpen}
-                    correctPassword={correctPassword}
-                  />
+                  <GroupActionButtons group={group} user={user} />
                 </Stack>
               </Box>
             </Box>

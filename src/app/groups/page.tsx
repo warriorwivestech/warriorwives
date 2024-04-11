@@ -26,7 +26,7 @@ export default async function GroupsPage() {
     if (!groups || groups.length === 0) return <ExploreGroups />;
 
     return (
-      <SimpleGrid columns={[1, 2, 3]} spacing={6}>
+      <SimpleGrid minChildWidth="330px" columns={[1, 2, 3]} spacing={6}>
         {groups.map((group) => {
           return <GroupCard key={group.id} {...group} />;
         })}

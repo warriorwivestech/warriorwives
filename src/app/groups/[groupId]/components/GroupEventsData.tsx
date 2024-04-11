@@ -37,7 +37,7 @@ export default function GroupEventsData({
           meetingLink={event.meetingLink as string}
           location={event.location}
           dateTime={event.dateTime as string}
-          attendeesCount={event?.attendees.length}
+          attendeesCount={event?.attendees?.length}
         />
       ))}
     </Flex>
