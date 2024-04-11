@@ -47,7 +47,7 @@ function getBranchBadgeText(branch: BranchType) {
   }
 }
 
-export default function BranchBadge({ branch }: { branch: Branch }) {
+export default function BranchBadge({ branch }: { branch: BranchType }) {
   return (
     <Badge variant="default" className={getBranchBadgeColor(branch)}>
       {getBranchBadgeText(branch)}

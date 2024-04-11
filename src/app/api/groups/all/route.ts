@@ -2,7 +2,7 @@ import prisma from "@/prisma";
 import { auth } from "@/auth";
 import { Prisma } from "@prisma/client";
 import { parseBranchOfService } from "@/data/helpers";
-import { queryUserIsSuperUser } from "../[groupId]/members/route";
+import { queryUserIsSuperUser } from "@/data/sharedQueries";
 
 async function queryAllGroups() {
   return prisma.group.findMany({

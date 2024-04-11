@@ -9,7 +9,7 @@ import Link from "next/link";
 import Tags from "../common/tags";
 import { SWRProvider, fetcher } from "@/providers/swrProvider";
 import useSWR, { preload } from "swr";
-import { getSingleGroupRequestOptions } from "@/app/groups/[groupId]/page";
+import { getSingleGroupRequestOptions } from "@/app/api/groups/helper";
 
 function _Search() {
   const [searchInput, setSearchInput] = useState("");

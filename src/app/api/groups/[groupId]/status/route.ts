@@ -1,5 +1,5 @@
 import { auth } from "@/auth";
-import { queryUserIsSuperUser } from "../members/route";
+import { queryUserIsSuperUser } from "@/data/sharedQueries";
 import prisma from "@/prisma";
 
 export async function PUT(

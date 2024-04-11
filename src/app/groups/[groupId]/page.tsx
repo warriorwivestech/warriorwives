@@ -32,6 +32,8 @@ import { UserDataType } from "@/app/api/user/route";
 import { notFound } from "next/navigation";
 import { TypographyH1 } from "@/components/ui/typography/h1";
 import { TypographyH2 } from "@/components/ui/typography/h2";
+import { getGroupEventsRequestOptions } from "@/app/api/events/helper";
+import { getSingleGroupRequestOptions } from "@/app/api/groups/helper";
 
 function GroupData({
   group,
@@ -195,20 +197,6 @@ function GroupData({
       </div>
     </div>
   );
-}
-
-export function getSingleGroupRequestOptions(groupId: string): RequestInit {
-  return {
-    // cache: "force-cache",
-    next: { tags: ["group", groupId], revalidate: 60 * 5 },
-  };
-}
-
-export function getGroupEventsRequestOptions(groupId: string): RequestInit {
-  return {
-    // cache: "force-cache",
-    next: { tags: ["group", groupId, "events"], revalidate: 60 * 5 },
-  };
 }
 
 function _GroupPage({ params }: { params: { groupId: string } }) {

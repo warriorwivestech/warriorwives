@@ -2,6 +2,7 @@ import prisma from "@/prisma";
 import { auth } from "@/auth";
 import { Prisma } from "@prisma/client";
 import { parseBranchOfService } from "@/data/helpers";
+import { queryUserIsSuperUser } from "@/data/sharedQueries";
 
 async function queryGroupMembers(groupId: number) {
   const membersData = await prisma.membersOnGroups.findMany({
@@ -27,16 +28,6 @@ function parseGroupMembers(members: UnparsedGroupMembers) {
   });
 }
 export type GroupMembers = ReturnType<typeof parseGroupMembers>;
-
-export async function queryUserIsSuperUser(userEmail: string) {
-  const userData = await prisma.user.findUnique({
-    where: {
-      email: userEmail,
-    },
-  });
-
-  return userData?.superUser;
-}
 
 export async function GET(
   request: Request,

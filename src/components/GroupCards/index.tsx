@@ -25,10 +25,8 @@ import Tags from "../common/tags";
 import IconText from "../common/icontext";
 import { preload } from "swr";
 import { fetcher } from "@/providers/swrProvider";
-import {
-  getGroupEventsRequestOptions,
-  getSingleGroupRequestOptions,
-} from "@/app/groups/[groupId]/page";
+import { getGroupEventsRequestOptions } from "@/app/api/events/helper";
+import { getSingleGroupRequestOptions } from "@/app/api/groups/helper";
 
 interface GroupCardProps {
   id: number;
