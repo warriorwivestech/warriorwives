@@ -53,7 +53,8 @@ export default async function EventPage({
           displayPhoto={event.displayPhoto}
           location={event.location}
           meetingLink={event.meetingLink}
-          dateTime={event.dateTime}
+          startDateTime={event?.startDateTime}
+          endDateTime={event?.endDateTime}
           online={event.online}
           attendees={event.attendees}
           photos={event.photos}
