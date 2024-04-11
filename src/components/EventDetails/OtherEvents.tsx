@@ -4,7 +4,6 @@ import { SWRProvider } from "@/providers/swrProvider";
 import useSWR from "swr";
 import EventCard from "../EventCard";
 import { GroupEvents } from "@/app/api/groups/[groupId]/events/route";
-import { Event } from "@/app/api/events/[eventId]/route";
 
 interface OtherEventsProps {
   groupId: number;
@@ -25,8 +24,8 @@ function _OtherEvents({ groupId, eventId }: OtherEventsProps) {
 
   return (
     <div className="flex flex-row gap-4 overflow-x-scroll">
-      {otherEvents.map((event: any) => {
-        return <EventCard key={event.id} longCard={true} {...event} />;
+      {otherEvents.map((event) => {
+        return <EventCard key={event.id} longCard={true} event={event} />;
       })}
     </div>
   );

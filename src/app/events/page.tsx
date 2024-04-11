@@ -1,38 +1,51 @@
 import { Flex } from "@chakra-ui/react";
 import React from "react";
 import EventCard from "../../components/EventCard";
-import { getJoinedEvents } from "../../data/joinedEvents";
+import { JoinedEvents, getJoinedEvents } from "../../data/joinedEvents";
 import { TypographyH3 } from "@/components/ui/typography/h3";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { TypographyMuted } from "@/components/ui/typography/muted";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import ExploreEvents from "./components/ExploreEvents";
+
+function EventsList({ events }: { events: JoinedEvents }) {
+  if (!events || events.length === 0) return <ExploreEvents />;
+
+  return (
+    <Flex className="flex-col w-[100%]" gap={6}>
+      {events.map((event) => (
+        <EventCard key={event.id} event={event} />
+      ))}
+    </Flex>
+  );
+}
 
 export default async function EventsPage() {
   const { data: events, error } = await getJoinedEvents();
 
-  const ExploreEvents = () => {
-    return (
-      <div>
-        <TypographyMuted>
-          No events joined. Explore events from your groups.
-        </TypographyMuted>
-        <Link href="/groups">
-          <Button className="mt-4">View Groups</Button>
-        </Link>
-      </div>
-    );
-  };
-
   const EventsData = () => {
-    if (error) return <div>Error loading events</div>;
-    if (!events || events.length === 0) return <ExploreEvents />;
+    if (error) return <div className="mt-4">Error loading events</div>;
+
+    const upcomingEvents = events
+      ? events.filter((event) => new Date(event.startDateTime) > new Date())
+      : [];
+    const pastEvents = events
+      ? events
+          .filter((event) => new Date(event.startDateTime) < new Date())
+          .reverse()
+      : [];
 
     return (
-      <Flex className="flex-col w-[100%]" gap={6}>
-        {events.map((event) => (
-          <EventCard key={event.id} event={event} />
-        ))}
-      </Flex>
+      <Tabs defaultValue="upcoming" className="w-full">
+        <TabsList>
+          <TabsTrigger value="upcoming">Upcoming</TabsTrigger>
+          <TabsTrigger value="past">Past</TabsTrigger>
+        </TabsList>
+        <TabsContent value="upcoming">
+          <EventsList events={upcomingEvents} />
+        </TabsContent>
+        <TabsContent value="past">
+          <EventsList events={pastEvents} />
+        </TabsContent>
+      </Tabs>
     );
   };
 

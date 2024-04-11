@@ -333,7 +333,7 @@ export default function ProfileForm({
           </Button>
         </div>
         <Button type="submit" className="w-24" disabled={isMutating}>
-          {isMutating ? <Spinner size="sm" /> : "Update"}
+          {isMutating ? <Spinner size="sm" /> : "Save"}
         </Button>
       </form>
     </Form>
