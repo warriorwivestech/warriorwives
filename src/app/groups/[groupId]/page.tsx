@@ -29,7 +29,6 @@ import { GroupDataType } from "@/app/api/groups/[groupId]/route";
 import GroupActionButtons from "./components/GroupActionButtons";
 import { getUserRequestOptions } from "@/app/api/user/helper";
 import { UserDataType } from "@/app/api/user/route";
-import GroupPasswordModal from "./components/GroupPasswordModal";
 import { notFound } from "next/navigation";
 
 function GroupData({
@@ -199,12 +198,6 @@ function GroupData({
           <GroupEventsData events={events} />
         </Stack>
       </div>
-      <GroupPasswordModal
-        onClose={onClose}
-        isOpen={isOpen}
-        password={group?.password as string}
-        setCorrectPassword={setCorrectPassword}
-      />
     </div>
   );
 }

@@ -1,69 +1,116 @@
 "use client";
 
-import React, { useState } from "react";
+import { Dispatch, SetStateAction, useEffect } from "react";
 import {
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalBody,
-  ModalCloseButton,
-  Button,
-  Input,
-} from "@chakra-ui/react";
+  AlertDialog,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { TriggerWithArgs } from "swr/mutation";
+import { Button } from "@/components/ui/button";
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { JoinGroupResponseType } from "@/app/api/groups/[groupId]/join/route";
+import { Spinner } from "@chakra-ui/react";
+
+const FormSchema = z.object({
+  password: z.string().min(1, {
+    message: "Password is required.",
+  }),
+});
+
+interface GroupPasswordModalProps {
+  open: boolean;
+  onOpenChange: Dispatch<SetStateAction<boolean>>;
+  trigger: TriggerWithArgs<
+    JoinGroupResponseType,
+    any,
+    `/groups/${number}/join`,
+    {
+      password?: string | undefined;
+    }
+  >;
+  disabled: boolean;
+  data: JoinGroupResponseType | undefined;
+}
 
 export default function GroupPasswordModal({
-  isOpen,
-  onClose,
-  password,
-  setCorrectPassword,
-}: {
-  isOpen: boolean;
-  password: string | undefined;
-  onClose: () => void;
-  setCorrectPassword: (state: boolean) => void;
-}) {
-  const [enteredPassword, setEnteredPassword] = useState("");
-  const [validationError, setValidationError] = useState("");
+  open,
+  onOpenChange,
+  trigger,
+  disabled,
+  data,
+}: GroupPasswordModalProps) {
+  const form = useForm<z.infer<typeof FormSchema>>({
+    resolver: zodResolver(FormSchema),
+    defaultValues: {
+      password: "",
+    },
+  });
 
-  const handlePasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setEnteredPassword(event.target.value);
-  };
+  function onSubmit(data: z.infer<typeof FormSchema>) {
+    trigger({ password: data.password });
+  }
 
-  const handleJoinGroup = () => {
-    if (enteredPassword === password) {
-      setCorrectPassword(true);
-      onClose();
-    } else {
-      setCorrectPassword(false);
-      setValidationError("Incorrect password.");
+  useEffect(() => {
+    if (!data) return;
+    if (data.error) {
+      form.setError("password", {
+        message: data.error,
+      });
     }
-  };
+  }, [data]);
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
-      <ModalOverlay />
-      <ModalContent>
-        <ModalHeader>Enter Password</ModalHeader>
-        <ModalCloseButton />
-        <ModalBody>
-          <Input
-            placeholder="Password"
-            value={enteredPassword}
-            onChange={handlePasswordChange}
-            isInvalid={!!validationError}
-          />
-
-          {validationError && <p style={{ color: "red" }}>{validationError}</p>}
-        </ModalBody>
-
-        <ModalFooter>
-          <Button variant="ghost" onClick={handleJoinGroup}>
-            Join Group
-          </Button>
-        </ModalFooter>
-      </ModalContent>
-    </Modal>
+    <AlertDialog open={open} onOpenChange={onOpenChange}>
+      <AlertDialogTrigger asChild>
+        <Button disabled={disabled}>Join Group</Button>
+      </AlertDialogTrigger>
+      <AlertDialogContent>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <AlertDialogHeader>
+              <AlertDialogTitle>Enter Group Password</AlertDialogTitle>
+              <AlertDialogDescription>
+                <FormField
+                  control={form.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Password</FormLabel>
+                      <FormControl>
+                        <Input {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <Button type="submit" disabled={disabled} className="w-20">
+                {disabled ? <Spinner size="sm" /> : "Join"}
+              </Button>
+            </AlertDialogFooter>
+          </form>
+        </Form>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 }
