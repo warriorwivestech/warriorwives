@@ -4,8 +4,8 @@ import { Divider, SimpleGrid } from "@chakra-ui/react";
 import { getJoinedGroups } from "../../data/joinedGroups";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { TypographyP } from "@/components/ui/typography/p";
 import { TypographyH3 } from "@/components/ui/typography/h3";
+import { TypographyMuted } from "@/components/ui/typography/muted";
 
 export default async function GroupsPage() {
   const { data: groups, error } = await getJoinedGroups();
@@ -13,7 +13,7 @@ export default async function GroupsPage() {
   const ExploreGroups = () => {
     return (
       <div>
-        <TypographyP>No groups joined.</TypographyP>
+        <TypographyMuted>No groups joined.</TypographyMuted>
         <Link href="/">
           <Button className="mt-4">Explore Groups</Button>
         </Link>

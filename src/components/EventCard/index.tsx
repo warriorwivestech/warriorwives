@@ -1,34 +1,29 @@
+import { GroupEvents } from "@/app/api/groups/[groupId]/events/route";
+import { JoinedEvents } from "@/data/joinedEvents";
 import { Text, Image, Button } from "@chakra-ui/react";
 import Link from "next/link";
 import { FaLocationArrow } from "react-icons/fa";
 
 interface EventCardProps {
-  id: number;
-  name: string;
-  description: string;
-  displayPhoto: string | null;
-  online: boolean;
-  meetingLink: string | null;
-  location: string | null;
-  dateTime: string;
-  attendeesCount: number;
-  groupId: number;
+  event: JoinedEvents[0] | GroupEvents[0];
   longCard?: boolean;
 }
 
-export default function EventCard({
-  id,
-  name,
-  description,
-  displayPhoto,
-  online,
-  meetingLink,
-  location,
-  dateTime,
-  attendeesCount,
-  groupId,
-  longCard = false,
-}: EventCardProps) {
+export default function EventCard({ event, longCard = false }: EventCardProps) {
+  const {
+    id,
+    name,
+    description,
+    displayPhoto,
+    online,
+    meetingLink,
+    location,
+    startDateTime,
+    endDateTime,
+    attendeesCount,
+    groupId,
+  } = event;
+
   const displayPhotoUrl =
     displayPhoto || "https://startup.mp.gov.in/assets/img/img-not-found.png";
 
@@ -41,7 +36,7 @@ export default function EventCard({
         <div className="flex flex-row justify-between gap-4 w-[100%]">
           <div className="flex flex-col gap-2 w-[100%]">
             <p className="font-bold text-[14px] text-green-800 tracking-wider">
-              {dateTime}
+              {startDateTime}
             </p>
             <Text
               noOfLines={2}

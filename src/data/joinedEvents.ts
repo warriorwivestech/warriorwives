@@ -1,15 +1,21 @@
 import { Prisma } from "@prisma/client";
 import prisma from "../prisma";
+import { auth } from "@/auth";
+import { UnauthenticatedError } from "@/lib/errors";
+import { parseDate } from "@/helpers/dateParser";
 
-export async function queryJoinedEvents(userId: number) {
-  // get events user is attending where date is in the future and sorted by closest date
+export async function queryJoinedEvents() {
+  const session = await auth();
+  const user = session?.user;
+  if (!user) {
+    throw new UnauthenticatedError();
+  }
+
+  // sort by startDateTime in ascending order
   const data = await prisma.attendeesOnEvents.findMany({
     where: {
-      userId: userId,
-      event: {
-        startDateTime: {
-          gte: new Date(),
-        },
+      user: {
+        email: user.email as string,
       },
     },
     include: {
@@ -39,29 +45,20 @@ function parseJoinedEventsResponse(attendeesOnEvents: UnparsedJoinedEvents) {
   return attendeesOnEvents.map((attendeesOnEvent) => ({
     ...attendeesOnEvent.event,
     // "2024-02-08T12:00:00.000Z" convert this to "Feb 8, 2024, 12:00 PM"
-    dateTime: new Date(attendeesOnEvent.event.startDateTime).toLocaleString(
-      "en-US",
-      {
-        month: "short",
-        day: "numeric",
-        year: "numeric",
-        hour: "numeric",
-        minute: "numeric",
-        hour12: true,
-      }
-    ),
+    startDateTime: parseDate(attendeesOnEvent.event.startDateTime),
+    endDateTime: parseDate(attendeesOnEvent.event.endDateTime),
     attendeesCount: attendeesOnEvent.event._count.attendees,
   }));
 }
 
 export type JoinedEvents = ReturnType<typeof parseJoinedEventsResponse>;
 
-export async function getJoinedEvents(userId: number) {
+export async function getJoinedEvents() {
   let data: JoinedEvents | undefined = undefined;
   let error = undefined;
 
   try {
-    const eventsData = await queryJoinedEvents(userId);
+    const eventsData = await queryJoinedEvents();
     data = parseJoinedEventsResponse(eventsData);
   } catch (e) {
     error = {
