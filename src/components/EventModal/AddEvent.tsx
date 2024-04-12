@@ -239,10 +239,7 @@ export function AddEvent({
 
   return (
     <>
-      <Button
-        onClick={onOpen}
-        className="bg-black text-white hover:text-black mt-4"
-      >
+      <Button onClick={onOpen} className="bg-black text-white hover:text-black">
         <IconText icon={RiAdminFill}>{"Create new event"}</IconText>
       </Button>
       <Modal closeOnOverlayClick={false} isOpen={isOpen} onClose={onClose}>

@@ -13,6 +13,8 @@ import OtherEvents from "./OtherEvents";
 import { apiClient } from "@/apiClient";
 import { useState } from "react";
 import { EditEvent } from "../EventModal/EditEvent";
+import { TypographyH4 } from "../ui/typography/h4";
+import { Card } from "../ui/card";
 
 // Define the props interface
 interface EventDetailsProps {
@@ -96,15 +98,15 @@ export default function EventDetails({
   };
 
   return (
-    <div className="flex flex-col-reverse md:flex-row gap-8 justify-between">
+    <div className="w-full flex flex-col md:flex-row gap-8 justify-between">
       {/* content */}
 
-      <div className="flex flex-col gap-8 w-[100%] md:w-[65%]">
+      <div className="flex flex-col gap-8 w-full md:w-[65%]">
         {/* banner image */}
         {/* change back to without exclaimation mark when done*/}
         {displayPhotoUrl && (
           <Image
-            rounded={"xl"}
+            rounded={"md"}
             alt={"product image"}
             src={displayPhotoUrl}
             fit={"cover"}
@@ -114,10 +116,9 @@ export default function EventDetails({
           />
         )}
 
-        {/* description */}
         <div className="flex flex-col gap-4">
-          <p className="text-heading5">Description</p>
-          <p>{description}</p>
+          <TypographyH4>Description</TypographyH4>
+          <p className="text-gray-700">{description}</p>
         </div>
 
         {/* Attendees */}
@@ -191,8 +192,8 @@ export default function EventDetails({
       </div>
 
       {/* sticky tab */}
-      <div className="md:sticky md:top-10 flex flex-col gap-4 w-[100%] md:w-[25%] h-[100%]">
-        <div className="flex flex-col gap-4 bg-white rounded-xl p-4 w-[100%]">
+      <Card className="flex flex-col gap-4 w-full h-full md:sticky md:top-10 md:w-[30%] p-4">
+        <div className="flex flex-col gap-4 w-full p-2">
           {/* <div className="gap-2 flex flex-row flex-wrap">
             <Tag w={"auto"}>tags</Tag>
             <Tag w={"auto"}>tags</Tag>
@@ -201,29 +202,24 @@ export default function EventDetails({
             <Tag w={"auto"}>tags</Tag>
           </div> */}
 
-          <div className="flex flex-row gap-4 items-start">
-            <FaPeopleGroup
-              style={{ minHeight: "18px", minWidth: "18px", marginTop: "4px" }}
-            />
-            <p>{`Organized by ${
+          <div className="flex flex-row gap-4 items-center">
+            <FaClock style={{ minHeight: "18px", minWidth: "18px" }} />
+            <p className="text-gray-700">{`${startDateTime} to ${endDateTime}`}</p>
+          </div>
+
+          <div className="flex flex-row gap-4 items-center">
+            <FaPeopleGroup style={{ minHeight: "18px", minWidth: "18px" }} />
+            <p className="text-sm text-gray-700">{`Organized by ${
               organizersString ? organizersString : "Jackson"
             }`}</p>
           </div>
 
-          <div className="flex flex-row gap-4 items-start">
-            <FaClock
-              style={{ minHeight: "18px", minWidth: "18px", marginTop: "4px" }}
-            />
-            <p>{`${startDateTime} to ${endDateTime}`}</p>
-          </div>
-
           {online ? (
-            <div className="flex flex-row gap-4 items-start">
+            <div className="flex flex-row gap-4 items-center">
               <FaVideo
                 style={{
                   minHeight: "18px",
                   minWidth: "18px",
-                  marginTop: "4px",
                 }}
               />
 
@@ -239,12 +235,11 @@ export default function EventDetails({
               </div>
             </div>
           ) : (
-            <div className="flex flex-row gap-4 items-start">
+            <div className="flex flex-row gap-4 items-center">
               <FaLocationArrow
                 style={{
                   minHeight: "18px",
                   minWidth: "18px",
-                  marginTop: "4px",
                 }}
               />
               <p>{location}</p>
@@ -290,7 +285,7 @@ export default function EventDetails({
             {isJoining ? <Spinner /> : "Join Event"}
           </Button>
         )}
-      </div>
+      </Card>
     </div>
   );
 }

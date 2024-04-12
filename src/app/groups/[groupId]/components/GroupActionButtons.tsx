@@ -11,6 +11,7 @@ import useSWRMutation from "swr/mutation";
 import GroupPasswordModal from "./GroupPasswordModal";
 import { useToast } from "@/components/ui/use-toast";
 import { JoinGroupResponseType } from "@/app/api/groups/[groupId]/join/route";
+import Link from "next/link";
 
 async function joinGroup(
   url: string,
@@ -66,7 +67,7 @@ function JoinGroupButton({
 
   if (joined || justJoined) {
     return (
-      <Button variant="secondary" disabled={true}>
+      <Button variant="secondary" className="w-full" disabled={true}>
         Joined
       </Button>
     );
@@ -108,12 +109,19 @@ export default function GroupActionButtons({
       <div className="flex flex-col gap-2">
         <EditGroup data={group} />
         <AddEvent groupName={name} groupId={id} />
-        <JoinGroupButton
-          groupId={id}
-          joined={joined}
-          passwordEnabled={passwordEnabled}
-          disabled={isLoading}
-        />
+        <div className="flex gap-2">
+          <Link href={`/groups/${id}/members`} className="w-full">
+            <Button variant="outline" className="w-full">
+              View Members
+            </Button>
+          </Link>
+          <JoinGroupButton
+            groupId={id}
+            joined={joined}
+            passwordEnabled={passwordEnabled}
+            disabled={isLoading}
+          />
+        </div>
       </div>
     );
   }
