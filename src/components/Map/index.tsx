@@ -286,7 +286,7 @@ const _Map = () => {
           Groups in {selectedCounty && `${selectedCounty}, `}
           {selectedState}
         </p>
-        <SimpleGrid columns={[1, 2, 3]} spacing={5}>
+        <SimpleGrid minChildWidth="330px" columns={[1, 2, 3]} spacing={5}>
           {groups.map((group) => {
             return <GroupCard key={group.id} {...group} />;
           })}

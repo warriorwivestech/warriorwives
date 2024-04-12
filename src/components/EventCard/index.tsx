@@ -8,10 +8,13 @@ import Image from "next/image";
 
 interface EventCardProps {
   event: JoinedEvents[0] | GroupEvents[0];
-  longCard?: boolean;
+  shortCard?: boolean;
 }
 
-export default function EventCard({ event, longCard = false }: EventCardProps) {
+export default function EventCard({
+  event,
+  shortCard = false,
+}: EventCardProps) {
   const {
     id,
     name,
@@ -20,7 +23,6 @@ export default function EventCard({ event, longCard = false }: EventCardProps) {
     online,
     location,
     startDateTime,
-    endDateTime,
     attendeesCount,
     groupId,
   } = event;
@@ -30,16 +32,15 @@ export default function EventCard({ event, longCard = false }: EventCardProps) {
   const attendeesText = attendeesCount === 1 ? "attendee" : "attendees";
 
   return (
-    <Link
-      href={`/groups/${groupId}/events/${id}`}
-      className={`${longCard ? "min-w-[450px]" : "min-w-[340px]"} `}
-    >
-      <Card>
+    <Link href={`/groups/${groupId}/events/${id}`}>
+      <Card
+        className={`${shortCard ? "min-w-[340px] md:min-w-[450px]" : "min-w-[340px]"} `}
+      >
         <div className="p-4 flex flex-col gap-6">
           <div className="flex flex-col-reverse sm:flex-row justify-between gap-4 w-full">
             <div className="flex flex-col gap-2 w-full">
-              <p className="font-semibold text-md text-gray-500">
-                {startDateTime} - {endDateTime}
+              <p className="font-semibold text-sm text-gray-500">
+                {startDateTime}
               </p>
               <Text
                 noOfLines={2}
@@ -71,25 +72,25 @@ export default function EventCard({ event, longCard = false }: EventCardProps) {
             </div>
           </div>
 
-          <div className="flex flex-col gap-6">
-            <div>
+          <div
+            className={`flex flex-col gap-6 ${shortCard && "min-h-[124px]"}`}
+          >
+            <div className="flex-grow">
               <Text
                 noOfLines={3}
                 textOverflow="ellipsis"
-                className="text-[14px]"
+                className="text-sm text-gray-700"
               >
                 {description}
               </Text>
             </div>
-
             <div className="flex flex-row justify-between items-center">
               <div className="flex flex-row items-center gap-2">
                 <p className="text-gray-500 text-sm">
                   {`${attendeesCount} ${attendeesText}`}
                 </p>
               </div>
-
-              <Button>View event</Button>
+              <Button>View Event</Button>
             </div>
           </div>
         </div>

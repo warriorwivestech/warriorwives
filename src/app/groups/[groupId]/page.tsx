@@ -30,10 +30,10 @@ import GroupActionButtons from "./components/GroupActionButtons";
 import { getUserRequestOptions } from "@/app/api/user/helper";
 import { UserDataType } from "@/app/api/user/route";
 import { notFound } from "next/navigation";
-import { TypographyH1 } from "@/components/ui/typography/h1";
-import { TypographyH2 } from "@/components/ui/typography/h2";
 import { getGroupEventsRequestOptions } from "@/app/api/events/helper";
 import { getSingleGroupRequestOptions } from "@/app/api/groups/helper";
+import { TypographyH4 } from "@/components/ui/typography/h4";
+import { TypographyH3 } from "@/components/ui/typography/h3";
 
 function GroupData({
   group,
@@ -148,7 +148,7 @@ function GroupData({
                       <IconText
                         icon={RiBaseStationFill}
                         iconClassName="text-green-500"
-                        textClassName="uppercase text-green-500 tracking-wider font-bold"
+                        textClassName="uppercase text-green-500 font-bold"
                       >
                         ONLINE ONLY
                       </IconText>
@@ -156,15 +156,21 @@ function GroupData({
                     <IconText
                       icon={FaMapMarkerAlt}
                       iconClassName="text-red-700"
+                      textClassName="font-semibold text-sm"
                     >
                       {location}
                     </IconText>
-                    <IconText icon={MdPeopleAlt} iconClassName="text-blue-400">
+                    <IconText
+                      icon={MdPeopleAlt}
+                      iconClassName="text-blue-400"
+                      textClassName="text-gray-500 text-sm"
+                    >
                       {`${membersCount} members`}
                     </IconText>
                     <IconText
                       icon={BsPersonRaisedHand}
                       iconClassName="text-gray-500"
+                      textClassName="text-gray-500 text-sm"
                     >
                       Organized by {parsedAdmins}
                     </IconText>
@@ -175,7 +181,7 @@ function GroupData({
             </Box>
           </SimpleGrid>
           <Flex className="flex-col gap-4">
-            <p className="text-heading5">Description</p>
+            <TypographyH4>Description</TypographyH4>
             <Text
               textOverflow={"ellipsis"}
               width={`${
@@ -184,14 +190,14 @@ function GroupData({
               }%`}
               transition={"width 0.25s ease"}
               ref={descriptionRef}
-              className="break-words"
+              className="break-words text-gray-700"
             >
               {description}
             </Text>
           </Flex>
         </Stack>
         <Stack gap={4}>
-          <p className="text-heading4">Events from {name}</p>
+          <TypographyH3>Events from {name}</TypographyH3>
           <GroupEventsData events={events} />
         </Stack>
       </div>

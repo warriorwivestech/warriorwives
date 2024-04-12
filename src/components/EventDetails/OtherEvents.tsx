@@ -23,9 +23,9 @@ function _OtherEvents({ groupId, eventId }: OtherEventsProps) {
     return <div>No other events</div>;
 
   return (
-    <div className="flex flex-row gap-4 overflow-x-scroll">
+    <div className="flex flex-row gap-4 overflow-x-scroll pb-2 pl-1">
       {otherEvents.map((event) => {
-        return <EventCard key={event.id} longCard={true} event={event} />;
+        return <EventCard key={event.id} shortCard event={event} />;
       })}
     </div>
   );

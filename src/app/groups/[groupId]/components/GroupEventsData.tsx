@@ -12,7 +12,7 @@ export default function GroupEventsData({
 
   if (isLoading)
     return (
-      <div className="w-[100%] md:w-[65%] flex flex-col gap-8">
+      <div className="w-full md:w-[65%] flex flex-col gap-8">
         <Skeleton height="150px" className="rounded-xl" />
         <Skeleton height="150px" className="rounded-xl" />
         <Skeleton height="150px" className="rounded-xl" />
@@ -23,7 +23,7 @@ export default function GroupEventsData({
     return <div>No events found for this group.</div>;
 
   return (
-    <Flex className="flex-col w-[100%] md:w-[65%]" gap={6}>
+    <Flex className="flex-col w-full md:w-[65%]" gap={6}>
       {eventsData.map((event) => (
         <EventCard key={event.id} event={event} />
       ))}
