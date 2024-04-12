@@ -1,20 +1,21 @@
-import { Event } from "@/app/api/events/[eventId]/route";
-import { apiClient } from "@/apiClient";
+"use client";
+
 import EventDetails from "@/components/EventDetails";
 import { Avatar } from "@chakra-ui/react";
-import React from "react";
-import { TypographyH2 } from "@/components/ui/typography/h2";
 import { TypographyH3 } from "@/components/ui/typography/h3";
+import useSWR from "swr";
+import {
+  SingleEventDataType,
+  SingleEventResponseType,
+} from "@/app/api/groups/[groupId]/events/[eventId]/route";
+import { notFound } from "next/navigation";
+import { SWRProvider } from "@/providers/swrProvider";
 
-export default async function EventPage({
-  params,
-}: {
-  params: { groupId: string; eventId: string };
-}) {
-  const event: Event = await apiClient(`/events/${params?.eventId}`, {
-    cache: "no-store",
-  });
+interface EventDataProps {
+  event: SingleEventDataType;
+}
 
+function EventData({ event }: EventDataProps) {
   return (
     <div className="flex flex-col gap-8">
       <div className="flex flex-col w-full">
@@ -29,23 +30,40 @@ export default async function EventPage({
           </div>
         </div>
       </div>
-      <EventDetails
-        id={event.id}
-        name={event.name}
-        description={event.description}
-        displayPhoto={event.displayPhoto}
-        location={event.location}
-        meetingLink={event.meetingLink}
-        startDateTime={event?.startDateTime}
-        endDateTime={event?.endDateTime}
-        online={event.online}
-        attendees={event.attendees}
-        photos={event.photos}
-        organizers={event.organizers}
-        joined={event.joined}
-        groupName={event.groupName}
-        groupId={event.groupId}
-      />
+      <EventDetails event={event} />
     </div>
+  );
+}
+
+function _EventPage({
+  params,
+}: {
+  params: { groupId: string; eventId: string };
+}) {
+  const groupId = params.groupId;
+  const eventId = params.eventId;
+  const {
+    data: event,
+    error,
+    isLoading,
+  } = useSWR<SingleEventResponseType>([`/groups/${groupId}/events/${eventId}`]);
+
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>Error loading group</div>;
+
+  if (!event || !event.data) return notFound();
+
+  return <EventData event={event.data} />;
+}
+
+export default function EventPage({
+  params,
+}: {
+  params: { groupId: string; eventId: string };
+}) {
+  return (
+    <SWRProvider>
+      <_EventPage params={params} />
+    </SWRProvider>
   );
 }

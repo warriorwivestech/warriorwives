@@ -1,6 +1,6 @@
 "use client";
 
-import { Image, Button, Avatar, Divider, Spinner } from "@chakra-ui/react";
+import { Divider, Spinner, Image as ChakraImage } from "@chakra-ui/react";
 import {
   FaVideo,
   FaClock,
@@ -15,69 +15,38 @@ import { useState } from "react";
 import { EditEvent } from "../EventModal/EditEvent";
 import { TypographyH4 } from "../ui/typography/h4";
 import { Card } from "../ui/card";
+import { SingleEventDataType } from "@/app/api/groups/[groupId]/events/[eventId]/route";
+import Image from "next/image";
+import { Button } from "../ui/button";
+import AttendeeCard from "./AttendeeCard";
+import { parseEventDateTimes } from "@/helpers/dateParser";
 
-// Define the props interface
 interface EventDetailsProps {
-  id: number;
-  name: string;
-  description: string;
-  displayPhoto: string | null;
-  location: string | null;
-  meetingLink: string | null;
-  startDateTime: string;
-  endDateTime: string;
-  online: boolean;
-  attendees: string[];
-  photos: string[];
-  organizers: string[];
-  joined: boolean;
-  groupName: string;
-  groupId: number;
+  event: SingleEventDataType;
 }
 
-export default function EventDetails({
-  id,
-  name,
-  description,
-  displayPhoto,
-  location,
-  meetingLink,
-  online,
-  startDateTime,
-  endDateTime,
-  attendees,
-  photos,
-  organizers,
-  joined,
-  groupName,
-  groupId,
-}: EventDetailsProps) {
-  const displayPhotoUrl =
-    displayPhoto || "https://startup.mp.gov.in/assets/img/img-not-found.png";
-  // last organizer is should be "and" instead of ","
-  const lastOrganizer = organizers[organizers.length - 1];
-  const otherOrganizers = organizers.slice(0, -1).join(", ");
-  const organizersString =
-    organizers.length === 0 ? "" : `${otherOrganizers} and ${lastOrganizer}`;
-  const startDateTimeFormat = new Date(startDateTime).toLocaleString("en-US", {
-    month: "long",
-    day: "numeric",
-    year: "numeric",
-    hour: "numeric",
-    minute: "numeric",
-    hour12: true,
-  });
-  // endDateTime is one hour after startDateTime
-  const endDateTimeFormat = new Date(
-    new Date(endDateTime).getTime() + 60 * 60 * 1000
-  ).toLocaleString("en-US", {
-    month: "long",
-    day: "numeric",
-    year: "numeric",
-    hour: "numeric",
-    minute: "numeric",
-    hour12: true,
-  });
+export default function EventDetails({ event }: EventDetailsProps) {
+  const {
+    id,
+    name,
+    description,
+    displayPhoto,
+    location,
+    meetingLink,
+    online,
+    startDateTime,
+    endDateTime,
+    attendees,
+    photos,
+    organizers,
+    joined,
+    groupName,
+    groupId,
+    attendeesCount,
+    organizersCount,
+  } = event;
+
+  const totalAttendeesAndOrganizers = attendeesCount + organizersCount;
 
   const [justJoined, setJustJoined] = useState(false);
   const [isJoining, setIsJoining] = useState(false);
@@ -99,20 +68,14 @@ export default function EventDetails({
 
   return (
     <div className="w-full flex flex-col md:flex-row gap-8 justify-between">
-      {/* content */}
-
       <div className="flex flex-col gap-8 w-full md:w-[65%]">
-        {/* banner image */}
-        {/* change back to without exclaimation mark when done*/}
-        {displayPhotoUrl && (
+        {displayPhoto && (
           <Image
-            rounded={"md"}
-            alt={"product image"}
-            src={displayPhotoUrl}
-            fit={"cover"}
-            align={"center"}
-            w={"100%"}
-            h={{ base: "100%", sm: "400px", lg: "500px" }}
+            src={displayPhoto}
+            alt={name}
+            width={100}
+            height={100}
+            className="w-full h-96 object-cover rounded-md md:h-[400px] lg:h-[500px]"
           />
         )}
 
@@ -121,70 +84,80 @@ export default function EventDetails({
           <p className="text-gray-700">{description}</p>
         </div>
 
-        {/* Attendees */}
-        {attendees && (
+        {totalAttendeesAndOrganizers > 0 && (
           <div className="flex flex-col gap-4">
-            <p className="text-heading5">{attendees.length} Attendees</p>
-            <div className="bg-white rounded-xl w-[100%] flex flex-row p-6 gap-4 overflow-x-scroll">
-              {attendees.map((attendee) => {
+            <TypographyH4>
+              Attendees ({totalAttendeesAndOrganizers})
+            </TypographyH4>
+            <Card className="w-full flex flex-row p-6 gap-4 overflow-x-scroll">
+              {organizers.map((organizer) => {
                 return (
-                  <div
-                    className="bg-white p-4 shadow-lg text-center flex flex-col justify-center items-center gap-4"
-                    key={attendee}
-                  >
-                    <Avatar
-                      size="2xl"
-                      name={attendee}
-                      src={
-                        "https://img.freepik.com/free-vector/businessman-character-avatar-isolated_24877-60111.jpg?size=338&ext=jpg&ga=GA1.1.1448711260.1706400000&semt=ais"
-                      }
-                    />
-                    <p className="font-bold">{attendee}</p>
-                  </div>
+                  <AttendeeCard
+                    src={organizer.image as string}
+                    name={organizer.name as string}
+                    alt={organizer.name as string}
+                    role="Organizer"
+                    key={organizer.id}
+                  />
                 );
               })}
-            </div>
+
+              {attendees.map((attendee) => {
+                return (
+                  <AttendeeCard
+                    src={attendee.image as string}
+                    name={attendee.name as string}
+                    alt={attendee.name as string}
+                    role="Member"
+                    key={attendee.id}
+                  />
+                );
+              })}
+            </Card>
           </div>
         )}
 
-        {/* Pictures */}
+        {/* Photos */}
         {photos.length > 0 && (
           <div className="flex flex-col gap-4">
-            <p className="text-heading5">{photos.length} Pictures</p>
-            <div className="rounded-xl w-[100%] flex flex-row gap-4 overflow-x-scroll">
-              {photos.map((photos, index) => {
+            <TypographyH4>Photos ({photos.length})</TypographyH4>
+            <Card className="w-full flex flex-row p-6 gap-4 overflow-x-scroll">
+              {photos.map((photo, index) => {
                 return (
-                  <div
-                    className="bg-white p-4 shadow-lg text-center flex flex-col justify-center items-center gap-4 rounded-xl w-[100%]"
+                  <Card
+                    className="p-2 text-center flex flex-col justify-center items-center gap-4"
                     key={index}
                   >
-                    <Image
+                    <ChakraImage
                       rounded={"md"}
                       alt={"product image"}
-                      src={photos}
+                      src={photo.photo}
                       fit={"cover"}
                       align={"center"}
                       minW={"300px"}
                       h={{ base: "100%", sm: "200px", lg: "200px" }}
                     />
-                  </div>
+                  </Card>
                 );
               })}
-            </div>
+            </Card>
           </div>
         )}
 
         <Divider h={4} />
 
-        {/* Events */}
         <div className="flex flex-col gap-4">
           <div className="flex flex-row justify-between">
-            <p className="text-heading5">Other events by {groupName}</p>
-            <div className="flex flex-row gap-2 justify-center items-center">
-              <Link className="font-bold" href={`/groups/${groupId}`}>
-                View all
+            <TypographyH4>Other events by {groupName}</TypographyH4>
+            <div className="flex flex-row gap-1 justify-center items-center">
+              <Link href={`/groups/${groupId}`}>
+                <Button variant="link" size="default">
+                  View All
+                  <div className="ml-1">
+                    <FaChevronRight />
+                  </div>
+                </Button>
               </Link>
-              <FaChevronRight />
             </div>
           </div>
           <OtherEvents groupId={groupId} eventId={id} />
@@ -194,24 +167,11 @@ export default function EventDetails({
       {/* sticky tab */}
       <Card className="flex flex-col gap-4 w-full h-full md:sticky md:top-10 md:w-[30%] p-4">
         <div className="flex flex-col gap-4 w-full p-2">
-          {/* <div className="gap-2 flex flex-row flex-wrap">
-            <Tag w={"auto"}>tags</Tag>
-            <Tag w={"auto"}>tags</Tag>
-            <Tag w={"auto"}>tags</Tag>
-            <Tag w={"auto"}>tags</Tag>
-            <Tag w={"auto"}>tags</Tag>
-          </div> */}
-
           <div className="flex flex-row gap-4 items-center">
             <FaClock style={{ minHeight: "18px", minWidth: "18px" }} />
-            <p className="text-gray-700">{`${startDateTime} to ${endDateTime}`}</p>
-          </div>
-
-          <div className="flex flex-row gap-4 items-center">
-            <FaPeopleGroup style={{ minHeight: "18px", minWidth: "18px" }} />
-            <p className="text-sm text-gray-700">{`Organized by ${
-              organizersString ? organizersString : "Jackson"
-            }`}</p>
+            <p className="text-gray-700 tracking-tight">
+              {parseEventDateTimes(startDateTime, endDateTime)}
+            </p>
           </div>
 
           {online ? (
@@ -259,8 +219,8 @@ export default function EventDetails({
             location,
             meetingLink,
             online,
-            startDateTime: startDateTimeFormat as unknown as Date,
-            endDateTime: endDateTimeFormat as unknown as Date,
+            startDateTime: startDateTime as unknown as Date,
+            endDateTime: endDateTime as unknown as Date,
             attendees,
             photos,
             organizers,
@@ -272,16 +232,9 @@ export default function EventDetails({
 
         <Divider />
         {joined || justJoined ? (
-          <Button rounded={"md"} className="border" isDisabled={true}>
-            Joined
-          </Button>
+          <Button disabled={true}>Joined</Button>
         ) : (
-          <Button
-            rounded={"md"}
-            className="bg-black text-white hover:text-black"
-            onClick={joinEventHandler}
-            isDisabled={isJoining}
-          >
+          <Button onClick={joinEventHandler} disabled={isJoining}>
             {isJoining ? <Spinner /> : "Join Event"}
           </Button>
         )}

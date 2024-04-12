@@ -53,7 +53,13 @@ async function queryGroupEvents(groupId: number) {
 
 type UnparsedGroupEvents = Prisma.PromiseReturnType<typeof queryGroupEvents>;
 
-function parseGroupEvents(events: UnparsedGroupEvents) {
+function parseGroupEvents(
+  events: UnparsedGroupEvents,
+  eventIdToExclude?: number
+) {
+  if (eventIdToExclude) {
+    events = events.filter((event) => event.id !== eventIdToExclude);
+  }
   const parsedEvents = events.map((event) => ({
     ...event,
     startDateTime: parseDate(event.startDateTime),
@@ -67,9 +73,15 @@ function parseGroupEvents(events: UnparsedGroupEvents) {
 export type GroupEvents = ReturnType<typeof parseGroupEvents>;
 
 export async function GET(
-  _request: Request,
+  request: Request,
   { params }: { params: { groupId: string } }
 ) {
+  // if url query string has exclude=eventId, then exclude that event from the response
+  // e.g. /api/groups/[groupId]/events?exclude=1
+  const eventIdToExclude = request.url.includes("exclude")
+    ? Number(new URL(request.url).searchParams.get("exclude"))
+    : undefined;
+
   const groupId = Number(params.groupId);
   const session = await auth();
   const user = session?.user;
@@ -87,7 +99,7 @@ export async function GET(
     });
   }
   const events = await queryGroupEvents(groupId);
-  const parsedEvents = parseGroupEvents(events);
+  const parsedEvents = parseGroupEvents(events, eventIdToExclude);
 
   return Response.json(parsedEvents);
 }
