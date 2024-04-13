@@ -14,29 +14,29 @@ import {
 import { TriggerWithoutArgs } from "swr/mutation";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@chakra-ui/react";
-import { JoinEventResponseType } from "@/app/api/groups/[groupId]/events/[eventId]/join/route";
 import { useToast } from "@/components/ui/use-toast";
+import { LeaveEventResponseType } from "@/app/api/groups/[groupId]/events/[eventId]/leave/route";
 
-interface JoinEventModalProps {
+interface LeaveEventModalProps {
   open: boolean;
   onOpenChange: Dispatch<SetStateAction<boolean>>;
   trigger: TriggerWithoutArgs<
-    JoinEventResponseType,
+    LeaveEventResponseType,
     any,
-    `/groups/${number}/events/${number}/join`,
+    `/groups/${number}/events/${number}/leave`,
     never
   >;
   disabled: boolean;
-  data: JoinEventResponseType | undefined;
+  data: LeaveEventResponseType | undefined;
 }
 
-export default function JoinEventModal({
+export default function LeaveEventModal({
   open,
   onOpenChange,
   trigger,
   disabled,
   data,
-}: JoinEventModalProps) {
+}: LeaveEventModalProps) {
   const { toast } = useToast();
 
   useEffect(() => {
@@ -44,7 +44,7 @@ export default function JoinEventModal({
     if (data.error) {
       toast({
         variant: "destructive",
-        title: "Unable to join event.",
+        title: "Unable to leave event.",
         description: data.error,
       });
     }
@@ -54,14 +54,16 @@ export default function JoinEventModal({
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogTrigger asChild>
-        <Button disabled={disabled}>Join</Button>
+        <Button disabled={disabled} variant="destructive">
+          Leave
+        </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Join Event?</AlertDialogTitle>
+          <AlertDialogTitle>Leave Event?</AlertDialogTitle>
           <AlertDialogDescription>
-            Once you join this event, an email with a calendar invite will be
-            sent to you.
+            You will no longer be a part of this event and will be removed from
+            the list of attendees.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
@@ -72,8 +74,9 @@ export default function JoinEventModal({
             onClick={() => {
               trigger();
             }}
+            variant="destructive"
           >
-            {disabled ? <Spinner size="sm" /> : "Join"}
+            {disabled ? <Spinner size="sm" /> : "Leave"}
           </Button>
         </AlertDialogFooter>
       </AlertDialogContent>

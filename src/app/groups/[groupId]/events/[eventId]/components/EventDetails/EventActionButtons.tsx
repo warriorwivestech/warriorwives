@@ -3,6 +3,7 @@ import { SWRResponse } from "swr";
 import { SingleEventDataType } from "@/app/api/groups/[groupId]/events/[eventId]/route";
 import { EditEvent } from "@/components/EventModal/EditEvent";
 import JoinEventButton from "./JoinEventButton";
+import LeaveEventButton from "./LeaveEventButton";
 
 interface EventActionButtonsProps {
   event: SingleEventDataType;
@@ -14,28 +15,49 @@ export default function EventActionButtons({
   user,
 }: EventActionButtonsProps) {
   const { data: userData, isLoading } = user;
-  const { id, joined, userIsAdmin, groupId, userIsOrganizer } = event;
+  const { id, joined, userIsAdmin, groupId } = event;
+  const userIsSuperUser = userData?.superUser;
 
-  if (userIsAdmin || userData?.superUser) {
-    return (
-      <div className="flex flex-col gap-2">
-        <EditEvent groupName={event.groupName} groupId={groupId} />
+  function JoinOrLeaveButton() {
+    if (joined) {
+      return (
+        <LeaveEventButton
+          groupId={groupId}
+          eventId={id}
+          joined={joined}
+          disabled={isLoading}
+        />
+      );
+    } else {
+      return (
         <JoinEventButton
           groupId={groupId}
           eventId={id}
           joined={joined}
           disabled={isLoading}
         />
+      );
+    }
+  }
+
+  if (userIsAdmin || userIsSuperUser) {
+    return (
+      <div className="flex flex-col gap-2">
+        <EditEvent groupName={event.groupName} groupId={groupId} />
+        {/* for organizers, if they have joined already, don't allow them to leave the event */}
+        {/* any admin of the group who joins the event is an organizer */}
+        {userIsAdmin && (
+          <JoinEventButton
+            groupId={groupId}
+            eventId={id}
+            joined={joined}
+            disabled={isLoading}
+          />
+        )}
+        {!userIsAdmin && <JoinOrLeaveButton />}
       </div>
     );
   }
 
-  return (
-    <JoinEventButton
-      groupId={groupId}
-      eventId={id}
-      joined={joined}
-      disabled={isLoading}
-    />
-  );
+  return <JoinOrLeaveButton />;
 }

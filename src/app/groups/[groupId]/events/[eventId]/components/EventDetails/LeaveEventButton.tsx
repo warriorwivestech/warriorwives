@@ -1,47 +1,46 @@
 import { apiClient } from "@/apiClient";
-import { JoinEventResponseType } from "@/app/api/groups/[groupId]/events/[eventId]/join/route";
+import { LeaveEventResponseType } from "@/app/api/groups/[groupId]/events/[eventId]/leave/route";
+import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { useState } from "react";
 import useSWRMutation from "swr/mutation";
-import JoinEventModal from "./JoinEventModal";
-import LeaveEventButton from "./LeaveEventButton";
-import { Button } from "@/components/ui/button";
+import LeaveEventModal from "./LeaveEventModal";
 
-async function joinEvent(url: string): Promise<JoinEventResponseType> {
+async function leaveEvent(url: string): Promise<LeaveEventResponseType> {
   const response = await apiClient(url, {
-    method: "POST",
+    method: "DELETE",
   });
   return response;
 }
 
-interface JoinEventButtonProps {
+interface LeaveEventButtonProps {
   groupId: number;
   eventId: number;
   joined: boolean;
   disabled: boolean;
 }
 
-export default function JoinEventButton({
+export default function LeaveEventButton({
   groupId,
   eventId,
   joined,
   disabled,
-}: JoinEventButtonProps) {
-  const [justJoined, setJustJoined] = useState(false);
-  const [joinEventModalOpen, setJoinEventModalOpen] = useState(false);
+}: LeaveEventButtonProps) {
+  const [justLeft, setJustLeft] = useState(false);
+  const [joinEventModalOpen, setLeaveEventModalOpen] = useState(false);
   const { toast } = useToast();
 
   const { data, error, trigger, isMutating } = useSWRMutation(
-    `/groups/${groupId}/events/${eventId}/join`,
-    joinEvent,
+    `/groups/${groupId}/events/${eventId}/leave`,
+    leaveEvent,
     {
       onSuccess(data) {
         if (data?.data) {
-          setJustJoined(true);
-          setJoinEventModalOpen(false);
+          setJustLeft(true);
+          setLeaveEventModalOpen(false);
           toast({
-            title: `Joined Event`,
-            description: `You have successfully joined this event.`,
+            title: `Removed From Event`,
+            description: `You have successfully left this event.`,
           });
         }
       },
@@ -54,18 +53,18 @@ export default function JoinEventButton({
     }
   );
 
-  if (joined || justJoined) {
+  if (!joined || justLeft) {
     return (
       <Button variant="secondary" className="w-full" disabled={true}>
-        Joined
+        Left Event
       </Button>
     );
   }
 
   return (
-    <JoinEventModal
+    <LeaveEventModal
       open={joinEventModalOpen}
-      onOpenChange={setJoinEventModalOpen}
+      onOpenChange={setLeaveEventModalOpen}
       trigger={trigger}
       disabled={isMutating || disabled}
       data={data}

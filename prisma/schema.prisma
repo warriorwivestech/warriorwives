@@ -155,7 +155,7 @@ model AttendeesOnEvents {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@id([eventId, userId])
+  @@id(name: "attendeeEventId", fields: [eventId, userId])
 }
 
 model OrganizersOnEvents {
@@ -166,7 +166,7 @@ model OrganizersOnEvents {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@id([eventId, userId])
+  @@id(name: "organizerEventId", fields: [eventId, userId])
 }
 
 model EventPhoto {
