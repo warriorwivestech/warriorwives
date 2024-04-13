@@ -164,15 +164,17 @@ export default function EventDetails({ event, user }: EventDetailsProps) {
                   minWidth: "18px",
                 }}
               />
-
               <div className="flex flex-col">
-                <p>Online</p>
+                <p className="font-semibold text-sm text-gray-500">
+                  This event is hosted online
+                </p>
                 <a
                   href={meetingLink || "#"}
                   target="_blank"
-                  className="cursor-pointer text-blue-500"
+                  rel="noopener noreferrer"
+                  className="cursor-pointer text-blue-500 hover:underline"
                 >
-                  Join Meeting
+                  Online Meeting Link
                 </a>
               </div>
             </div>
@@ -184,11 +186,10 @@ export default function EventDetails({ event, user }: EventDetailsProps) {
                   minWidth: "18px",
                 }}
               />
-              <p>{location}</p>
+              <p className="text-gray-700">{location}</p>
             </div>
           )}
         </div>
-        <Divider />
         <EventActionButtons event={event} user={user} />
       </Card>
     </div>
