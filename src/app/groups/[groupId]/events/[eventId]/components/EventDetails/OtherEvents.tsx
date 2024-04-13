@@ -2,7 +2,7 @@
 
 import { SWRProvider } from "@/providers/swrProvider";
 import useSWR from "swr";
-import EventCard from "../EventCard";
+import EventCard from "../../../../../../../components/EventCard";
 import { GroupEvents } from "@/app/api/groups/[groupId]/events/route";
 
 interface OtherEventsProps {

@@ -1,6 +1,6 @@
 "use client";
 
-import { Divider, Spinner, Image as ChakraImage } from "@chakra-ui/react";
+import { Divider, Image as ChakraImage } from "@chakra-ui/react";
 import {
   FaVideo,
   FaClock,
@@ -8,24 +8,23 @@ import {
   FaChevronRight,
 } from "react-icons/fa";
 import Link from "next/link";
-import { FaPeopleGroup } from "react-icons/fa6";
 import OtherEvents from "./OtherEvents";
-import { apiClient } from "@/apiClient";
-import { useState } from "react";
-import { EditEvent } from "../EventModal/EditEvent";
-import { TypographyH4 } from "../ui/typography/h4";
-import { Card } from "../ui/card";
+import { TypographyH4 } from "@/components/ui/typography/h4";
+import { Card } from "@/components/ui/card";
 import { SingleEventDataType } from "@/app/api/groups/[groupId]/events/[eventId]/route";
-import Image from "next/image";
-import { Button } from "../ui/button";
+import { Button } from "@/components/ui/button";
 import AttendeeCard from "./AttendeeCard";
 import { parseEventDateTimes } from "@/helpers/dateParser";
+import { SWRResponse } from "swr";
+import { UserDataType } from "@/app/api/user/route";
+import EventActionButtons from "./EventActionButtons";
 
 interface EventDetailsProps {
   event: SingleEventDataType;
+  user: SWRResponse<UserDataType, any, any>;
 }
 
-export default function EventDetails({ event }: EventDetailsProps) {
+export default function EventDetails({ event, user }: EventDetailsProps) {
   const {
     id,
     name,
@@ -39,7 +38,6 @@ export default function EventDetails({ event }: EventDetailsProps) {
     attendees,
     photos,
     organizers,
-    joined,
     groupName,
     groupId,
     attendeesCount,
@@ -48,34 +46,18 @@ export default function EventDetails({ event }: EventDetailsProps) {
 
   const totalAttendeesAndOrganizers = attendeesCount + organizersCount;
 
-  const [justJoined, setJustJoined] = useState(false);
-  const [isJoining, setIsJoining] = useState(false);
-  const joinEventHandler = async () => {
-    // join event
-    // TODO: UPDATE USER ID
-    setIsJoining(true);
-    const response = await apiClient("/events/join", {
-      method: "POST",
-      body: JSON.stringify({ eventId: id, userId: 3 }),
-    });
-
-    // if success, set joined to true
-    if (response) {
-      setJustJoined(true);
-    }
-    setIsJoining(false);
-  };
-
   return (
     <div className="w-full flex flex-col md:flex-row gap-8 justify-between">
       <div className="flex flex-col gap-8 w-full md:w-[65%]">
         {displayPhoto && (
-          <Image
-            src={displayPhoto}
+          <ChakraImage
+            rounded={"md"}
             alt={name}
-            width={100}
-            height={100}
-            className="w-full h-96 object-cover rounded-md md:h-[400px] lg:h-[500px]"
+            src={displayPhoto}
+            fit={"cover"}
+            align={"center"}
+            w={"100%"}
+            h={{ base: "100%", sm: "400px", lg: "500px" }}
           />
         )}
 
@@ -206,38 +188,8 @@ export default function EventDetails({ event }: EventDetailsProps) {
             </div>
           )}
         </div>
-
-        {/* TODO: Only show for admin */}
-        <EditEvent
-          groupName={groupName}
-          groupId={groupId}
-          eventData={{
-            id,
-            name,
-            description,
-            displayPhoto,
-            location,
-            meetingLink,
-            online,
-            startDateTime: startDateTime as unknown as Date,
-            endDateTime: endDateTime as unknown as Date,
-            attendees,
-            photos,
-            organizers,
-            joined,
-            groupName,
-            groupId,
-          }}
-        />
-
         <Divider />
-        {joined || justJoined ? (
-          <Button disabled={true}>Joined</Button>
-        ) : (
-          <Button onClick={joinEventHandler} disabled={isJoining}>
-            {isJoining ? <Spinner /> : "Join Event"}
-          </Button>
-        )}
+        <EventActionButtons event={event} user={user} />
       </Card>
     </div>
   );

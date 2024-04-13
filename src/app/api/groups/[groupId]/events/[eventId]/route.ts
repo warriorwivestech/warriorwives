@@ -23,12 +23,13 @@ async function queryUserAuthorizedToViewGroupEvents(
   });
   const passwordEnabled = data?.passwordEnabled;
   const userHasJoinedGroup = data?.members && data.members.length > 0;
+  const userIsAdmin = data?.members?.[0].admin;
 
   // if group is password protected, user must have joined the group to view events
   // if group is not password protected, user can view events
   const authorized = passwordEnabled ? userHasJoinedGroup : true;
 
-  return authorized;
+  return { authorized, userIsAdmin };
 }
 
 function queryEvent(groupId: number, eventId: number) {
@@ -79,10 +80,19 @@ function queryEvent(groupId: number, eventId: number) {
 }
 type UnparsedEvent = Prisma.PromiseReturnType<typeof queryEvent>;
 
-function parseEvent(event: NonNullable<UnparsedEvent>, email: string) {
-  const eventJoined = event.attendees.some(
+function parseEvent(
+  event: NonNullable<UnparsedEvent>,
+  email: string,
+  userIsAdmin: boolean | undefined
+) {
+  const userIsOrganizer = event.organizers.some(
+    (organizer) => organizer.user.email === email
+  );
+  const userIsAttendee = event.attendees.some(
     (attendee) => attendee.user.email === email
   );
+
+  const eventJoined = userIsOrganizer || userIsAttendee;
   const parsedEvent = {
     ...event,
     startDateTime: parseDate(event.startDateTime),
@@ -107,7 +117,10 @@ function parseEvent(event: NonNullable<UnparsedEvent>, email: string) {
     })),
     attendeesCount: event.attendees.length,
     organizersCount: event.organizers.length,
+    userIsOrganizer,
+    userIsAttendee,
     joined: eventJoined,
+    userIsAdmin,
   };
 
   return parsedEvent;
@@ -131,8 +144,8 @@ export async function GET(
   }
 
   const email = user.email as string;
-  const authorized = await queryUserAuthorizedToViewGroupEvents(groupId, email);
-  if (!authorized) {
+  const userData = await queryUserAuthorizedToViewGroupEvents(groupId, email);
+  if (!userData.authorized) {
     return Response.json({
       error: "Unauthorized",
       message: "You need to join the group to view this event.",
@@ -143,7 +156,7 @@ export async function GET(
   if (!event) {
     return Response.json({ data: null });
   }
-  const parsedEvent = parseEvent(event, email);
+  const parsedEvent = parseEvent(event, email, userData.userIsAdmin);
 
   return Response.json({ data: parsedEvent });
 }
