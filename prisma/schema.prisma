@@ -148,7 +148,7 @@ model MembersOnGroups {
 }
 
 model AttendeesOnEvents {
-  event     Event    @relation(fields: [eventId], references: [id])
+  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
   eventId   Int
   user      User     @relation(fields: [userId], references: [id])
   userId    Int
@@ -159,7 +159,7 @@ model AttendeesOnEvents {
 }
 
 model OrganizersOnEvents {
-  event     Event    @relation(fields: [eventId], references: [id])
+  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
   eventId   Int
   user      User     @relation(fields: [userId], references: [id])
   userId    Int
