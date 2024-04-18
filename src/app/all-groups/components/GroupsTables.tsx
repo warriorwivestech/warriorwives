@@ -9,6 +9,7 @@ import { SWRProvider } from "@/providers/swrProvider";
 import { AllGroupsDataType } from "@/app/api/groups/all/route";
 import useSWR from "swr";
 import AllGroupsLoading from "./AllGroupsLoading";
+import CreateGroupModal from "@/components/GroupModal/AddGroup";
 
 function _GroupsTables() {
   const { data, error, isLoading, mutate } = useSWR<AllGroupsDataType>([
@@ -22,11 +23,14 @@ function _GroupsTables() {
 
   return (
     <Tabs defaultValue="all-groups" className="w-full mt-4">
-      <TabsList>
-        <TabsTrigger value="all-groups">All</TabsTrigger>
-        <TabsTrigger value="active">Active</TabsTrigger>
-        <TabsTrigger value="archived">Archived</TabsTrigger>
-      </TabsList>
+      <div className="flex justify-between items-center">
+        <TabsList>
+          <TabsTrigger value="all-groups">All</TabsTrigger>
+          <TabsTrigger value="active">Active</TabsTrigger>
+          <TabsTrigger value="archived">Archived</TabsTrigger>
+        </TabsList>
+        <CreateGroupModal />
+      </div>
       <TabsContent value="all-groups">
         <AllGroupsTable groups={groups} />
       </TabsContent>

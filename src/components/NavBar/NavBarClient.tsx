@@ -15,7 +15,6 @@ import {
 } from "@chakra-ui/react";
 import { HamburgerIcon, CloseIcon } from "@chakra-ui/icons";
 import Image from "next/image";
-import { AddGroup } from "../GroupModal/AddGroup";
 import { UserDataType } from "@/data/user";
 import UnauthenticatedNavBar from "./UnauthenticatedNavBar";
 import Link from "next/link";
@@ -107,8 +106,6 @@ export default function NavBarClient({ user, signOut }: NavBarClientProps) {
           direction={"row"}
           spacing={6}
         >
-          {/* TODO: remove this */}
-          {desktopSize && <AddGroup />}
           <UserAvatar name={user.name} image={user.image} signOut={signOut} />
         </Stack>
       </Flex>

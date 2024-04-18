@@ -1,10 +1,9 @@
 "use client";
 
 import {
-  Button,
+  Button as ChakraButton,
   FormControl,
   FormErrorMessage,
-  FormHelperText,
   FormLabel,
   Modal,
   ModalBody,
@@ -19,18 +18,16 @@ import {
   HStack,
   RadioGroup,
   Textarea,
-  Divider,
-  SimpleGrid,
-  Select,
   InputRightElement,
   InputGroup,
-  Switch,
   Spinner,
+  FormHelperText,
 } from "@chakra-ui/react";
 import React, { ChangeEvent, useEffect, useState } from "react";
 import { FileUploader } from "react-drag-drop-files";
 import {
   AsyncSelect,
+  ChakraStylesConfig,
   CreatableSelect,
   Select as MultiSelect,
 } from "chakra-react-select";
@@ -40,82 +37,203 @@ import {
   NewGroup,
   requiredGroupField,
 } from "@/types/groups";
-import locationData from "../../json/location.json";
 import { MdDelete } from "react-icons/md";
 import { supabase } from "@/supabase";
 import { useRouter } from "next/navigation";
 import { apiClient } from "@/apiClient";
 import Image from "next/image";
-import { GroupDataType } from "@/app/api/groups/[groupId]/route";
 import {
-  getBranchOfService,
-  getCounty,
+  getBranchesOfService,
+  getCounties,
   getInterest,
   getStates,
 } from "./helper/getData";
 import { z } from "zod";
+import { Button } from "../ui/button";
+import { SWRProvider } from "@/providers/swrProvider";
+import useSWR from "swr";
+import { InterestsType } from "@/app/api/interests/route";
+import { getInterestsRequestOptions } from "@/app/api/interests/helper";
 
-interface CreateGroupModalType {
-  data?: GroupDataType;
-}
-
-const GroupSchema = z.object({
+const createGroupFormSchema = z.object({
   displayPhoto: z.string().min(1, {
-    message: "Display photo cannot be empty",
+    message: "Display photo is required",
   }),
-  name: z.string().min(1, {
-    message: "Group name cannot be empty",
-  }),
+  name: z
+    .string()
+    .min(1, {
+      message: "Group name is required",
+    })
+    .max(100, {
+      message: "Name must be at most 100 characters.",
+    }),
   description: z.string().min(1, {
-    message: "Description cannot be empty",
+    message: "A description of the group is required",
   }),
   online: z.boolean(),
-  state: z.object({
-    value: z.string().min(1),
-    label: z.string().min(1),
+  state: z.string().min(1, {
+    message: "State is required.",
   }),
-  county: z.object({}),
-  tags: z.array(z.string()).min(1),
-  branchOfService: z.string().min(1),
-  password: z.string().optional(),
+  county: z.string().optional(),
+  branchOfService: z.string().min(1, {
+    message: "Branch of service is required.",
+  }),
+  tags: z.array(z.number()).min(1, {
+    message: "At least one tag is required.",
+  }),
+  password: z
+    .string()
+    .min(8, {
+      message: "Password must be at least 8 characters.",
+    })
+    .optional(),
 });
 
-export function AddGroup(props: CreateGroupModalType) {
+const dropDownChakraStyles: ChakraStylesConfig = {
+  clearIndicator: (provided, state) => ({
+    ...provided,
+  }),
+  container: (provided, state) => ({
+    ...provided,
+  }),
+  control: (provided, state) => ({
+    ...provided,
+  }),
+  dropdownIndicator: (provided, state) => ({
+    ...provided,
+  }),
+  group: (provided, state) => ({
+    ...provided,
+  }),
+  groupHeading: (provided, state) => ({
+    ...provided,
+  }),
+  indicatorsContainer: (provided, state) => ({
+    ...provided,
+  }),
+  input: (provided, state) => ({
+    ...provided,
+    fontSize: "14px",
+  }),
+  inputContainer: (provided, state) => ({
+    ...provided,
+    fontSize: "14px",
+  }),
+  menu: (provided, state) => ({
+    ...provided,
+    fontSize: "14px",
+  }),
+  menuList: (provided, state) => ({
+    ...provided,
+    fontSize: "14px",
+  }),
+  multiValue: (provided, state) => ({
+    ...provided,
+    fontSize: "14px",
+  }),
+  multiValueLabel: (provided, state) => ({
+    ...provided,
+    fontSize: "14px",
+  }),
+  multiValueRemove: (provided, state) => ({
+    ...provided,
+    fontSize: "14px",
+  }),
+  option: (provided, state) => ({
+    ...provided,
+    fontSize: "14px",
+  }),
+  placeholder: (provided, state) => ({
+    ...provided,
+    fontSize: "14px",
+  }),
+  singleValue: (provided, state) => ({
+    ...provided,
+    fontSize: "14px",
+  }),
+  valueContainer: (provided, state) => ({
+    ...provided,
+    fontSize: "14px",
+  }),
+};
+
+interface CreateGroupType {
+  displayPhoto: string;
+  name: string;
+  description: string;
+  online: boolean;
+  state: string;
+  county: string;
+  branchOfService: string;
+  tags: number[];
+  password: string | undefined;
+}
+
+const defaultFormValues = {
+  displayPhoto: "",
+  name: "",
+  description: "",
+  online: false,
+  state: "",
+  county: "",
+  branchOfService: "",
+  tags: [],
+  password: undefined,
+};
+
+function _CreateGroupModal() {
+  const {
+    data: interestsData,
+    error: interestsError,
+    isLoading: interestsAreLoading,
+  } = useSWR<InterestsType>(["/interests", getInterestsRequestOptions()]);
+
+  // parse interests data into { label: name, value: id}
+  const availableTags = interestsData
+    ? interestsData.map((interest) => ({
+        label: interest.name,
+        value: interest.id,
+      }))
+    : [];
+
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const router = useRouter();
+
   const [loading, setLoading] = useState(false);
-  const branchOfService = getBranchOfService();
-  const states = getStates();
-  const interest = getInterest();
+
+  const branchesOfService = getBranchesOfService();
+
   const [validationErrors, setValidationErrors] = useState<any>([]);
-  const [input, setInput] = useState<NewGroup>({
-    name: "",
-    description: "",
-    online: false,
-    displayPhoto: "",
-    county: "",
-    state: "",
-    branchOfService: [],
-    tags: [],
-    password: "",
-  });
-  const [filteredCounties, setFilteredCounties] = useState<LocationType[]>([]);
-  const [show, setShow] = useState(false);
-  const handleClick = () => setShow(!show);
+  const [input, setInput] = useState<CreateGroupType>(defaultFormValues);
+  const { displayPhoto, name, description, online, state, tags, password } =
+    input;
+
+  const states = getStates();
+  const [countyIsDisabled, setCountyIsDisabled] = useState(true);
+  const [availableCounties, setAvailableCounties] = useState<
+    { value: string; label: string }[]
+  >([]);
+
+  useEffect(() => {
+    if (!state || state === "National") {
+      setCountyIsDisabled(true);
+      handleInputChange("county", "");
+      setAvailableCounties([]);
+    } else {
+      setCountyIsDisabled(false);
+      handleInputChange("county", "");
+      setAvailableCounties(getCounties(state));
+    }
+  }, [state]);
+
+  console.log("input", input);
+  console.log("availableCounties", availableCounties);
+
+  const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
     setValidationErrors([]);
     setLoading(false);
   }, [isOpen]);
-
-  useEffect(() => {
-    const stateValue =
-      typeof input?.state === "object" ? input?.state?.value : input?.state;
-    if (stateValue) {
-      const counties = getCounty(stateValue);
-      setFilteredCounties(counties);
-    }
-  }, [input?.state]);
 
   const handleSingleChange = async (file: File) => {
     if (file) {
@@ -153,7 +271,7 @@ export function AddGroup(props: CreateGroupModalType) {
   };
 
   const handleInputChange = (inputType: string, value: any) => {
-    setInput((prev: any) => ({
+    setInput((prev: CreateGroupType) => ({
       ...prev,
       [inputType]: value,
     }));
@@ -166,23 +284,18 @@ export function AddGroup(props: CreateGroupModalType) {
 
   const handleSubmit = async () => {
     try {
-      GroupSchema.parse(input);
-      console.log(input);
+      createGroupFormSchema.parse(input);
 
-      const groupData = await apiClient("/groups", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          ...input,
-          userId: 3,
-        }),
-      });
-      onClose();
-      // navigate to group page
-      router.push(`/groups/${groupData.id}`);
-
+      // const groupData = await apiClient("/groups", {
+      //   method: "POST",
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //   },
+      //   body: JSON.stringify({
+      //     ...input,
+      //     userId: 3,
+      //   }),
+      // });
       onClose();
       // navigate to group page
       // router.push(`/groups/${groupData.id}`);
@@ -191,11 +304,9 @@ export function AddGroup(props: CreateGroupModalType) {
       // Handle validation errors
       if (error instanceof z.ZodError) {
         const errorMap: Record<string, string> = {};
-
         error.errors.forEach((err) => {
           errorMap[err.path[0]] = err.message;
         });
-
         setValidationErrors(errorMap);
       } else {
         console.error(error);
@@ -205,29 +316,31 @@ export function AddGroup(props: CreateGroupModalType) {
 
   return (
     <>
-      <Button onClick={onOpen}>Create new group</Button>
-
+      <Button variant="outline" onClick={onOpen} disabled={interestsAreLoading}>
+        Create Group
+      </Button>
       <Modal closeOnOverlayClick={false} isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
-        <ModalContent minW="900px">
-          <ModalHeader>{`Create new group`}</ModalHeader>
+        <ModalContent minW="700px">
+          <ModalHeader fontSize="lg">Create New Group</ModalHeader>
           <ModalCloseButton />
           <ModalBody pb={6} gap={6} display={"flex"} flexDirection={"column"}>
-            {/* banner image */}
             <FormControl isInvalid={validationErrors["displayImage"]}>
               <div className="flex flex-col gap-2">
-                <FormLabel>Banner Image</FormLabel>
+                <FormLabel fontSize="sm" textColor="gray.600">
+                  Banner Image
+                </FormLabel>
                 {loading ? (
-                  <div className="w-[100%] flex justify-center items-center h-[100px]">
+                  <div className="w-full flex justify-center items-center h-[100px]">
                     <Spinner />
                   </div>
                 ) : (
-                  <div className="flex flex-col justify-center w-[100%] items-center gap-6">
-                    {input?.displayPhoto && (
+                  <div className="flex flex-col justify-center w-full items-center gap-6">
+                    {displayPhoto && (
                       <div className="flex flex-col gap-4 justify-center items-center">
                         <Image
-                          src={input?.displayPhoto as string}
-                          alt={input?.displayPhoto as string}
+                          src={displayPhoto}
+                          alt={displayPhoto}
                           width={200}
                           height={350}
                           style={{
@@ -236,7 +349,7 @@ export function AddGroup(props: CreateGroupModalType) {
                             borderRadius: "4px",
                           }}
                         />
-                        <Button
+                        <ChakraButton
                           onClick={() => handleSingleDelete()}
                           bgColor={"#FC8181 !important"}
                           size={"sm"}
@@ -245,7 +358,7 @@ export function AddGroup(props: CreateGroupModalType) {
                           }}
                         >
                           <MdDelete size={25} />
-                        </Button>
+                        </ChakraButton>
                       </div>
                     )}
                     <FileUploader
@@ -266,14 +379,18 @@ export function AddGroup(props: CreateGroupModalType) {
                 )}
               </div>
             </FormControl>
-            <Divider />
 
-            {/* name */}
             <FormControl isInvalid={validationErrors["name"]}>
+              <FormLabel fontSize="sm" textColor="gray.600">
+                Group Name
+              </FormLabel>
               <Input
-                placeholder="Group name"
+                fontSize={"sm"}
+                paddingX={3}
+                paddingY={1}
                 type="name"
-                value={input?.name}
+                placeholder="Enter group name"
+                value={name}
                 onChange={(e) => handleInputChange("name", e.target.value)}
               />
               {validationErrors["name"] && (
@@ -281,13 +398,18 @@ export function AddGroup(props: CreateGroupModalType) {
               )}
             </FormControl>
 
-            {/* description */}
             <FormControl isInvalid={validationErrors["description"]}>
+              <FormLabel fontSize="sm" textColor="gray.600">
+                Group Description
+              </FormLabel>
               <Textarea
+                fontSize={"sm"}
+                paddingX={3}
+                paddingY={3}
                 height={200}
                 resize={"none"}
-                placeholder="Description for the group"
-                value={input?.description}
+                placeholder="Provide a description of the group"
+                value={description}
                 onChange={(e) =>
                   handleInputChange("description", e.target.value)
                 }
@@ -299,142 +421,201 @@ export function AddGroup(props: CreateGroupModalType) {
               )}
             </FormControl>
 
-            {/* online */}
             <FormControl as="fieldset">
-              <FormLabel as="legend">Is this an online group?</FormLabel>
+              <FormLabel fontSize="sm" textColor="gray.600">
+                Is this an online group?
+              </FormLabel>
               <RadioGroup
                 defaultValue="No"
-                value={input?.online ? "Yes" : "No"}
+                value={online ? "Yes" : "No"}
                 onChange={(value) =>
                   handleInputChange("online", value === "Yes")
                 }
+                textColor={"gray.600"}
               >
                 <HStack spacing="24px">
-                  <Radio value="Yes">Yes</Radio>
-                  <Radio value="No">No</Radio>
+                  <Radio size="sm" value="Yes">
+                    Yes
+                  </Radio>
+                  <Radio size="sm" value="No">
+                    No
+                  </Radio>
                 </HStack>
               </RadioGroup>
             </FormControl>
 
             <div className="flex flex-row gap-6">
-              <FormControl isInvalid={validationErrors["state"]}>
-                <MultiSelect
-                  options={states}
-                  value={states.find(
-                    (option: { value: any }) =>
-                      option.value ===
-                      (typeof input?.state === "object"
-                        ? (input?.state?.value as any)
-                        : input?.state)
+              <div className="w-full">
+                <FormLabel fontSize="sm" textColor="gray.600">
+                  State
+                </FormLabel>
+                <FormControl isInvalid={validationErrors["state"]}>
+                  <MultiSelect
+                    chakraStyles={dropDownChakraStyles}
+                    options={states}
+                    value={states.find((state) => state.value === input.state)}
+                    placeholder="Select a state or national region"
+                    // @ts-ignore
+                    onChange={(value) =>
+                      handleInputChange("state", value.value)
+                    }
+                    variant="outline"
+                    isClearable
+                    useBasicStyles
+                  />
+                  {validationErrors["state"] && (
+                    <FormErrorMessage>
+                      State or region is required
+                    </FormErrorMessage>
                   )}
-                  placeholder="Select state"
-                  onChange={(value) => handleInputChange("state", value)}
-                  variant="outline"
-                  isClearable
-                  useBasicStyles
-                />
-                {validationErrors["state"] && (
-                  <FormErrorMessage>{"Select state"}</FormErrorMessage>
-                )}
-              </FormControl>
+                </FormControl>
+              </div>
 
-              <FormControl>
-                <MultiSelect
-                  isDisabled={filteredCounties?.length <= 0}
-                  options={filteredCounties}
-                  value={filteredCounties.find(
-                    (option) => option.County === input?.county
-                  )}
-                  placeholder="Select county"
-                  onChange={(value) => handleInputChange("county", value)}
-                  variant="outline"
-                  isClearable
-                  useBasicStyles
-                />
-              </FormControl>
+              <div className="w-full">
+                <FormLabel fontSize="sm" textColor="gray.600">
+                  County
+                </FormLabel>
+                <FormControl>
+                  <MultiSelect
+                    chakraStyles={dropDownChakraStyles}
+                    isDisabled={countyIsDisabled}
+                    options={availableCounties}
+                    value={
+                      availableCounties.find(
+                        (county) => county.value === input.county
+                      ) || ""
+                    }
+                    placeholder="Select county"
+                    // @ts-ignore
+                    onChange={(value) =>
+                      handleInputChange("county", value.value)
+                    }
+                    variant="outline"
+                    isClearable
+                    useBasicStyles
+                  />
+                </FormControl>
+              </div>
             </div>
 
             <div className="flex flex-row gap-6">
-              <FormControl isInvalid={validationErrors["tags"]}>
-                <MultiSelect
-                  isMulti
-                  options={interest}
-                  value={input?.tags.map((tag) => ({ label: tag, value: tag }))}
-                  name="interest"
-                  placeholder="Select interest"
-                  variant="outline"
-                  useBasicStyles
-                  onChange={(value) =>
-                    handleInputChange(
-                      "tags",
-                      value.map((tag) => tag.value)
-                    )
-                  }
-                />
-                {validationErrors["tags"] && (
-                  <FormErrorMessage>
-                    {"Select at least one interest"}
-                  </FormErrorMessage>
-                )}
-              </FormControl>
-
-              <FormControl isInvalid={validationErrors["branchOfService"]}>
-                <MultiSelect
-                  name="branchOfService"
-                  options={branchOfService}
-                  value={branchOfService.find(
-                    (option) => option.label === (input?.branchOfService as any)
-                  )}
-                  placeholder="Select branch of service"
-                  variant="outline"
-                  useBasicStyles
-                  isClearable
-                  onChange={(value) =>
-                    handleInputChange("branchOfService", value?.label)
-                  }
-                />
-                {validationErrors["branchOfService"] && (
-                  <FormErrorMessage>
-                    {"Select branch of service"}
-                  </FormErrorMessage>
-                )}
-              </FormControl>
-            </div>
-
-            <div>
-              {/* password */}
-              <FormControl>
-                <FormLabel as="legend">
-                  Do you want to lock the group with a password? (Optional)
+              <div className="w-full">
+                <FormLabel fontSize="sm" textColor="gray.600">
+                  Branch of Service
                 </FormLabel>
-                <InputGroup size="md">
-                  {/* <FormLabel>Name</FormLabel> */}
-                  <Input
-                    placeholder="Password"
-                    type={show ? "text" : "password"}
-                    value={input?.password}
-                    onChange={(e) =>
-                      handleInputChange("password", e.target.value)
+                <FormControl isInvalid={validationErrors["branchOfService"]}>
+                  <MultiSelect
+                    name="branchOfService"
+                    chakraStyles={dropDownChakraStyles}
+                    options={branchesOfService}
+                    value={branchesOfService.find(
+                      (branch) => branch.value === input.branchOfService
+                    )}
+                    placeholder="Select branch of service"
+                    variant="outline"
+                    useBasicStyles
+                    isClearable
+                    onChange={(value) =>
+                      // @ts-ignore
+                      handleInputChange("branchOfService", value.value)
                     }
                   />
-                  <InputRightElement width="4.5rem">
-                    <Button h="1.75rem" size="sm" onClick={handleClick}>
-                      {show ? "Hide" : "Show"}
-                    </Button>
-                  </InputRightElement>
-                </InputGroup>
-              </FormControl>
+                  {validationErrors["branchOfService"] && (
+                    <FormErrorMessage>
+                      Branch of service is required
+                    </FormErrorMessage>
+                  )}
+                </FormControl>
+              </div>
+              <div className="w-full">
+                <FormLabel fontSize="sm" textColor="gray.600">
+                  Tags
+                </FormLabel>
+                <FormControl isInvalid={validationErrors["tags"]}>
+                  <MultiSelect
+                    isMulti
+                    chakraStyles={dropDownChakraStyles}
+                    options={availableTags}
+                    value={
+                      availableTags.filter((availableTag) =>
+                        tags.includes(availableTag.value)
+                      ) || []
+                    }
+                    name="interest"
+                    placeholder="Select tags"
+                    variant="outline"
+                    useBasicStyles
+                    onChange={(value) =>
+                      handleInputChange(
+                        "tags",
+                        // @ts-ignore
+                        value.map((tag) => tag.value)
+                      )
+                    }
+                  />
+                  {validationErrors["tags"] && (
+                    <FormErrorMessage>
+                      At least one tag is required
+                    </FormErrorMessage>
+                  )}
+                </FormControl>
+              </div>
             </div>
+
+            <FormControl>
+              <FormLabel fontSize="sm" textColor="gray.600">
+                Lock group with a password? (Optional)
+              </FormLabel>
+              <InputGroup size="md">
+                <Input
+                  fontSize={"sm"}
+                  paddingX={3}
+                  paddingY={1}
+                  placeholder="Password"
+                  type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChange={(e) =>
+                    handleInputChange("password", e.target.value)
+                  }
+                />
+                <InputRightElement width="4.5rem">
+                  <ChakraButton
+                    h="1.75rem"
+                    size="sm"
+                    onClick={() => {
+                      setShowPassword(!showPassword);
+                    }}
+                  >
+                    {showPassword ? "Hide" : "Show"}
+                  </ChakraButton>
+                </InputRightElement>
+              </InputGroup>
+              <FormHelperText fontSize={"0.8rem"} lineHeight={"5"}>
+                Adding a password will require users to enter the password to
+                join the group. Leave blank if you do not want to add a
+                password.
+              </FormHelperText>
+            </FormControl>
           </ModalBody>
 
           <ModalFooter>
-            <Button mr={3} onClick={handleSubmit}>
-              Save
+            <Button variant="outline" className="mr-2" onClick={onClose}>
+              Cancel
             </Button>
-            <Button onClick={() => onClose()}>Cancel</Button>
+            <Button onClick={handleSubmit} disabled={interestsAreLoading}>
+              Create
+            </Button>
           </ModalFooter>
         </ModalContent>
       </Modal>
     </>
+  );
+}
+
+export default function CreateGroupModal() {
+  return (
+    <SWRProvider>
+      <_CreateGroupModal />
+    </SWRProvider>
   );
 }

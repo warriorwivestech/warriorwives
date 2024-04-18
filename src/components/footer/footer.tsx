@@ -22,27 +22,36 @@ export default function Footer() {
   const copyrightBgColor = useColorModeValue("gray.200", "gray.700");
 
   return (
-    <Box bg="white" color={detailsBgColor}>
+    <div className="border-t-[1px]">
       <Container as={Stack} maxW={"6xl"} py={10}>
         <SimpleGrid columns={{ base: 1, sm: 2, md: 4 }} spacing={8}>
           <Stack align={"flex-start"}>
-            <ListHeader>Warrior Wives</ListHeader>
-            <Box as="a" href={"https://www.usawarriorwives.org/about_us"}>
+            <div className="font-semibold text-sm">Warrior Wives</div>
+            <a
+              href="https://www.usawarriorwives.org/about_us"
+              className="text-sm text-gray-600"
+            >
               About Us
-            </Box>
-            <Box as="a" href={"https://www.usawarriorwives.org/contact-us"}>
+            </a>
+            <a
+              href="https://www.usawarriorwives.org/contact-us"
+              className="text-sm text-gray-600"
+            >
               Contact Us
-            </Box>
+            </a>
           </Stack>
           <Stack align={"flex-start"}>
             <Box>
-              <Box fontWeight={"semibold"}>Phone:</Box>
-              417-319-6780
+              <div className="font-semibold text-sm">Phone</div>
+              <div className="text-sm text-gray-600">417-319-6780</div>
             </Box>
             <Box>
-              <Box fontWeight={"semibold"}>Mailing Address:</Box>
-              Warrior Wives 9998 Academic Avenue #1009 Point Lookout, Missouri
-              65726-1009
+              <div className="font-semibold text-sm">Mailing Address</div>
+              <div className="text-sm text-gray-600">
+                Warrior Wives 9998 Academic Avenue #1009 Point Lookout,
+                <br />
+                Missouri 65726-1009
+              </div>
             </Box>
           </Stack>
         </SimpleGrid>
@@ -62,11 +71,11 @@ export default function Footer() {
           justify={{ md: "space-between" }}
           align={{ md: "center" }}
         >
-          <Text>
+          <div className="text-sm text-gray-700">
             © 2024 ReactEnjoyers for Warrior Wives. All rights reserved
-          </Text>
+          </div>
         </Container>
       </Box>
-    </Box>
+    </div>
   );
 }

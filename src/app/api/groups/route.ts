@@ -1,3 +1,4 @@
+import { auth } from "@/auth";
 import {
   parseBranchOfService,
   parseReverseBranchOfService,
@@ -6,8 +7,11 @@ import prisma from "@/prisma";
 
 // get groups based on location
 export async function GET(request: Request) {
-  // TODO: get userId from session
-  const userId = 3;
+  const session = await auth();
+  const user = session?.user;
+  if (!user) {
+    throw new Error("User not authenticated");
+  }
   const urlSearchParams = new URL(request.url).searchParams;
 
   let locationInfo = {};
@@ -24,6 +28,7 @@ export async function GET(request: Request) {
   // get groups by county or state and exclude groups user is already in, limit to 10
   const groupsByLocation = await prisma.group.findMany({
     where: {
+      archived: false,
       OR: [
         {
           ...locationInfo,
