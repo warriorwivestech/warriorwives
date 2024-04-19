@@ -1,16 +1,17 @@
 import { auth } from "@/auth";
-import {
-  parseBranchOfService,
-  parseReverseBranchOfService,
-} from "@/data/helpers";
+import { CreateGroupFormValues } from "@/components/GroupModal/AddGroup";
+import { parseBranchOfService } from "@/data/helpers";
+import { queryUserIsSuperUser } from "@/data/sharedQueries";
+import { UnauthenticatedError, UnauthorizedError } from "@/lib/errors";
 import prisma from "@/prisma";
+import { Group, groupArmyBranch } from "@prisma/client";
 
 // get groups based on location
 export async function GET(request: Request) {
   const session = await auth();
   const user = session?.user;
   if (!user) {
-    throw new Error("User not authenticated");
+    throw new UnauthenticatedError();
   }
   const urlSearchParams = new URL(request.url).searchParams;
 
@@ -74,70 +75,67 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
-  const req = await request.json();
+  const session = await auth();
+  const user = session?.user;
+  if (!user) {
+    throw new UnauthenticatedError();
+  }
+
+  const userIsSuperUser = await queryUserIsSuperUser(user.email as string);
+  if (!userIsSuperUser) {
+    throw new UnauthorizedError();
+  }
+
+  const body: CreateGroupFormValues = await request.json();
   const {
     name,
     description,
     displayPhoto,
-    branchOfService,
-    county,
-    state,
     online,
+    state,
+    county,
+    branchOfService,
     tags,
-    userId,
-  } = req;
-  const parsedBranchOfService = parseReverseBranchOfService(branchOfService);
-  // uppercase first letter of each word in name and remove extra spaces at the end
-  const parsedTags = tags.map((tag: string) => {
-    return tag
-      .split(" ")
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-      .join(" ")
-      .trim();
-  });
+    password,
+  } = body;
 
-  console.log("trying to create group...");
+  const passwordEnabled = password ? true : false;
   const groupData = await prisma.group.create({
     data: {
       name,
       description,
       displayPhoto,
-      branchOfService: parsedBranchOfService,
+      branchOfService: branchOfService as groupArmyBranch,
       county,
       state,
       online,
-      // tags: {
-      //   connectOrCreate: parsedTags.map((tag: string) => {
-      //     return {
-      //       create: {
-      //         interest: {
-      //           name: tag,
-      //         }
-      //       },
-      //     };
-      //   }),
-      // },
+      tags: {
+        create: tags.map((tag) => {
+          return {
+            interest: {
+              connect: {
+                id: tag,
+              },
+            },
+          };
+        }),
+      },
+      passwordEnabled,
+      password,
       members: {
         create: {
-          userId,
+          user: {
+            connect: {
+              email: user.email as string,
+            },
+          },
           admin: true,
         },
       },
     },
   });
-  console.log("group created", groupData);
-  // const tagsData = await prisma.tagsOnGroups.createMany({
-  //   data: parsedTags.map((tag: string) => {
-  //     return {
-  //       groupId: groupData.id,
-  //       interest: {
-  //         connectOrCreate: {
-  //           name: tag,
-  //         },
-  //       },
-  //     };
-  //   }),
-  // });
 
   return Response.json(groupData);
 }
+
+export type CreateGroupResponseType = Group;

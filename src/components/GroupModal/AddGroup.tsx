@@ -23,37 +23,24 @@ import {
   Spinner,
   FormHelperText,
 } from "@chakra-ui/react";
-import React, { ChangeEvent, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FileUploader } from "react-drag-drop-files";
-import {
-  AsyncSelect,
-  ChakraStylesConfig,
-  CreatableSelect,
-  Select as MultiSelect,
-} from "chakra-react-select";
-import {
-  FileWithPreview,
-  LocationType,
-  NewGroup,
-  requiredGroupField,
-} from "@/types/groups";
+import { ChakraStylesConfig, Select as MultiSelect } from "chakra-react-select";
 import { MdDelete } from "react-icons/md";
 import { supabase } from "@/supabase";
-import { useRouter } from "next/navigation";
-import { apiClient } from "@/apiClient";
 import Image from "next/image";
-import {
-  getBranchesOfService,
-  getCounties,
-  getInterest,
-  getStates,
-} from "./helper/getData";
-import { z } from "zod";
+import { getBranchesOfService, getCounties, getStates } from "./helper/getData";
+import { set, z } from "zod";
 import { Button } from "../ui/button";
 import { SWRProvider } from "@/providers/swrProvider";
 import useSWR from "swr";
 import { InterestsType } from "@/app/api/interests/route";
 import { getInterestsRequestOptions } from "@/app/api/interests/helper";
+import useSWRMutation from "swr/mutation";
+import { apiClient } from "@/apiClient";
+import { useToast } from "../ui/use-toast";
+import { CreateGroupResponseType } from "@/app/api/groups/route";
+import { useRouter } from "next/navigation";
 
 const createGroupFormSchema = z.object({
   displayPhoto: z.string().min(1, {
@@ -88,6 +75,8 @@ const createGroupFormSchema = z.object({
     })
     .optional(),
 });
+
+export type CreateGroupFormValues = z.infer<typeof createGroupFormSchema>;
 
 const dropDownChakraStyles: ChakraStylesConfig = {
   clearIndicator: (provided, state) => ({
@@ -181,12 +170,41 @@ const defaultFormValues = {
   password: undefined,
 };
 
+async function createGroup(
+  url: string,
+  { arg }: { arg: CreateGroupFormValues }
+): Promise<CreateGroupResponseType> {
+  const response = await apiClient(url, {
+    method: "POST",
+    body: JSON.stringify(arg),
+  });
+  return response;
+}
+
 function _CreateGroupModal() {
+  const router = useRouter();
+  const { toast } = useToast();
   const {
     data: interestsData,
     error: interestsError,
     isLoading: interestsAreLoading,
   } = useSWR<InterestsType>(["/interests", getInterestsRequestOptions()]);
+  const { trigger, isMutating } = useSWRMutation(`/groups`, createGroup, {
+    onSuccess: (data) => {
+      toast({
+        title: `New Group Created!`,
+        description: `${data.name} group has been successfully created!`,
+      });
+      router.push(`/groups/${data.id}`);
+    },
+    onError: (error) => {
+      toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description: "There was a problem with your request.",
+      });
+    },
+  });
 
   // parse interests data into { label: name, value: id}
   const availableTags = interestsData
@@ -198,7 +216,7 @@ function _CreateGroupModal() {
 
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const [loading, setLoading] = useState(false);
+  const [imageIsUploading, setImageIsUploading] = useState(false);
 
   const branchesOfService = getBranchesOfService();
 
@@ -225,23 +243,18 @@ function _CreateGroupModal() {
     }
   }, [state]);
 
-  console.log("input", input);
-  console.log("availableCounties", availableCounties);
-
   const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
     setValidationErrors([]);
-    setLoading(false);
   }, [isOpen]);
 
   const handleSingleChange = async (file: File) => {
     if (file) {
-      setLoading(true);
+      setImageIsUploading(true);
       // generate random filepath using a hash
-      const filePath = `group-banners/${Math.random()}-${file.name}`;
-
-      const { data, error }: { data: any; error: any } = await supabase.storage
+      const filePath = `group-banners/${Math.floor(Math.random() * 100000000)}-${file.name}`;
+      const { data, error } = await supabase.storage
         .from("warrior-wives-test")
         .upload(filePath, file);
 
@@ -249,25 +262,40 @@ function _CreateGroupModal() {
         console.log("Error uploading file: ", error.message);
         setValidationErrors((prev: any) => ({
           ...prev,
-          ["displayPhoto"]:
-            "Make sure your file name does not contain any special characters",
+          ["displayPhoto"]: "An error occurred while uploading the file.",
         }));
-        setLoading(false);
       } else {
-        console.log("File uploaded successfully: ", data);
         handleInputChange(
           "displayPhoto",
-          `${process.env.NEXT_PUBLIC_SUPABASE_BLOB_URL}/${data?.fullPath}`
+          `${process.env.NEXT_PUBLIC_SUPABASE_BLOB_URL}/warrior-wives-test/${data.path}`
         );
-
-        setLoading(false);
       }
+      setImageIsUploading(false);
     }
   };
 
-  const handleSingleDelete = () => {
-    if (input?.displayPhoto) URL.revokeObjectURL(input?.displayPhoto as any);
-    handleInputChange("displayPhoto", null);
+  const handleSingleDelete = async () => {
+    setImageIsUploading(true);
+    if (input.displayPhoto) {
+      // URL.revokeObjectURL(input.displayPhoto);
+      // need to get the name from `group-banners/` onwards
+      const fileName = input.displayPhoto.split("/group-banners/")[1];
+      const key = `group-banners/${fileName}`;
+      const { data, error } = await supabase.storage
+        .from("warrior-wives-test")
+        .remove([key]);
+
+      if (error) {
+        console.log("Error deleting file: ", error.message);
+        setValidationErrors((prev: any) => ({
+          ...prev,
+          ["displayPhoto"]: "An error occurred while deleting the file.",
+        }));
+      } else {
+        handleInputChange("displayPhoto", "");
+      }
+    }
+    setImageIsUploading(false);
   };
 
   const handleInputChange = (inputType: string, value: any) => {
@@ -285,22 +313,8 @@ function _CreateGroupModal() {
   const handleSubmit = async () => {
     try {
       createGroupFormSchema.parse(input);
-
-      // const groupData = await apiClient("/groups", {
-      //   method: "POST",
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //   },
-      //   body: JSON.stringify({
-      //     ...input,
-      //     userId: 3,
-      //   }),
-      // });
-      onClose();
-      // navigate to group page
-      // router.push(`/groups/${groupData.id}`);
+      trigger(input);
     } catch (error) {
-      console.log("testing");
       // Handle validation errors
       if (error instanceof z.ZodError) {
         const errorMap: Record<string, string> = {};
@@ -316,7 +330,11 @@ function _CreateGroupModal() {
 
   return (
     <>
-      <Button variant="outline" onClick={onOpen} disabled={interestsAreLoading}>
+      <Button
+        variant="outline"
+        onClick={onOpen}
+        disabled={interestsAreLoading || interestsError}
+      >
         Create Group
       </Button>
       <Modal closeOnOverlayClick={false} isOpen={isOpen} onClose={onClose}>
@@ -330,20 +348,21 @@ function _CreateGroupModal() {
                 <FormLabel fontSize="sm" textColor="gray.600">
                   Banner Image
                 </FormLabel>
-                {loading ? (
+                {imageIsUploading ? (
                   <div className="w-full flex justify-center items-center h-[100px]">
                     <Spinner />
                   </div>
                 ) : (
                   <div className="flex flex-col justify-center w-full items-center gap-6">
-                    {displayPhoto && (
+                    {displayPhoto ? (
                       <div className="flex flex-col gap-4 justify-center items-center">
                         <Image
                           src={displayPhoto}
                           alt={displayPhoto}
-                          width={200}
+                          width={350}
                           height={350}
                           style={{
+                            width: "auto",
                             maxHeight: "350px",
                             objectFit: "cover",
                             borderRadius: "4px",
@@ -351,30 +370,29 @@ function _CreateGroupModal() {
                         />
                         <ChakraButton
                           onClick={() => handleSingleDelete()}
-                          bgColor={"#FC8181 !important"}
+                          bgColor={"red.400 !important"}
                           size={"sm"}
                           _hover={{
-                            bgColor: "#E53E3E !important",
+                            bgColor: "red.500 !important",
                           }}
                         >
-                          <MdDelete size={25} />
+                          <MdDelete size={20} />
                         </ChakraButton>
                       </div>
+                    ) : (
+                      <FileUploader
+                        multiple={false}
+                        handleChange={handleSingleChange}
+                        name="file"
+                        types={["JPG", "JPEG", "PNG"]}
+                      />
                     )}
-                    <FileUploader
-                      multiple={false}
-                      handleChange={handleSingleChange}
-                      name="file"
-                      types={["JPG", "JPEG", "PNG"]}
-                    />
                   </div>
                 )}
 
                 {validationErrors["displayPhoto"] && (
                   <p className="text-red-500 text-[14px]">
-                    {validationErrors["displayPhoto"]?.includes("null")
-                      ? "Display image is required"
-                      : validationErrors["displayPhoto"]}
+                    {validationErrors["displayPhoto"]}
                   </p>
                 )}
               </div>
@@ -455,8 +473,8 @@ function _CreateGroupModal() {
                     options={states}
                     value={states.find((state) => state.value === input.state)}
                     placeholder="Select a state or national region"
-                    // @ts-ignore
                     onChange={(value) =>
+                      // @ts-ignore
                       handleInputChange("state", value.value)
                     }
                     variant="outline"
@@ -486,8 +504,8 @@ function _CreateGroupModal() {
                       ) || ""
                     }
                     placeholder="Select county"
-                    // @ts-ignore
                     onChange={(value) =>
+                      // @ts-ignore
                       handleInputChange("county", value.value)
                     }
                     variant="outline"
@@ -562,7 +580,7 @@ function _CreateGroupModal() {
               </div>
             </div>
 
-            <FormControl>
+            <FormControl isInvalid={validationErrors["password"]}>
               <FormLabel fontSize="sm" textColor="gray.600">
                 Lock group with a password? (Optional)
               </FormLabel>
@@ -595,6 +613,11 @@ function _CreateGroupModal() {
                 join the group. Leave blank if you do not want to add a
                 password.
               </FormHelperText>
+              {validationErrors["password"] && (
+                <FormErrorMessage>
+                  {validationErrors["password"]}
+                </FormErrorMessage>
+              )}
             </FormControl>
           </ModalBody>
 
@@ -602,8 +625,11 @@ function _CreateGroupModal() {
             <Button variant="outline" className="mr-2" onClick={onClose}>
               Cancel
             </Button>
-            <Button onClick={handleSubmit} disabled={interestsAreLoading}>
-              Create
+            <Button
+              onClick={handleSubmit}
+              disabled={interestsAreLoading || isMutating}
+            >
+              {isMutating ? "Creating" : "Create"}
             </Button>
           </ModalFooter>
         </ModalContent>

@@ -57,8 +57,7 @@ export const getCounty = (state: string) => {
 
 export const getBranchesOfService = () => {
   return [
-    { value: "ANY", label: "Any" },
-    { value: "ALL", label: "All Branch" },
+    { value: "ANY", label: "All Branches" },
     { value: "ARMY", label: "Army" },
     { value: "NAVY", label: "Navy" },
     { value: "AIR_FORCE", label: "Air Force" },
