@@ -475,7 +475,7 @@ function _CreateGroupModal() {
                     placeholder="Select a state or national region"
                     onChange={(value) =>
                       // @ts-ignore
-                      handleInputChange("state", value.value)
+                      handleInputChange("state", value?.value)
                     }
                     variant="outline"
                     isClearable
@@ -506,7 +506,7 @@ function _CreateGroupModal() {
                     placeholder="Select county"
                     onChange={(value) =>
                       // @ts-ignore
-                      handleInputChange("county", value.value)
+                      handleInputChange("county", value?.value)
                     }
                     variant="outline"
                     isClearable
@@ -535,7 +535,7 @@ function _CreateGroupModal() {
                     isClearable
                     onChange={(value) =>
                       // @ts-ignore
-                      handleInputChange("branchOfService", value.value)
+                      handleInputChange("branchOfService", value?.value)
                     }
                   />
                   {validationErrors["branchOfService"] && (
@@ -592,9 +592,11 @@ function _CreateGroupModal() {
                   placeholder="Password"
                   type={showPassword ? "text" : "password"}
                   value={password}
-                  onChange={(e) =>
-                    handleInputChange("password", e.target.value)
-                  }
+                  onChange={(e) => {
+                    const newValue =
+                      e.target.value === "" ? undefined : e.target.value;
+                    handleInputChange("password", newValue);
+                  }}
                 />
                 <InputRightElement width="4.5rem">
                   <ChakraButton

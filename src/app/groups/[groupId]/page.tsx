@@ -21,7 +21,7 @@ import IconText from "@/components/common/icontext";
 import { BsPersonRaisedHand } from "react-icons/bs";
 import { RiBaseStationFill } from "react-icons/ri";
 import { SWRProvider } from "@/providers/swrProvider";
-import useSWR, { SWRResponse } from "swr";
+import useSWR, { KeyedMutator, SWRResponse } from "swr";
 import GroupLoading from "./loading";
 import GroupEventsData from "./components/GroupEventsData";
 import { GroupEvents } from "@/app/api/groups/[groupId]/events/route";
@@ -39,10 +39,12 @@ function GroupData({
   group,
   events,
   user,
+  revalidateData,
 }: {
   group: GroupDataType;
   events: SWRResponse<GroupEvents, any, any>;
   user: SWRResponse<UserDataType, any, any>;
+  revalidateData: KeyedMutator<GroupDataType>;
 }) {
   const [isSticky, setIsSticky] = useState(false);
   const [scrollPosition, setScrollPosition] = useState(70);
@@ -175,7 +177,11 @@ function GroupData({
                       Organized by {parsedAdmins}
                     </IconText>
                   </Stack>
-                  <GroupActionButtons group={group} user={user} />
+                  <GroupActionButtons
+                    group={group}
+                    user={user}
+                    revalidateData={revalidateData}
+                  />
                 </Stack>
               </Box>
             </Box>
@@ -190,7 +196,7 @@ function GroupData({
               }%`}
               transition={"width 0.25s ease"}
               ref={descriptionRef}
-              className="break-words text-gray-700"
+              className="break-words text-gray-700 whitespace-pre"
             >
               {description}
             </Text>
@@ -211,6 +217,7 @@ function _GroupPage({ params }: { params: { groupId: string } }) {
     data: group,
     error,
     isLoading,
+    mutate,
   } = useSWR<GroupDataType>([
     `/groups/${groupId}`,
     getSingleGroupRequestOptions(groupId),
@@ -225,7 +232,14 @@ function _GroupPage({ params }: { params: { groupId: string } }) {
   if (error) return <div>Error loading group</div>;
   if (!group) return notFound();
 
-  return <GroupData group={group} events={events} user={user} />;
+  return (
+    <GroupData
+      group={group}
+      events={events}
+      user={user}
+      revalidateData={mutate}
+    />
+  );
 }
 
 export default function GroupPage({ params }: { params: { groupId: string } }) {

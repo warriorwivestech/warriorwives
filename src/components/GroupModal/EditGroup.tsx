@@ -1,7 +1,7 @@
 "use client";
 
 import {
-  Button,
+  Button as ChakraButton,
   FormControl,
   FormErrorMessage,
   FormLabel,
@@ -18,100 +18,258 @@ import {
   HStack,
   RadioGroup,
   Textarea,
-  Divider,
   InputRightElement,
   InputGroup,
   Spinner,
+  FormHelperText,
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import { FileUploader } from "react-drag-drop-files";
-import { CreatableSelect, Select as MultiSelect } from "chakra-react-select";
-import { LocationType, NewGroup } from "@/types/groups";
+import { ChakraStylesConfig, Select as MultiSelect } from "chakra-react-select";
 import { MdDelete } from "react-icons/md";
 import { supabase } from "@/supabase";
-import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { GroupDataType } from "@/app/api/groups/[groupId]/route";
-import {
-  getBranchOfService,
-  getCounty,
-  getInterest,
-  getStates,
-} from "./helper/getData";
-import { z } from "zod";
+import { getBranchesOfService, getCounties, getStates } from "./helper/getData";
+import { set, z } from "zod";
+import { Button } from "../ui/button";
+import { SWRProvider } from "@/providers/swrProvider";
+import useSWR, { KeyedMutator } from "swr";
+import { InterestsType } from "@/app/api/interests/route";
+import { getInterestsRequestOptions } from "@/app/api/interests/helper";
+import useSWRMutation from "swr/mutation";
+import { apiClient } from "@/apiClient";
 import { useToast } from "../ui/use-toast";
+import { useRouter } from "next/navigation";
+import {
+  GroupDataType,
+  UpdateGroupResponseType,
+} from "@/app/api/groups/[groupId]/route";
+import { parseReverseBranchOfService } from "@/data/helpers";
 
-interface CreateGroupModalType {
-  data?: GroupDataType;
-}
-
-const GroupSchema = z.object({
+const updateGroupFormSchema = z.object({
   displayPhoto: z.string().min(1, {
-    message: "Display photo cannot be empty",
+    message: "Display photo is required",
   }),
-  name: z.string().min(1, {
-    message: "Group name cannot be empty",
-  }),
+  name: z
+    .string()
+    .min(1, {
+      message: "Group name is required",
+    })
+    .max(100, {
+      message: "Name must be at most 100 characters.",
+    }),
   description: z.string().min(1, {
-    message: "Description cannot be empty",
+    message: "A description of the group is required",
   }),
   online: z.boolean(),
-  state: z.object({
-    value: z.string().min(1),
-    label: z.string().min(1),
+  state: z.string().min(1, {
+    message: "State is required.",
   }),
-  tags: z.array(z.string()).min(1),
-  branchOfService: z.string().min(1),
-  password: z.string().optional(),
+  county: z.string().optional(),
+  branchOfService: z.string().min(1, {
+    message: "Branch of service is required.",
+  }),
+  tags: z.array(z.number()).min(1, {
+    message: "At least one tag is required.",
+  }),
+  password: z
+    .string()
+    .min(8, {
+      message: "Password must be at least 8 characters.",
+    })
+    .optional(),
 });
 
-export default function EditGroup(props: CreateGroupModalType) {
+export type EditGroupFormValues = z.infer<typeof updateGroupFormSchema>;
+
+const dropDownChakraStyles: ChakraStylesConfig = {
+  clearIndicator: (provided, state) => ({
+    ...provided,
+  }),
+  container: (provided, state) => ({
+    ...provided,
+  }),
+  control: (provided, state) => ({
+    ...provided,
+  }),
+  dropdownIndicator: (provided, state) => ({
+    ...provided,
+  }),
+  group: (provided, state) => ({
+    ...provided,
+  }),
+  groupHeading: (provided, state) => ({
+    ...provided,
+  }),
+  indicatorsContainer: (provided, state) => ({
+    ...provided,
+  }),
+  input: (provided, state) => ({
+    ...provided,
+    fontSize: "14px",
+  }),
+  inputContainer: (provided, state) => ({
+    ...provided,
+    fontSize: "14px",
+  }),
+  menu: (provided, state) => ({
+    ...provided,
+    fontSize: "14px",
+  }),
+  menuList: (provided, state) => ({
+    ...provided,
+    fontSize: "14px",
+  }),
+  multiValue: (provided, state) => ({
+    ...provided,
+    fontSize: "14px",
+  }),
+  multiValueLabel: (provided, state) => ({
+    ...provided,
+    fontSize: "14px",
+  }),
+  multiValueRemove: (provided, state) => ({
+    ...provided,
+    fontSize: "14px",
+  }),
+  option: (provided, state) => ({
+    ...provided,
+    fontSize: "14px",
+  }),
+  placeholder: (provided, state) => ({
+    ...provided,
+    fontSize: "14px",
+  }),
+  singleValue: (provided, state) => ({
+    ...provided,
+    fontSize: "14px",
+  }),
+  valueContainer: (provided, state) => ({
+    ...provided,
+    fontSize: "14px",
+  }),
+};
+
+interface EditGroupType {
+  displayPhoto: string;
+  name: string;
+  description: string;
+  online: boolean;
+  state: string;
+  county: string;
+  branchOfService: string;
+  tags: number[];
+  password: string | undefined;
+}
+
+async function updateGroup(
+  url: string,
+  { arg }: { arg: EditGroupFormValues }
+): Promise<UpdateGroupResponseType> {
+  const response = await apiClient(url, {
+    method: "PUT",
+    body: JSON.stringify(arg),
+  });
+  return response;
+}
+
+function _EditGroupModal({
+  group,
+  revalidateData,
+}: {
+  group: GroupDataType;
+  revalidateData: KeyedMutator<GroupDataType>;
+}) {
+  const { toast } = useToast();
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const router = useRouter();
-  const [loading, setLoading] = useState(false);
-  const branchOfService = getBranchOfService();
-  const states = getStates();
-  const interest = getInterest();
+  const {
+    data: interestsData,
+    error: interestsError,
+    isLoading: interestsAreLoading,
+  } = useSWR<InterestsType>(["/interests", getInterestsRequestOptions()]);
+  const { trigger, isMutating } = useSWRMutation(
+    `/groups/${group.id}`,
+    updateGroup,
+    {
+      onSuccess: (data) => {
+        toast({
+          title: `Group Updated!`,
+          description: `${data.name} group has been successfully updated!`,
+        });
+        revalidateData();
+        onClose();
+      },
+      onError: (error) => {
+        toast({
+          variant: "destructive",
+          title: "Uh oh! Something went wrong.",
+          description: "There was a problem with your request.",
+        });
+      },
+    }
+  );
+  const originalDisplayPhoto = group.displayPhoto;
+  const [isShowingOriginalDisplayPhoto, setIsShowingOriginalDisplayPhoto] =
+    useState(true);
+
+  // parse interests data into { label: name, value: id}
+  const availableTags = interestsData
+    ? interestsData.map((interest) => ({
+        label: interest.name,
+        value: interest.id,
+      }))
+    : [];
+
+  const [imageIsUploading, setImageIsUploading] = useState(false);
+
+  const branchesOfService = getBranchesOfService();
+
+  const defaultFormValues = {
+    displayPhoto: group.displayPhoto,
+    name: group.name,
+    description: group.description,
+    online: group.online,
+    state: group.state,
+    county: group.county || "",
+    branchOfService: parseReverseBranchOfService(group.branchOfService),
+    tags: group.tagIds,
+    password: group.password ? group.password : undefined,
+  };
+  const [input, setInput] = useState<EditGroupType>(defaultFormValues);
   const [validationErrors, setValidationErrors] = useState<any>([]);
-  const [input, setInput] = useState<NewGroup>();
-  const [filteredCounties, setFilteredCounties] = useState<LocationType[]>([]);
-  const [show, setShow] = useState(false);
-  const handleClick = () => setShow(!show);
+  const { displayPhoto, name, description, online, state, tags, password } =
+    input;
+
+  const states = getStates();
+  const [countyIsDisabled, setCountyIsDisabled] = useState(true);
+  const [availableCounties, setAvailableCounties] = useState<
+    { value: string; label: string }[]
+  >([]);
+
+  useEffect(() => {
+    if (!state || state === "National") {
+      setCountyIsDisabled(true);
+      handleInputChange("county", "");
+      setAvailableCounties([]);
+    } else {
+      setCountyIsDisabled(false);
+      handleInputChange("county", "");
+      setAvailableCounties(getCounties(state));
+    }
+  }, [state]);
+
+  const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
     setValidationErrors([]);
-    setLoading(false);
-
-    setInput((prevInput: any) => ({
-      ...prevInput,
-      name: props?.data?.name || "",
-      description: props?.data?.description || "",
-      online: props?.data?.online || false,
-      displayPhoto: props?.data?.displayPhoto || "",
-      county: props?.data?.county || "",
-      state: { value: props?.data?.state, label: props?.data?.state },
-      branchOfService: props?.data?.branchOfService || [],
-      tags: props?.data?.tags || [],
-      password: props?.data?.password || "",
-    }));
-  }, [props?.data, isOpen]);
-
-  useEffect(() => {
-    const stateValue =
-      typeof input?.state === "object" ? input?.state?.value : input?.state;
-    if (stateValue) {
-      const counties = getCounty(stateValue);
-      setFilteredCounties(counties);
-    }
-  }, [input?.state]);
+  }, [isOpen]);
 
   const handleSingleChange = async (file: File) => {
     if (file) {
-      setLoading(true);
+      setImageIsUploading(true);
       // generate random filepath using a hash
-      const filePath = `group-banners/${Math.random()}-${file.name}`;
-
-      const { data, error }: { data: any; error: any } = await supabase.storage
+      const filePath = `group-banners/${Math.floor(Math.random() * 100000000)}-${file.name}`;
+      const { data, error } = await supabase.storage
         .from("warrior-wives-test")
         .upload(filePath, file);
 
@@ -119,31 +277,49 @@ export default function EditGroup(props: CreateGroupModalType) {
         console.log("Error uploading file: ", error.message);
         setValidationErrors((prev: any) => ({
           ...prev,
-          ["displayPhoto"]:
-            "Make sure your file name does not contain any special characters",
+          ["displayPhoto"]: "An error occurred while uploading the file.",
         }));
-        setLoading(false);
       } else {
-        console.log("File uploaded successfully: ", data);
         handleInputChange(
           "displayPhoto",
-          `${process.env.NEXT_PUBLIC_SUPABASE_BLOB_URL}/${data?.fullPath}`
+          `${process.env.NEXT_PUBLIC_SUPABASE_BLOB_URL}/warrior-wives-test/${data.path}`
         );
-
-        setTimeout(() => {
-          setLoading(false);
-        }, 5000);
       }
+      setImageIsUploading(false);
     }
   };
 
-  const handleSingleDelete = () => {
-    if (input?.displayPhoto) URL.revokeObjectURL(input?.displayPhoto as any);
-    handleInputChange("displayPhoto", null);
+  const handleSingleDelete = async () => {
+    setImageIsUploading(true);
+    if (input.displayPhoto) {
+      if (isShowingOriginalDisplayPhoto) {
+        handleInputChange("displayPhoto", "");
+        setIsShowingOriginalDisplayPhoto(false);
+      } else {
+        // URL.revokeObjectURL(input.displayPhoto);
+        // need to get the name from `group-banners/` onwards
+        const fileName = input.displayPhoto.split("/group-banners/")[1];
+        const key = `group-banners/${fileName}`;
+        const { data, error } = await supabase.storage
+          .from("warrior-wives-test")
+          .remove([key]);
+
+        if (error) {
+          console.log("Error deleting file: ", error.message);
+          setValidationErrors((prev: any) => ({
+            ...prev,
+            ["displayPhoto"]: "An error occurred while deleting the file.",
+          }));
+        } else {
+          handleInputChange("displayPhoto", "");
+        }
+      }
+    }
+    setImageIsUploading(false);
   };
 
   const handleInputChange = (inputType: string, value: any) => {
-    setInput((prev: any) => ({
+    setInput((prev: EditGroupType) => ({
       ...prev,
       [inputType]: value,
     }));
@@ -156,21 +332,15 @@ export default function EditGroup(props: CreateGroupModalType) {
 
   const handleSubmit = async () => {
     try {
-      GroupSchema.parse(input);
-      // TODO: Add edit group API
-
-      onClose();
-      // navigate to group page
-      // router.push(`/groups/${groupData.id}`);
+      updateGroupFormSchema.parse(input);
+      trigger(input);
     } catch (error) {
       // Handle validation errors
       if (error instanceof z.ZodError) {
         const errorMap: Record<string, string> = {};
-
         error.errors.forEach((err) => {
           errorMap[err.path[0]] = err.message;
         });
-
         setValidationErrors(errorMap);
       } else {
         console.error(error);
@@ -180,75 +350,100 @@ export default function EditGroup(props: CreateGroupModalType) {
 
   return (
     <>
-      <Button onClick={onOpen}>Edit group</Button>
-
+      <Button
+        variant="outline"
+        onClick={onOpen}
+        disabled={interestsAreLoading || interestsError}
+      >
+        Edit Group
+      </Button>
       <Modal closeOnOverlayClick={false} isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
-        <ModalContent minW="900px">
-          <ModalHeader>{`Edit ${props?.data?.name}`}</ModalHeader>
+        <ModalContent minW="700px">
+          <ModalHeader fontSize="lg">Edit Group</ModalHeader>
           <ModalCloseButton />
           <ModalBody pb={6} gap={6} display={"flex"} flexDirection={"column"}>
-            {/* banner image */}
             <FormControl isInvalid={validationErrors["displayImage"]}>
               <div className="flex flex-col gap-2">
-                <FormLabel>Banner Image</FormLabel>
-                {loading ? (
-                  <div className="w-[100%] flex justify-center items-center h-[100px]">
+                <FormLabel fontSize="sm" textColor="gray.600">
+                  Banner Image
+                </FormLabel>
+                {imageIsUploading ? (
+                  <div className="w-full flex justify-center items-center h-[100px]">
                     <Spinner />
                   </div>
                 ) : (
-                  <div className="flex flex-col justify-center w-[100%] items-center gap-6">
-                    {input?.displayPhoto && (
+                  <div className="flex flex-col justify-center w-full items-center gap-6">
+                    {displayPhoto ? (
                       <div className="flex flex-col gap-4 justify-center items-center">
                         <Image
-                          src={input?.displayPhoto as string}
-                          alt={input?.displayPhoto as string}
-                          width={200}
+                          src={displayPhoto}
+                          alt={displayPhoto}
+                          width={350}
                           height={350}
                           style={{
+                            width: "auto",
                             maxHeight: "350px",
                             objectFit: "cover",
                             borderRadius: "4px",
                           }}
                         />
-                        <Button
+                        <ChakraButton
                           onClick={() => handleSingleDelete()}
-                          bgColor={"#FC8181 !important"}
+                          bgColor={"red.400 !important"}
                           size={"sm"}
                           _hover={{
-                            bgColor: "#E53E3E !important",
+                            bgColor: "red.500 !important",
                           }}
                         >
-                          <MdDelete size={25} />
-                        </Button>
+                          <MdDelete size={20} />
+                        </ChakraButton>
                       </div>
+                    ) : (
+                      <>
+                        <FileUploader
+                          multiple={false}
+                          handleChange={handleSingleChange}
+                          name="file"
+                          types={["JPG", "JPEG", "PNG"]}
+                        />
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => {
+                            handleInputChange(
+                              "displayPhoto",
+                              originalDisplayPhoto
+                            );
+                            setIsShowingOriginalDisplayPhoto(true);
+                          }}
+                        >
+                          Re-use current photo
+                        </Button>
+                      </>
                     )}
-                    <FileUploader
-                      multiple={false}
-                      handleChange={handleSingleChange}
-                      name="file"
-                      types={["JPG", "JPEG", "PNG"]}
-                    />
                   </div>
                 )}
 
                 {validationErrors["displayPhoto"] && (
                   <p className="text-red-500 text-[14px]">
-                    {validationErrors["displayPhoto"]?.includes("null")
-                      ? "Display image is required"
-                      : validationErrors["displayPhoto"]}
+                    {validationErrors["displayPhoto"]}
                   </p>
                 )}
               </div>
             </FormControl>
-            <Divider />
 
-            {/* name */}
             <FormControl isInvalid={validationErrors["name"]}>
+              <FormLabel fontSize="sm" textColor="gray.600">
+                Group Name
+              </FormLabel>
               <Input
-                placeholder="Group name"
+                fontSize={"sm"}
+                paddingX={3}
+                paddingY={1}
                 type="name"
-                value={input?.name}
+                placeholder="Enter group name"
+                value={name}
                 onChange={(e) => handleInputChange("name", e.target.value)}
               />
               {validationErrors["name"] && (
@@ -256,13 +451,18 @@ export default function EditGroup(props: CreateGroupModalType) {
               )}
             </FormControl>
 
-            {/* description */}
             <FormControl isInvalid={validationErrors["description"]}>
+              <FormLabel fontSize="sm" textColor="gray.600">
+                Group Description
+              </FormLabel>
               <Textarea
+                fontSize={"sm"}
+                paddingX={3}
+                paddingY={3}
                 height={200}
                 resize={"none"}
-                placeholder="Description for the group"
-                value={input?.description}
+                placeholder="Provide a description of the group"
+                value={description}
                 onChange={(e) =>
                   handleInputChange("description", e.target.value)
                 }
@@ -274,142 +474,217 @@ export default function EditGroup(props: CreateGroupModalType) {
               )}
             </FormControl>
 
-            {/* online */}
             <FormControl as="fieldset">
-              <FormLabel as="legend">Is this an online group?</FormLabel>
+              <FormLabel fontSize="sm" textColor="gray.600">
+                Is this an online group?
+              </FormLabel>
               <RadioGroup
                 defaultValue="No"
-                value={input?.online ? "Yes" : "No"}
+                value={online ? "Yes" : "No"}
                 onChange={(value) =>
                   handleInputChange("online", value === "Yes")
                 }
+                textColor={"gray.600"}
               >
                 <HStack spacing="24px">
-                  <Radio value="Yes">Yes</Radio>
-                  <Radio value="No">No</Radio>
+                  <Radio size="sm" value="Yes">
+                    Yes
+                  </Radio>
+                  <Radio size="sm" value="No">
+                    No
+                  </Radio>
                 </HStack>
               </RadioGroup>
             </FormControl>
 
             <div className="flex flex-row gap-6">
-              <FormControl isInvalid={validationErrors["state"]}>
-                <MultiSelect
-                  options={states}
-                  value={states.find(
-                    (option: { value: any }) =>
-                      option.value ===
-                      (typeof input?.state === "object"
-                        ? (input?.state?.value as any)
-                        : input?.state)
+              <div className="w-full">
+                <FormLabel fontSize="sm" textColor="gray.600">
+                  State
+                </FormLabel>
+                <FormControl isInvalid={validationErrors["state"]}>
+                  <MultiSelect
+                    chakraStyles={dropDownChakraStyles}
+                    options={states}
+                    value={states.find((state) => state.value === input.state)}
+                    placeholder="Select a state or national region"
+                    onChange={(value) =>
+                      // @ts-ignore
+                      handleInputChange("state", value?.value)
+                    }
+                    variant="outline"
+                    isClearable
+                    useBasicStyles
+                  />
+                  {validationErrors["state"] && (
+                    <FormErrorMessage>
+                      State or region is required
+                    </FormErrorMessage>
                   )}
-                  placeholder="Select state"
-                  onChange={(value) => handleInputChange("state", value)}
-                  variant="outline"
-                  isClearable
-                  useBasicStyles
-                />
-                {validationErrors["state"] && (
-                  <FormErrorMessage>{"Select state"}</FormErrorMessage>
-                )}
-              </FormControl>
+                </FormControl>
+              </div>
 
-              <FormControl>
-                <MultiSelect
-                  isDisabled={filteredCounties?.length <= 0}
-                  options={filteredCounties}
-                  value={filteredCounties.find(
-                    (option) => option.County === input?.county
-                  )}
-                  placeholder="Select county"
-                  onChange={(value) => handleInputChange("county", value)}
-                  variant="outline"
-                  isClearable
-                  useBasicStyles
-                />
-              </FormControl>
+              <div className="w-full">
+                <FormLabel fontSize="sm" textColor="gray.600">
+                  County
+                </FormLabel>
+                <FormControl>
+                  <MultiSelect
+                    chakraStyles={dropDownChakraStyles}
+                    isDisabled={countyIsDisabled}
+                    options={availableCounties}
+                    value={
+                      availableCounties.find(
+                        (county) => county.value === input.county
+                      ) || ""
+                    }
+                    placeholder="Select county"
+                    onChange={(value) =>
+                      // @ts-ignore
+                      handleInputChange("county", value?.value)
+                    }
+                    variant="outline"
+                    isClearable
+                    useBasicStyles
+                  />
+                </FormControl>
+              </div>
             </div>
 
             <div className="flex flex-row gap-6">
-              <FormControl isInvalid={validationErrors["tags"]}>
-                <MultiSelect
-                  isMulti
-                  options={interest}
-                  value={input?.tags.map((tag) => ({ label: tag, value: tag }))}
-                  name="interest"
-                  placeholder="Select interest"
-                  variant="outline"
-                  useBasicStyles
-                  onChange={(value) =>
-                    handleInputChange(
-                      "tags",
-                      value.map((tag) => tag.value)
-                    )
-                  }
-                />
-                {validationErrors["tags"] && (
-                  <FormErrorMessage>
-                    {"Select at least one interest"}
-                  </FormErrorMessage>
-                )}
-              </FormControl>
-
-              <FormControl isInvalid={validationErrors["branchOfService"]}>
-                <MultiSelect
-                  name="branchOfService"
-                  options={branchOfService}
-                  value={branchOfService.find(
-                    (option) => option.label === (input?.branchOfService as any)
-                  )}
-                  placeholder="Select branch of service"
-                  variant="outline"
-                  useBasicStyles
-                  isClearable
-                  onChange={(value) =>
-                    handleInputChange("branchOfService", value?.label)
-                  }
-                />
-                {validationErrors["branchOfService"] && (
-                  <FormErrorMessage>
-                    {"Select branch of service"}
-                  </FormErrorMessage>
-                )}
-              </FormControl>
-            </div>
-
-            <div>
-              {/* password */}
-              <FormControl>
-                <FormLabel as="legend">
-                  Do you want to lock the group with a password? (Optional)
+              <div className="w-full">
+                <FormLabel fontSize="sm" textColor="gray.600">
+                  Branch of Service
                 </FormLabel>
-                <InputGroup size="md">
-                  {/* <FormLabel>Name</FormLabel> */}
-                  <Input
-                    placeholder="Password"
-                    type={show ? "text" : "password"}
-                    value={input?.password}
-                    onChange={(e) =>
-                      handleInputChange("password", e.target.value)
+                <FormControl isInvalid={validationErrors["branchOfService"]}>
+                  <MultiSelect
+                    name="branchOfService"
+                    chakraStyles={dropDownChakraStyles}
+                    options={branchesOfService}
+                    value={branchesOfService.find(
+                      (branch) => branch.value === input.branchOfService
+                    )}
+                    placeholder="Select branch of service"
+                    variant="outline"
+                    useBasicStyles
+                    isClearable
+                    onChange={(value) =>
+                      // @ts-ignore
+                      handleInputChange("branchOfService", value?.value)
                     }
                   />
-                  <InputRightElement width="4.5rem">
-                    <Button h="1.75rem" size="sm" onClick={handleClick}>
-                      {show ? "Hide" : "Show"}
-                    </Button>
-                  </InputRightElement>
-                </InputGroup>
-              </FormControl>
+                  {validationErrors["branchOfService"] && (
+                    <FormErrorMessage>
+                      Branch of service is required
+                    </FormErrorMessage>
+                  )}
+                </FormControl>
+              </div>
+              <div className="w-full">
+                <FormLabel fontSize="sm" textColor="gray.600">
+                  Tags
+                </FormLabel>
+                <FormControl isInvalid={validationErrors["tags"]}>
+                  <MultiSelect
+                    isMulti
+                    chakraStyles={dropDownChakraStyles}
+                    options={availableTags}
+                    value={
+                      availableTags.filter((availableTag) =>
+                        tags.includes(availableTag.value)
+                      ) || []
+                    }
+                    name="interest"
+                    placeholder="Select tags"
+                    variant="outline"
+                    useBasicStyles
+                    onChange={(value) =>
+                      handleInputChange(
+                        "tags",
+                        // @ts-ignore
+                        value.map((tag) => tag.value)
+                      )
+                    }
+                  />
+                  {validationErrors["tags"] && (
+                    <FormErrorMessage>
+                      At least one tag is required
+                    </FormErrorMessage>
+                  )}
+                </FormControl>
+              </div>
             </div>
+
+            <FormControl isInvalid={validationErrors["password"]}>
+              <FormLabel fontSize="sm" textColor="gray.600">
+                Lock group with a password? (Optional)
+              </FormLabel>
+              <InputGroup size="md">
+                <Input
+                  fontSize={"sm"}
+                  paddingX={3}
+                  paddingY={1}
+                  placeholder="Password"
+                  type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChange={(e) => {
+                    const newValue =
+                      e.target.value === "" ? undefined : e.target.value;
+                    handleInputChange("password", newValue);
+                  }}
+                />
+                <InputRightElement width="4.5rem">
+                  <ChakraButton
+                    h="1.75rem"
+                    size="sm"
+                    onClick={() => {
+                      setShowPassword(!showPassword);
+                    }}
+                  >
+                    {showPassword ? "Hide" : "Show"}
+                  </ChakraButton>
+                </InputRightElement>
+              </InputGroup>
+              <FormHelperText fontSize={"0.8rem"} lineHeight={"5"}>
+                Adding a password will require users to enter the password to
+                join the group. Leave blank if you do not want to add a
+                password.
+              </FormHelperText>
+              {validationErrors["password"] && (
+                <FormErrorMessage>
+                  {validationErrors["password"]}
+                </FormErrorMessage>
+              )}
+            </FormControl>
           </ModalBody>
 
           <ModalFooter>
-            <Button mr={3} onClick={handleSubmit}>
-              Save
+            <Button variant="outline" className="mr-2" onClick={onClose}>
+              Cancel
             </Button>
-            <Button onClick={() => onClose()}>Cancel</Button>
+            <Button
+              onClick={handleSubmit}
+              disabled={interestsAreLoading || isMutating}
+            >
+              {isMutating ? "Updating" : "Update"}
+            </Button>
           </ModalFooter>
         </ModalContent>
       </Modal>
     </>
+  );
+}
+
+export default function EditGroupModal({
+  group,
+  revalidateData,
+}: {
+  group: GroupDataType;
+  revalidateData: KeyedMutator<GroupDataType>;
+}) {
+  return (
+    <SWRProvider>
+      <_EditGroupModal group={group} revalidateData={revalidateData} />
+    </SWRProvider>
   );
 }

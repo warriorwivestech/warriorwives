@@ -6,7 +6,7 @@ import EditGroup from "@/components/GroupModal/EditGroup";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@chakra-ui/react";
 import { useState } from "react";
-import { SWRResponse } from "swr";
+import { KeyedMutator, SWRResponse } from "swr";
 import useSWRMutation from "swr/mutation";
 import GroupPasswordModal from "./GroupPasswordModal";
 import { useToast } from "@/components/ui/use-toast";
@@ -95,11 +95,13 @@ function JoinGroupButton({
 interface GroupActionButtonsProps {
   group: GroupDataType;
   user: SWRResponse<UserDataType, any, any>;
+  revalidateData: KeyedMutator<GroupDataType>;
 }
 
 export default function GroupActionButtons({
   group,
   user,
+  revalidateData,
 }: GroupActionButtonsProps) {
   const { data: userData, isLoading } = user;
   const { id, name, groupAdmin, joined, passwordEnabled } = group;
@@ -107,8 +109,8 @@ export default function GroupActionButtons({
   if (groupAdmin || userData?.superUser) {
     return (
       <div className="flex flex-col gap-2">
-        <EditGroup data={group} />
         <AddEvent groupName={name} groupId={id} />
+        <EditGroup group={group} revalidateData={revalidateData} />
         <div className="flex gap-2">
           <Link href={`/groups/${id}/members`} className="w-full">
             <Button variant="outline" className="w-full">
