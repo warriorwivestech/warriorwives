@@ -20,7 +20,9 @@ function _RecommendedGroups() {
   if (error) return <div>Error loading recommended groups</div>;
   if (!groups || groups.length === 0)
     return (
-      <div>You have joined all available groups based on your interests!</div>
+      <div className="text-sm">
+        You have joined all available groups based on your interests!
+      </div>
     );
 
   return (

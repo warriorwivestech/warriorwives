@@ -1,7 +1,7 @@
 import { apiClient } from "@/apiClient";
 import { GroupDataType } from "@/app/api/groups/[groupId]/route";
 import { UserDataType } from "@/app/api/user/route";
-import { AddEvent } from "@/components/EventModal/AddEvent";
+import CreateEventModal from "@/components/EventModal/AddEvent";
 import EditGroup from "@/components/GroupModal/EditGroup";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@chakra-ui/react";
@@ -109,7 +109,7 @@ export default function GroupActionButtons({
   if (groupAdmin || userData?.superUser) {
     return (
       <div className="flex flex-col gap-2">
-        <AddEvent groupName={name} groupId={id} />
+        <CreateEventModal groupName={name} groupId={id} />
         <EditGroup group={group} revalidateData={revalidateData} />
         <div className="flex gap-2">
           <Link href={`/groups/${id}/members`} className="w-full">
