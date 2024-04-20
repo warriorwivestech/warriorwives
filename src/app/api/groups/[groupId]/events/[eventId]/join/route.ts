@@ -22,6 +22,23 @@ function queryUserIsPartOfGroup(groupId: string, email: string) {
   });
 }
 
+async function queryFirstOrganizerOfEvent(eventId: number) {
+  const userData = await prisma.organizersOnEvents.findFirst({
+    where: {
+      eventId: eventId,
+    },
+    select: {
+      user: {
+        select: {
+          name: true,
+          email: true,
+        }
+      }
+    }
+  });
+  return { name: userData?.user.name, email: userData?.user.email }; 
+}
+
 export type JoinEventResponseType = {
   data: { eventId: number; userId: number } | null;
   error: string | null;
@@ -81,10 +98,12 @@ export async function POST(
   }
 
   if (user.email) {
-    const error = await sendJoinEventEmail(user.name ?? "", user.email, event);
+    const { name, email } = await queryFirstOrganizerOfEvent(event.id);
+    const error = await sendJoinEventEmail(user.name ?? "", user.email, name ?? undefined, email ?? undefined, event);
     if (error) {
       return Response.json({ data, error: error });
     }
+    console.log("successfully sent email");
   }
 
   return Response.json({ data, error: null });

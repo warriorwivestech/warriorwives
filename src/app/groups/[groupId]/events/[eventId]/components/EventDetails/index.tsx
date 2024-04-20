@@ -169,7 +169,7 @@ export default function EventDetails({ event, user }: EventDetailsProps) {
                   This event is hosted online
                 </p>
                 <a
-                  href={meetingLink || "#"}
+                  href={meetingLink ? (/^(?:https?:\/\/)/i.test(meetingLink) ? meetingLink : `http://${meetingLink}`) : "#"}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="cursor-pointer text-blue-500 hover:underline"

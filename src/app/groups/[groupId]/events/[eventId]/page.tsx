@@ -12,6 +12,7 @@ import { notFound } from "next/navigation";
 import { SWRProvider } from "@/providers/swrProvider";
 import { UserDataType } from "@/app/api/user/route";
 import { getUserRequestOptions } from "@/app/api/user/helper";
+import EventsLoading from "./loading";
 
 interface EventDataProps {
   event: SingleEventDataType;
@@ -52,7 +53,7 @@ function _EventPage({
   } = useSWR<SingleEventResponseType>([`/groups/${groupId}/events/${eventId}`]);
   const user = useSWR<UserDataType>(["/user", getUserRequestOptions()]);
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) return <EventsLoading />;
   if (error) return <div>Error loading group</div>;
 
   if (!event || !event.data) return notFound();

@@ -1,5 +1,5 @@
 import { TypographyH3 } from "@/components/ui/typography/h3";
-import { Flex, Skeleton, SkeletonText } from "@chakra-ui/react";
+import { Flex, SkeletonText } from "@chakra-ui/react";
 
 export default function EventsLoading() {
   return (

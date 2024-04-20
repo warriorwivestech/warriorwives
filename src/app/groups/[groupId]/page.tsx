@@ -102,7 +102,7 @@ function GroupData({
   const [desktopSize] = useMediaQuery("(min-width: 1024px)");
 
   return (
-    <div className="flex flex-col-reverse md:flex-row gap-8 justify-between">
+    <div className="flex flex-col-reverse xl:flex-row gap-8 justify-between">
       <div className="flex flex-col gap-16">
         <Stack gap={8}>
           <SimpleGrid columns={[1, 1, 2]} spacing={8}>
