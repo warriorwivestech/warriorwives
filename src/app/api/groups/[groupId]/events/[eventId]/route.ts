@@ -4,9 +4,9 @@ import { parseDate } from "@/helpers/dateParser";
 import { UnauthenticatedError, UnauthorizedError } from "@/lib/errors";
 import prisma from "@/prisma";
 import { Event, Prisma } from "@prisma/client";
-import { queryMemberJoined } from "../../route";
 import { supabase } from "@/supabase";
 import { UpdateEventFormValues } from "@/components/EventModal/EditEvent";
+import { queryMemberJoined } from "../../helpers";
 
 async function queryUserAuthorizedToViewGroupEvents(
   groupId: number,

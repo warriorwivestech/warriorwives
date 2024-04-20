@@ -19,9 +19,9 @@ export default function NotFound() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Link href="/">
+          <a href="/">
             <Button className="w-full">Return Home</Button>
-          </Link>
+          </a>
         </CardContent>
       </Card>
     </div>

@@ -6,6 +6,7 @@ import { UnparsedUserData, queryUser } from "@/data/user";
 import { UnauthenticatedError, UnauthorizedError } from "@/lib/errors";
 import { EditGroupFormValues } from "@/components/GroupModal/EditGroup";
 import { supabase } from "@/supabase";
+import { queryMemberJoined } from "./helpers";
 
 function queryGroup(groupId: number) {
   return prisma.group.findUnique({
@@ -33,16 +34,6 @@ function queryGroup(groupId: number) {
 }
 type UnparsedGroup = Prisma.PromiseReturnType<typeof queryGroup>;
 
-export function queryMemberJoined(groupId: number, userEmail: string) {
-  return prisma.membersOnGroups.findFirst({
-    where: {
-      groupId,
-      user: {
-        email: userEmail,
-      },
-    },
-  });
-}
 type UnparsedMemberJoined = Prisma.PromiseReturnType<typeof queryMemberJoined>;
 
 function queryGroupAdmins(groupId: number) {
