@@ -18,9 +18,18 @@ function _OtherEvents({ groupId, eventId }: OtherEventsProps) {
   } = useSWR<GroupEvents>([`/groups/${groupId}/events?exclude=${eventId}`]);
 
   if (isLoading) return <div>Loading...</div>;
-  if (error) return <div>Error loading events</div>;
+  if (error)
+    return <div className="text-gray-600 text-sm">Error loading events</div>;
+  // @ts-ignore
+  if (otherEvents && otherEvents.error) {
+    return (
+      <div className="text-sm text-gray-600">
+        Join this group to view events!
+      </div>
+    );
+  }
   if (!otherEvents || otherEvents.length === 0)
-    return <div>No other events</div>;
+    return <div className="text-gray-600 text-sm">No other events</div>;
 
   return (
     <div className="flex flex-row gap-4 overflow-x-scroll pb-2 pl-1">

@@ -80,7 +80,9 @@ export default function GroupPasswordModal({
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogTrigger asChild>
-        <Button disabled={disabled}>Join Group</Button>
+        <Button className="w-full" disabled={disabled}>
+          Join Group
+        </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <Form {...form}>

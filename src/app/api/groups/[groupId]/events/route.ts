@@ -97,7 +97,9 @@ export async function GET(
     groupId,
     user.email as string
   );
-  if (!authorized) {
+  const userIsSuperUser = await queryUserIsSuperUser(user.email as string);
+
+  if (!authorized && !userIsSuperUser) {
     return Response.json({
       error: "User not authorized to view events for this group",
     });

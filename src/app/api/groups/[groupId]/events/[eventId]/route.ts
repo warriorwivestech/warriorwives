@@ -28,7 +28,7 @@ async function queryUserAuthorizedToViewGroupEvents(
   });
   const passwordEnabled = data?.passwordEnabled;
   const userHasJoinedGroup = data?.members && data.members.length > 0;
-  const userIsAdmin = data?.members?.[0].admin;
+  const userIsAdmin = data?.members?.[0]?.admin;
 
   // if group is password protected, user must have joined the group to view events
   // if group is not password protected, user can view events
@@ -150,7 +150,8 @@ export async function GET(
 
   const email = user.email as string;
   const userData = await queryUserAuthorizedToViewGroupEvents(groupId, email);
-  if (!userData.authorized) {
+  const userIsSuperUser = await queryUserIsSuperUser(email);
+  if (!userData.authorized && !userIsSuperUser) {
     return Response.json({
       error: "Unauthorized",
       message: "You need to join the group to view this event.",

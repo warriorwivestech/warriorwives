@@ -18,9 +18,24 @@ export default function GroupEventsData({
         <Skeleton height="150px" className="rounded-xl" />
       </div>
     );
-  if (error) return <div>Error loading events</div>;
+  if (error)
+    return <div className="text-sm text-gray-600">Error loading events</div>;
+
+  // @ts-ignore
+  if (eventsData && eventsData.error) {
+    return (
+      <div className="text-sm text-gray-600">
+        Join this group to view events!
+      </div>
+    );
+  }
+
   if (!eventsData || eventsData.length === 0)
-    return <div>No events found for this group.</div>;
+    return (
+      <div className="text-sm text-gray-600">
+        No events found for this group.
+      </div>
+    );
 
   return (
     <Flex className="flex-col w-full md:w-[65%]" gap={6}>

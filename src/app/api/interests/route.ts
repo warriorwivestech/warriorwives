@@ -9,7 +9,12 @@ async function queryInterests() {
     throw new Error("User not authenticated");
   }
 
-  return await prisma.interest.findMany();
+  return await prisma.interest.findMany({
+    // sort interests by name
+    orderBy: {
+      name: "asc",
+    },
+  });
 }
 
 export type InterestsType = Prisma.PromiseReturnType<typeof queryInterests>;
