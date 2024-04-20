@@ -24,9 +24,12 @@ export default function GroupEventsData({
 
   return (
     <Flex className="flex-col w-full md:w-[65%]" gap={6}>
-      {eventsData.map((event) => (
-        <EventCard key={event.id} event={event} />
-      ))}
+      {/* only upcoming events */}
+      {eventsData
+        .filter((event) => new Date(event.startDateTime) > new Date())
+        .map((event) => (
+          <EventCard key={event.id} event={event} />
+        ))}
     </Flex>
   );
 }

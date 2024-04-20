@@ -1,9 +1,9 @@
 import { UserDataType } from "@/app/api/user/route";
 import { SWRResponse } from "swr";
 import { SingleEventDataType } from "@/app/api/groups/[groupId]/events/[eventId]/route";
-import { EditEvent } from "@/components/EventModal/EditEvent";
 import JoinEventButton from "./JoinEventButton";
 import LeaveEventButton from "./LeaveEventButton";
+import EditEventModal from "@/components/EventModal/EditEvent";
 
 interface EventActionButtonsProps {
   event: SingleEventDataType;
@@ -43,7 +43,11 @@ export default function EventActionButtons({
   if (userIsAdmin || userIsSuperUser) {
     return (
       <div className="flex flex-col gap-2">
-        <EditEvent groupName={event.groupName} groupId={groupId} />
+        <EditEventModal
+          groupName={event.groupName}
+          groupId={groupId}
+          event={event}
+        />
         {/* for organizers, if they have joined already, don't allow them to leave the event */}
         {/* any admin of the group who joins the event is an organizer */}
         {userIsAdmin && (

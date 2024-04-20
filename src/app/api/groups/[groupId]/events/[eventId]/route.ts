@@ -1,7 +1,12 @@
 import { auth } from "@/auth";
+import { queryUserIsSuperUser } from "@/data/sharedQueries";
 import { parseDate } from "@/helpers/dateParser";
+import { UnauthenticatedError, UnauthorizedError } from "@/lib/errors";
 import prisma from "@/prisma";
-import { Prisma } from "@prisma/client";
+import { Event, Prisma } from "@prisma/client";
+import { queryMemberJoined } from "../../route";
+import { supabase } from "@/supabase";
+import { UpdateEventFormValues } from "@/components/EventModal/EditEvent";
 
 async function queryUserAuthorizedToViewGroupEvents(
   groupId: number,
@@ -166,3 +171,111 @@ export type SingleEventResponseType = {
   error?: string;
   message?: string;
 };
+
+export async function PUT(
+  request: Request,
+  { params }: { params: { groupId: string; eventId: string } }
+) {
+  const session = await auth();
+  const user = session?.user;
+  if (!user) {
+    throw new UnauthenticatedError();
+  }
+
+  const groupId = Number(params.groupId);
+  const [userIsSuperUser, memberData, eventData] = await Promise.all([
+    queryUserIsSuperUser(user.email as string),
+    queryMemberJoined(groupId, user.email as string),
+    queryEvent(groupId, Number(params.eventId)),
+  ]);
+  const userIsAdmin = memberData?.admin;
+  if (!eventData) {
+    throw new Error("Event not found");
+  }
+  if (!userIsSuperUser && !userIsAdmin) {
+    throw new UnauthorizedError();
+  }
+
+  const { displayPhoto: oldDisplayPhoto, photos: oldPhotos } = eventData;
+  const parsedOldPhotos = oldPhotos.map((photo) => photo.photo);
+  const body: UpdateEventFormValues = await request.json();
+  const {
+    displayPhoto,
+    name,
+    description,
+    online,
+    meetingLink,
+    location,
+    startDateTime,
+    endDateTime,
+    photos,
+  } = body;
+  console.log("startDateTime", startDateTime);
+  console.log("endDateTime", endDateTime);
+
+  const displayPhotoChanged = displayPhoto !== oldDisplayPhoto;
+  const photosToCreate = photos.filter(
+    (photo) => !parsedOldPhotos.includes(photo)
+  );
+  const photosToDelete = parsedOldPhotos.filter(
+    (photo) => !photos.includes(photo)
+  );
+
+  const updatedEventData = await prisma.event.update({
+    where: {
+      id: Number(params.eventId),
+    },
+    data: {
+      displayPhoto,
+      name,
+      description,
+      online,
+      meetingLink,
+      location,
+      startDateTime: startDateTime,
+      endDateTime: endDateTime,
+      photos: {
+        create: photosToCreate.map((photo) => {
+          return {
+            photo: photo,
+          };
+        }),
+        deleteMany: {
+          photo: {
+            in: photosToDelete,
+          },
+        },
+      },
+    },
+    include: {
+      photos: {
+        select: {
+          id: true,
+          photo: true,
+        },
+      },
+    },
+  });
+
+  if (displayPhotoChanged && oldDisplayPhoto) {
+    const fileName = oldDisplayPhoto.split("/event-banners/")[1];
+    const key = `group-banners/${fileName}`;
+    const { data, error } = await supabase.storage
+      .from("warrior-wives-test")
+      .remove([key]);
+  }
+
+  if (photosToDelete.length > 0) {
+    const keys = photosToDelete.map((photo) => {
+      const fileName = photo.split("/event-photos/")[1];
+      return `event-photos/${fileName}`;
+    });
+    const { data, error } = await supabase.storage
+      .from("warrior-wives-test")
+      .remove(keys);
+  }
+
+  return Response.json(updatedEventData);
+}
+
+export type UpdateEventResponseType = Event;

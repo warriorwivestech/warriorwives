@@ -36,6 +36,36 @@ export async function queryJoinedEvents() {
     },
   });
 
+  const organizedEvents = await prisma.organizersOnEvents.findMany({
+    where: {
+      user: {
+        email: user.email as string,
+      },
+    },
+    include: {
+      event: {
+        include: {
+          _count: {
+            select: {
+              attendees: true,
+            },
+          },
+        },
+      },
+    },
+    orderBy: {
+      event: {
+        startDateTime: "asc",
+      },
+    },
+  });
+
+  data.push(...organizedEvents);
+  // sort by startDateTime in ascending order
+  data.sort((a, b) => {
+    return a.event.startDateTime.getTime() - b.event.startDateTime.getTime();
+  });
+
   return data;
 }
 

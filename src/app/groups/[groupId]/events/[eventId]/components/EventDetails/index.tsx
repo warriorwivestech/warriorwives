@@ -63,7 +63,7 @@ export default function EventDetails({ event, user }: EventDetailsProps) {
 
         <div className="flex flex-col gap-4">
           <TypographyH4>Description</TypographyH4>
-          <p className="text-gray-700">{description}</p>
+          <p className="text-gray-700 whitespace-pre-wrap">{description}</p>
         </div>
 
         {totalAttendeesAndOrganizers > 0 && (

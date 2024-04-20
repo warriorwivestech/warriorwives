@@ -33,7 +33,7 @@ function queryGroup(groupId: number) {
 }
 type UnparsedGroup = Prisma.PromiseReturnType<typeof queryGroup>;
 
-function queryMemberJoined(groupId: number, userEmail: string) {
+export function queryMemberJoined(groupId: number, userEmail: string) {
   return prisma.membersOnGroups.findFirst({
     where: {
       groupId,
