@@ -45,7 +45,7 @@ import {
   UpdateGroupResponseType,
 } from "@/app/api/groups/[groupId]/route";
 import { parseReverseBranchOfService } from "@/data/helpers";
-import { randomUUID } from "crypto";
+import { v4 as uuidv4 } from "uuid";
 
 const updateGroupFormSchema = z.object({
   displayPhoto: z.string().min(1, {
@@ -269,7 +269,7 @@ function _EditGroupModal({
     if (file) {
       setImageIsUploading(true);
       // generate random filepath using a hash
-      const filePath = `group-banners/${Math.floor(Math.random() * 100000000)}-${randomUUID()}`;
+      const filePath = `group-banners/${Math.floor(Math.random() * 100000000)}-${uuidv4()}`;
       const { data, error } = await supabase.storage
         .from("warrior-wives-test")
         .upload(filePath, file);

@@ -1,9 +1,8 @@
 "use client";
 
-import { EventDetailsProps } from "@/types/events";
 import { FileWithPreview } from "@/types/groups";
 import {
-  Button,
+  Button as ChakraButton,
   FormControl,
   FormErrorMessage,
   FormLabel,
@@ -34,66 +33,154 @@ import { apiClient } from "@/apiClient";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { z } from "zod";
+import { Button } from "../ui/button";
+import { SWRProvider } from "@/providers/swrProvider";
+import { useToast } from "../ui/use-toast";
+import useSWRMutation from "swr/mutation";
+import {
+  SingleEventDataType,
+  UpdateEventResponseType,
+} from "@/app/api/groups/[groupId]/events/[eventId]/route";
+import { mutate } from "swr";
+import { v4 as uuidv4 } from "uuid";
 
-const GroupSchema = z.object({
+function getFormattedCurrentDateTime(date: Date) {
+  // Adjusting date to UTC can help with timezone differences if needed
+  const year = date.getFullYear();
+  const month = date.getMonth() + 1;
+  const day = date.getDate();
+  const hours = date.getHours();
+  const minutes = date.getMinutes();
+
+  const formattedMonth = month.toString().padStart(2, "0");
+  const formattedDay = day.toString().padStart(2, "0");
+  const formattedHours = hours.toString().padStart(2, "0");
+  const formattedMinutes = minutes.toString().padStart(2, "0");
+
+  return `${year}-${formattedMonth}-${formattedDay}T${formattedHours}:${formattedMinutes}`;
+}
+
+const updateEventFormSchema = z.object({
   displayPhoto: z.string().min(1, {
-    message: "Display photo cannot be empty",
+    message: "Display photo is required",
   }),
-  name: z.string().min(1, {
-    message: "Group name cannot be empty",
-  }),
+  name: z
+    .string()
+    .min(1, {
+      message: "Event name is required",
+    })
+    .max(100, {
+      message: "Name must be at most 100 characters.",
+    }),
   description: z.string().min(1, {
-    message: "Description cannot be empty",
+    message: "A description of the group is required",
   }),
   online: z.boolean(),
   meetingLink: z.string(),
   location: z.string(),
   startDateTime: z.string().min(1, {
-    message: "Start time cannot be empty",
+    message: "Start time is required",
   }),
   endDateTime: z.string().min(1, {
-    message: "End time cannot be empty",
+    message: "End time is required",
   }),
-  photos: z.array(z.string()).min(1, {
-    message: "Photos cannot be empty",
-  }),
+  photos: z.array(z.string()),
 });
 
-export function EditEvent({
+export type UpdateEventFormValues = z.infer<typeof updateEventFormSchema>;
+
+interface EditEventType {
+  name: string;
+  description: string;
+  displayPhoto: string;
+  location: string;
+  online: boolean;
+  meetingLink: string;
+  startDateTime: string;
+  endDateTime: string;
+  photos: string[];
+}
+
+async function updateEvent(
+  url: string,
+  { arg }: { arg: UpdateEventFormValues }
+): Promise<UpdateEventResponseType> {
+  const response = await apiClient(url, {
+    method: "PUT",
+    body: JSON.stringify(arg),
+  });
+  return response;
+}
+
+function _EditEventModal({
   groupName,
   groupId,
-  eventData,
+  event,
 }: {
   groupName: string;
   groupId: number;
-  eventData?: EventDetailsProps;
+  event: SingleEventDataType;
 }) {
-  const router = useRouter();
-  const [loading, setLoading] = useState(false);
-  const [loadingPhotos, setLoadingPhotos] = useState(false);
+  const { toast } = useToast();
+  const { trigger, isMutating } = useSWRMutation(
+    `/groups/${groupId}/events/${event.id}`,
+    updateEvent,
+    {
+      onSuccess: (data) => {
+        toast({
+          title: `Event Updated!`,
+          description: `${data.name} event has been successfully updated!`,
+        });
+        mutate([`/groups/${groupId}/events/${event.id}`]);
+        onClose();
+      },
+      onError: (error) => {
+        toast({
+          variant: "destructive",
+          title: "Uh oh! Something went wrong.",
+          description: "There was a problem with your request.",
+        });
+      },
+    }
+  );
+  const originalDisplayPhoto = event.displayPhoto;
+  const [isShowingOriginalDisplayPhoto, setIsShowingOriginalDisplayPhoto] =
+    useState(true);
+  const originalEventPhotos = event.photos.map((photo) => photo.photo);
+
+  const [imageIsUploading, setImageIsUploading] = useState(false);
+  const [imagesAreUploading, setImagesAreUploading] = useState(false);
   const fileTypes = ["JPG", "JPEG", "PNG"];
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [validationErrors, setValidationErrors] = useState<any>([]);
-  const [input, setInput] = useState<EventDetailsProps>();
+
+  const defaultFormValues: EditEventType = {
+    name: event.name,
+    description: event.description,
+    displayPhoto: event.displayPhoto || "",
+    location: event.location || "",
+    online: event.online,
+    meetingLink: event.meetingLink || "",
+    startDateTime: getFormattedCurrentDateTime(new Date(event.startDateTime)),
+    endDateTime: getFormattedCurrentDateTime(new Date(event.endDateTime)),
+    photos: event.photos.map((photo) => photo.photo),
+  };
+  const [input, setInput] = useState<EditEventType>(defaultFormValues);
+  const {
+    displayPhoto,
+    name,
+    description,
+    online,
+    meetingLink,
+    location,
+    startDateTime,
+    endDateTime,
+    photos,
+  } = input;
 
   useEffect(() => {
     setValidationErrors([]);
-    setLoading(false);
-    setLoadingPhotos(false);
-
-    setInput((prevInput: any) => ({
-      ...prevInput,
-      name: eventData?.name || "",
-      description: eventData?.description || "",
-      location: eventData?.location || "",
-      online: eventData?.online || false,
-      meetingLink: eventData?.meetingLink || "",
-      startDateTime: eventData?.startDateTime || null,
-      endDateTime: eventData?.endDateTime || null,
-      displayPhoto: eventData?.displayPhoto || "",
-      photos: eventData?.photos || [],
-    }));
-  }, [eventData, isOpen]);
+  }, [isOpen]);
 
   const handleInputChange = (inputType: string, value: any) => {
     setInput((prev: any) => ({
@@ -107,117 +194,148 @@ export function EditEvent({
     }));
   };
 
-  // Single image
+  // single image change
   const handleSingleChange = async (file: File) => {
-    setLoading(true);
     if (file) {
+      setImageIsUploading(true);
       // generate random filepath using a hash
-      const filePath = `event-banners/${Math.random()}-${file.name}`;
-
-      const { data, error }: { data: any; error: any } = await supabase.storage
+      const filePath = `event-banners/${Math.floor(Math.random() * 100000000)}-${uuidv4()}`;
+      const { data, error } = await supabase.storage
         .from("warrior-wives-test")
         .upload(filePath, file);
+
       if (error) {
+        console.log("Error uploading file: ", error.message);
         setValidationErrors((prev: any) => ({
           ...prev,
-          ["displayPhoto"]:
-            "Make sure your file name does not contain any special characters",
+          ["displayPhoto"]: "An error occurred while uploading the file.",
         }));
-        setLoading(false);
       } else {
         handleInputChange(
           "displayPhoto",
-          `${process.env.NEXT_PUBLIC_SUPABASE_BLOB_URL}/${data?.fullPath}`
+          `${process.env.NEXT_PUBLIC_SUPABASE_BLOB_URL}/warrior-wives-test/${data.path}`
         );
-
-        setLoading(false);
       }
+      setImageIsUploading(false);
     }
   };
 
-  const handleSingleDelete = () => {
-    if (input?.displayPhoto) URL.revokeObjectURL(input?.displayPhoto);
-    handleInputChange("displayPhoto", null);
+  const handleSingleDelete = async () => {
+    setImageIsUploading(true);
+    if (input.displayPhoto) {
+      if (isShowingOriginalDisplayPhoto) {
+        handleInputChange("displayPhoto", "");
+        setIsShowingOriginalDisplayPhoto(false);
+      } else {
+        // URL.revokeObjectURL(input.displayPhoto);
+        // need to get the name from `event-banners/` onwards
+        const fileName = input.displayPhoto.split("/event-banners/")[1];
+        const key = `event-banners/${fileName}`;
+        const { data, error } = await supabase.storage
+          .from("warrior-wives-test")
+          .remove([key]);
+
+        if (error) {
+          console.log("Error deleting file: ", error.message);
+          setValidationErrors((prev: any) => ({
+            ...prev,
+            ["displayPhoto"]: "An error occurred while deleting the file.",
+          }));
+        } else {
+          handleInputChange("displayPhoto", "");
+        }
+      }
+    }
+    setImageIsUploading(false);
   };
 
   // Multiple images
-  const handleChange = (newFiles: FileList | File[]) => {
-    setLoadingPhotos(true);
+  const handleMultipleImageChange = async (newFiles: FileList | File[]) => {
+    setImagesAreUploading(true);
     const newFilesWithUrls: FileWithPreview[] = Array.from(newFiles).map(
       (file) => ({
         file,
         url: URL.createObjectURL(file),
       })
     );
+    const uploadedFilesToDisplay: string[] = [];
     // generate random filepath using a hash
-    newFilesWithUrls.forEach(async (file) => {
-      const filePath = `event-photos/${Math.random()}-${file.file.name}`;
 
-      const { data, error }: { data: any; error: any } = await supabase.storage
+    const resolveNewFiles = await Promise.all(
+      newFilesWithUrls.map(async (file) => {
+        const filePath = `event-photos/${Math.floor(Math.random() * 100000000)}-${uuidv4()}`;
+        const { data, error } = await supabase.storage
+          .from("warrior-wives-test")
+          .upload(filePath, file.file);
+
+        if (error) {
+          console.log("Error uploading file: ", error.message);
+          setValidationErrors((prev: any) => ({
+            ...prev,
+            ["photos"]: "An error occurred while uploading the files.",
+          }));
+        } else {
+          uploadedFilesToDisplay.push(
+            `${process.env.NEXT_PUBLIC_SUPABASE_BLOB_URL}/warrior-wives-test/${data.path}`
+          );
+        }
+      })
+    );
+    handleInputChange("photos", [...photos, ...uploadedFilesToDisplay]);
+
+    setImagesAreUploading(false);
+  };
+
+  const handleMultipleDelete = async (indexToDelete: number) => {
+    setImagesAreUploading(true);
+    // URL.revokeObjectURL(photos[indexToDelete]);
+    const photoToDelete = photos[indexToDelete];
+
+    if (!originalEventPhotos.includes(photoToDelete)) {
+      const fileName = photoToDelete.split("/event-photos/")[1];
+      const key = `event-photos/${fileName}`;
+      const { data, error } = await supabase.storage
         .from("warrior-wives-test")
-        .upload(filePath, file.file);
+        .remove([key]);
+
       if (error) {
+        console.log("Error deleting file: ", error.message);
         setValidationErrors((prev: any) => ({
           ...prev,
-          ["photos"]:
-            "Make sure your file name does not contain any special characters",
+          ["photos"]: "An error occurred while deleting the file.",
         }));
-        setLoadingPhotos(false);
       } else {
-        setLoadingPhotos(false);
-        handleInputChange("photos", [
-          ...(input?.photos as any),
-          `${process.env.NEXT_PUBLIC_SUPABASE_BLOB_URL}/${data?.fullPath}`,
-        ]);
+        handleInputChange(
+          "photos",
+          photos.filter((_, index) => index !== indexToDelete)
+        );
       }
-    });
+    } else {
+      handleInputChange(
+        "photos",
+        photos.filter((_, index) => index !== indexToDelete)
+      );
+    }
+    setImagesAreUploading(false);
   };
 
-  const handleDelete = (indexToDelete: number) => {
-    URL.revokeObjectURL(input?.photos[indexToDelete] as any);
-    handleInputChange(
-      "photos",
-      input?.photos.filter((_, index) => index !== indexToDelete)
-    );
-  };
-
-  const getFormattedCurrentDateTime = () => {
-    const now = new Date();
-    // Adjusting date to UTC can help with timezone differences if needed
-    const year = now.getUTCFullYear();
-    const month = now.getUTCMonth() + 1;
-    const day = now.getUTCDate();
-    const hours = now.getUTCHours();
-    const minutes = now.getUTCMinutes();
-
-    const formattedMonth = month.toString().padStart(2, "0");
-    const formattedDay = day.toString().padStart(2, "0");
-    const formattedHours = hours.toString().padStart(2, "0");
-    const formattedMinutes = minutes.toString().padStart(2, "0");
-
-    return `${year}-${formattedMonth}-${formattedDay}T${formattedHours}:${formattedMinutes}`;
-  };
-
-  const minDateTime = getFormattedCurrentDateTime();
+  const minDateTime = new Date();
 
   const handleSubmit = async () => {
     try {
-      GroupSchema.parse(input);
-
-      // TODO: Add edit event API
-
-      onClose();
-      // navigate to group page
-      // router.push(`/groups/${groupId}/${eventData.id}`);
+      updateEventFormSchema.parse(input);
+      trigger({
+        ...input,
+        startDateTime: new Date(input.startDateTime).toISOString(),
+        endDateTime: new Date(input.endDateTime).toISOString(),
+      });
     } catch (error) {
       // Handle validation errors
       if (error instanceof z.ZodError) {
         const errorMap: Record<string, string> = {};
-
         error.errors.forEach((err) => {
           errorMap[err.path[0]] = err.message;
         });
-
         setValidationErrors(errorMap);
       } else {
         console.error(error);
@@ -227,135 +345,168 @@ export function EditEvent({
 
   return (
     <>
-      <Button
-        onClick={onOpen}
-        className="bg-black text-white hover:text-black mt-4"
-      >
-        <IconText icon={RiAdminFill}>{"Create new event"}</IconText>
+      <Button onClick={onOpen}>
+        <IconText icon={RiAdminFill}>Edit Event</IconText>
       </Button>
       <Modal closeOnOverlayClick={false} isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent minW="900px">
-          <ModalHeader>{`Create new event for ${groupName}`}</ModalHeader>
+          <ModalHeader fontSize="lg">Edit {event.name}</ModalHeader>
           <ModalCloseButton />
           <ModalBody pb={6} gap={6} display={"flex"} flexDirection={"column"}>
-            {/* banner image */}
             <FormControl isInvalid={validationErrors["displayImage"]}>
               <div className="flex flex-col gap-2">
-                <FormLabel>Banner Image</FormLabel>
-                {loading ? (
-                  <div className="w-[100%] flex justify-center items-center h-[100px]">
+                <FormLabel fontSize="sm" textColor="gray.600">
+                  Banner Image
+                </FormLabel>
+                {imageIsUploading ? (
+                  <div className="w-full flex justify-center items-center h-[100px]">
                     <Spinner />
                   </div>
                 ) : (
-                  <div className="flex flex-col justify-center w-[100%] items-center gap-6">
-                    {input?.displayPhoto && (
+                  <div className="flex flex-col justify-center w-full items-center gap-6">
+                    {displayPhoto ? (
                       <div className="flex flex-col gap-4 justify-center items-center">
                         <Image
-                          src={input?.displayPhoto as string}
-                          alt={input?.displayPhoto as string}
-                          width={200}
+                          src={displayPhoto}
+                          alt={displayPhoto}
+                          width={350}
                           height={350}
                           style={{
+                            width: "auto",
                             maxHeight: "350px",
                             objectFit: "cover",
                             borderRadius: "4px",
                           }}
                         />
-                        <Button
+                        <ChakraButton
                           onClick={() => handleSingleDelete()}
-                          bgColor={"#FC8181 !important"}
+                          bgColor={"red.400 !important"}
                           size={"sm"}
                           _hover={{
-                            bgColor: "#E53E3E !important",
+                            bgColor: "red.500 !important",
                           }}
                         >
-                          <MdDelete size={25} />
-                        </Button>
+                          <MdDelete size={20} />
+                        </ChakraButton>
                       </div>
+                    ) : (
+                      <>
+                        <FileUploader
+                          multiple={false}
+                          handleChange={handleSingleChange}
+                          name="file"
+                          types={["JPG", "JPEG", "PNG"]}
+                        />
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => {
+                            handleInputChange(
+                              "displayPhoto",
+                              originalDisplayPhoto
+                            );
+                            setIsShowingOriginalDisplayPhoto(true);
+                          }}
+                        >
+                          Re-use current photo
+                        </Button>
+                      </>
                     )}
-                    <FileUploader
-                      multiple={false}
-                      handleChange={handleSingleChange}
-                      name="file"
-                      types={["JPG", "JPEG", "PNG"]}
-                    />
                   </div>
                 )}
 
                 {validationErrors["displayPhoto"] && (
                   <p className="text-red-500 text-[14px]">
-                    {validationErrors["displayPhoto"]?.includes("null")
-                      ? "Display image is required"
-                      : validationErrors["displayPhoto"]}
+                    {validationErrors["displayPhoto"]}
                   </p>
                 )}
               </div>
             </FormControl>
-            <Divider />
+
+            <FormControl isInvalid={validationErrors["name"]}>
+              <FormLabel fontSize="sm" textColor="gray.600">
+                Event Name
+              </FormLabel>
+              <Input
+                fontSize={"sm"}
+                paddingX={3}
+                paddingY={1}
+                type="name"
+                placeholder="Enter event name"
+                value={name}
+                onChange={(e) => handleInputChange("name", e.target.value)}
+              />
+              {validationErrors["name"] && (
+                <FormErrorMessage>{validationErrors["name"]}</FormErrorMessage>
+              )}
+            </FormControl>
 
             <div className="flex flex-row gap-8">
-              {/* name */}
-              <FormControl isInvalid={validationErrors["name"]}>
-                {/* <FormLabel>Name</FormLabel> */}
-                <Input
-                  placeholder="Name"
-                  type="name"
-                  value={input?.name}
-                  onChange={(e) => handleInputChange("name", e.target.value)}
-                />
-                {validationErrors["name"] && (
-                  <FormErrorMessage>
-                    {validationErrors["name"]}
-                  </FormErrorMessage>
-                )}
-              </FormControl>
-            </div>
-
-            <div className="flex flex-row gap-8">
-              {/* date time */}
               <FormControl isInvalid={validationErrors["startDateTime"]}>
-                <FormLabel>Start time</FormLabel>
+                <FormLabel fontSize="sm" textColor="gray.600">
+                  Start Date and Time
+                </FormLabel>
                 <Input
-                  placeholder="Start time"
+                  fontSize={"sm"}
+                  paddingX={3}
+                  paddingY={1}
                   type="datetime-local"
-                  value={input?.startDateTime as any}
-                  min={minDateTime}
-                  onChange={(e) =>
-                    handleInputChange("startDateTime", e.target.value)
-                  }
+                  placeholder="Start time"
+                  value={startDateTime ? startDateTime : ""}
+                  min={minDateTime.toISOString()}
+                  max={endDateTime ? endDateTime : ""}
+                  onChange={(e) => {
+                    console.log(e.target.value);
+                    handleInputChange("startDateTime", e.target.value);
+                  }}
                 />
                 {validationErrors["startDateTime"] && (
                   <FormErrorMessage>
-                    Start time cannot be empty
+                    {validationErrors["startDateTime"]}
                   </FormErrorMessage>
                 )}
               </FormControl>
 
               <FormControl isInvalid={validationErrors["endDateTime"]}>
-                <FormLabel>End time</FormLabel>
+                <FormLabel fontSize="sm" textColor="gray.600">
+                  End Date and Time
+                </FormLabel>
                 <Input
-                  placeholder="End time"
+                  fontSize={"sm"}
+                  paddingX={3}
+                  paddingY={1}
                   type="datetime-local"
-                  value={input?.endDateTime as any}
-                  min={minDateTime}
-                  onChange={(e) =>
-                    handleInputChange("endDateTime", e.target.value)
+                  placeholder="End time"
+                  value={endDateTime ? endDateTime : ""}
+                  min={
+                    startDateTime ? startDateTime : minDateTime.toISOString()
                   }
+                  onChange={(e) => {
+                    console.log(e.target.value);
+                    handleInputChange("endDateTime", e.target.value);
+                  }}
                 />
                 {validationErrors["endDateTime"] && (
-                  <FormErrorMessage>End time cannot be empty</FormErrorMessage>
+                  <FormErrorMessage>
+                    {validationErrors["endDateTime"]}
+                  </FormErrorMessage>
                 )}
               </FormControl>
             </div>
 
-            {/* description */}
             <FormControl isInvalid={validationErrors["description"]}>
+              <FormLabel fontSize="sm" textColor="gray.600">
+                Group Description
+              </FormLabel>
               <Textarea
+                fontSize={"sm"}
+                paddingX={3}
+                paddingY={3}
                 height={200}
                 resize={"none"}
-                placeholder="Description for the event"
-                value={input?.description}
+                placeholder="Provide a description of the event"
+                value={description}
                 onChange={(e) =>
                   handleInputChange("description", e.target.value)
                 }
@@ -369,17 +520,18 @@ export function EditEvent({
 
             {/* image */}
             <div className="flex flex-col gap-2">
-              <FormLabel>Images</FormLabel>
-
-              {loadingPhotos ? (
+              <FormLabel fontSize="sm" textColor="gray.600">
+                Images
+              </FormLabel>
+              {imagesAreUploading ? (
                 <div className="w-[100%] flex justify-center items-center h-[100px]">
                   <Spinner />
                 </div>
               ) : (
                 <div className="flex flex-col justify-center w-[100%] items-center gap-6">
-                  {(input?.photos?.length as any) > 0 && (
+                  {photos.length > 0 && (
                     <SimpleGrid columns={3} spacing={10}>
-                      {input?.photos?.map((photosObj, index) => (
+                      {photos.map((photosObj, index) => (
                         <div
                           key={index}
                           className="flex flex-col gap-4 justify-center items-center"
@@ -392,23 +544,23 @@ export function EditEvent({
                             height={100}
                             style={{ objectFit: "cover", borderRadius: "4px" }}
                           />
-                          <Button
-                            onClick={() => handleDelete(index)}
-                            bgColor={"#FC8181 !important"}
+                          <ChakraButton
+                            onClick={() => handleMultipleDelete(index)}
+                            bgColor={"red.400 !important"}
                             size={"sm"}
                             _hover={{
-                              bgColor: "#E53E3E !important",
+                              bgColor: "red.500 !important",
                             }}
                           >
-                            <MdDelete size={25} />
-                          </Button>
+                            <MdDelete size={20} />
+                          </ChakraButton>
                         </div>
                       ))}
                     </SimpleGrid>
                   )}
                   <FileUploader
                     multiple={true}
-                    handleChange={handleChange}
+                    handleChange={handleMultipleImageChange}
                     name="file"
                     types={fileTypes}
                   />
@@ -416,47 +568,43 @@ export function EditEvent({
               )}
             </div>
 
-            {/* online */}
             <FormControl as="fieldset">
-              <FormLabel as="legend">Is this an online event?</FormLabel>
+              <FormLabel fontSize="sm" textColor="gray.600">
+                Is this an online event?
+              </FormLabel>
               <RadioGroup
                 defaultValue="No"
-                value={input?.online ? "Yes" : "No"}
+                value={online ? "Yes" : "No"}
                 onChange={(value) =>
                   handleInputChange("online", value === "Yes")
                 }
+                textColor={"gray.600"}
               >
                 <HStack spacing="24px">
-                  <Radio value="Yes">Yes</Radio>
-                  <Radio value="No">No</Radio>
+                  <Radio size="sm" value="Yes">
+                    Yes
+                  </Radio>
+                  <Radio size="sm" value="No">
+                    No
+                  </Radio>
                 </HStack>
               </RadioGroup>
             </FormControl>
 
             {/* location */}
             {/* meeting link */}
-            {!input?.online ? (
-              <FormControl isInvalid={validationErrors["location"]}>
-                <Input
-                  placeholder="Location"
-                  type="location"
-                  value={input?.location as string}
-                  onChange={(e) =>
-                    handleInputChange("location", e.target.value)
-                  }
-                />
-                {validationErrors["location"] && (
-                  <FormErrorMessage>
-                    {validationErrors["location"]}
-                  </FormErrorMessage>
-                )}
-              </FormControl>
-            ) : (
+            {online ? (
               <FormControl isInvalid={validationErrors["meetingLink"]}>
+                <FormLabel fontSize="sm" textColor="gray.600">
+                  Meeting Link
+                </FormLabel>
                 <Input
-                  placeholder="Meeting Link"
+                  fontSize={"sm"}
+                  paddingX={3}
+                  paddingY={1}
                   type="link"
-                  value={input?.meetingLink as string}
+                  placeholder="https://meet.google.com/my-event"
+                  value={meetingLink}
                   onChange={(e) =>
                     handleInputChange("meetingLink", e.target.value)
                   }
@@ -467,17 +615,57 @@ export function EditEvent({
                   </FormErrorMessage>
                 )}
               </FormControl>
+            ) : (
+              <FormControl isInvalid={validationErrors["location"]}>
+                <FormLabel fontSize="sm" textColor="gray.600">
+                  Location
+                </FormLabel>
+                <Input
+                  fontSize={"sm"}
+                  paddingX={3}
+                  paddingY={1}
+                  type="link"
+                  placeholder="9999 Main St, City, State, Zip"
+                  value={location}
+                  onChange={(e) =>
+                    handleInputChange("location", e.target.value)
+                  }
+                />
+                {validationErrors["location"] && (
+                  <FormErrorMessage>
+                    {validationErrors["location"]}
+                  </FormErrorMessage>
+                )}
+              </FormControl>
             )}
           </ModalBody>
 
           <ModalFooter>
-            <Button mr={3} onClick={handleSubmit}>
-              Save
+            <Button variant="outline" onClick={onClose} className="mr-2">
+              Cancel
             </Button>
-            <Button onClick={() => onClose()}>Cancel</Button>
+            <Button onClick={handleSubmit} disabled={isMutating}>
+              {isMutating ? "Updating" : "Update"}
+            </Button>
           </ModalFooter>
         </ModalContent>
       </Modal>
     </>
+  );
+}
+
+export default function EditEventModal({
+  groupName,
+  groupId,
+  event,
+}: {
+  groupName: string;
+  groupId: number;
+  event: SingleEventDataType;
+}) {
+  return (
+    <SWRProvider>
+      <_EditEventModal groupId={groupId} groupName={groupName} event={event} />
+    </SWRProvider>
   );
 }

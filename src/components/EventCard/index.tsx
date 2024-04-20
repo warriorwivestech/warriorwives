@@ -79,7 +79,7 @@ export default function EventCard({
               <Text
                 noOfLines={3}
                 textOverflow="ellipsis"
-                className="text-sm text-gray-700"
+                className="text-sm text-gray-700 whitespace-pre-wrap"
               >
                 {description}
               </Text>

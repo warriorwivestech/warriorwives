@@ -41,7 +41,7 @@ import { apiClient } from "@/apiClient";
 import { useToast } from "../ui/use-toast";
 import { CreateGroupResponseType } from "@/app/api/groups/route";
 import { useRouter } from "next/navigation";
-import { randomUUID } from "crypto";
+import { v4 as uuidv4 } from "uuid";
 
 const createGroupFormSchema = z.object({
   displayPhoto: z.string().min(1, {
@@ -254,7 +254,7 @@ function _CreateGroupModal() {
     if (file) {
       setImageIsUploading(true);
       // generate random filepath using a hash
-      const filePath = `group-banners/${Math.floor(Math.random() * 100000000)}-${randomUUID()}`;
+      const filePath = `group-banners/${Math.floor(Math.random() * 100000000)}-${uuidv4()}`;
       const { data, error } = await supabase.storage
         .from("warrior-wives-test")
         .upload(filePath, file);
