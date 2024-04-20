@@ -86,7 +86,11 @@ function JoinGroupButton({
   }
 
   return (
-    <Button onClick={() => trigger({})} disabled={isMutating || disabled}>
+    <Button
+      onClick={() => trigger({})}
+      disabled={isMutating || disabled}
+      className="w-full"
+    >
       {isMutating ? <Spinner size="sm" /> : "Join Group"}
     </Button>
   );

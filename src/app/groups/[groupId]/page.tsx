@@ -110,7 +110,7 @@ function GroupData({
               src={displayPhotoUrl}
               alt={name}
               borderRadius="lg"
-              className="w-full object-cover h-64 md:h-96"
+              className="w-full object-cover h-64 md:h-96 max-w-2xl"
             />
             <Box
               className={`${
@@ -196,7 +196,7 @@ function GroupData({
               }%`}
               transition={"width 0.25s ease"}
               ref={descriptionRef}
-              className="break-words text-gray-700 whitespace-pre"
+              className="break-words text-gray-700 whitespace-pre-wrap"
             >
               {description}
             </Text>
