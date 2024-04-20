@@ -130,7 +130,9 @@ export default function GroupCard({
             </Flex>
             <Heading size="md">{name}</Heading>
             <Flex textOverflow="ellipsis" noOfLines={5}>
-              <Text className="whitespace-pre-wrap">{description}</Text>
+              <Text className="whitespace-pre-wrap text-gray-600 text-sm">
+                {description}
+              </Text>
             </Flex>
           </Stack>
         </CardBody>
