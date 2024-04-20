@@ -1,5 +1,6 @@
 import { auth } from "@/auth";
 import prisma from "@/prisma";
+import { sendJoinEventEmail } from "@/resend";
 
 function queryEvent(groupId: string, eventId: string) {
   return prisma.event.findUnique({
@@ -77,6 +78,13 @@ export async function POST(
         userId: userIsPartOfGroup.userId,
       },
     });
+  }
+
+  if (user.email) {
+    const error = await sendJoinEventEmail(user.name ?? "", user.email, event);
+    if (error) {
+      return Response.json({ data, error: error });
+    }
   }
 
   return Response.json({ data, error: null });

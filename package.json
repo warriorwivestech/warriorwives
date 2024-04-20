@@ -44,6 +44,7 @@
     "embla-carousel-react": "^8.0.0-rc14",
     "eslint-config-prettier": "^9.1.0",
     "framer-motion": "^10.16.4",
+    "ics": "^3.7.2",
     "next": "^14.0.0",
     "next-auth": "^5.0.0-beta.15",
     "prettier": "^3.2.5",
