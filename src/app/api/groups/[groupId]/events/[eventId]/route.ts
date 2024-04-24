@@ -211,8 +211,6 @@ export async function PUT(
     endDateTime,
     photos,
   } = body;
-  console.log("startDateTime", startDateTime);
-  console.log("endDateTime", endDateTime);
 
   const displayPhotoChanged = displayPhoto !== oldDisplayPhoto;
   const photosToCreate = photos.filter(
@@ -280,3 +278,75 @@ export async function PUT(
 }
 
 export type UpdateEventResponseType = Event;
+
+export async function DELETE(
+  request: Request,
+  { params }: { params: { groupId: string; eventId: string } }
+) {
+  const session = await auth();
+  const user = session?.user;
+  if (!user) {
+    return Response.json(
+      { data: null, error: "Unauthenticated" },
+      { status: 401 }
+    );
+  }
+
+  const groupId = Number(params.groupId);
+  const [userIsSuperUser, memberData] = await Promise.all([
+    queryUserIsSuperUser(user.email as string),
+    queryMemberJoined(groupId, user.email as string),
+  ]);
+  const userIsAdmin = memberData?.admin;
+  if (!userIsSuperUser && !userIsAdmin) {
+    return Response.json(
+      { data: null, error: "Unauthorized" },
+      { status: 403 }
+    );
+  }
+
+  const { displayPhoto, photos } = await prisma.event.delete({
+    where: {
+      id: Number(params.eventId),
+      groupId,
+    },
+    select: {
+      displayPhoto: true,
+      photos: {
+        select: {
+          photo: true,
+        },
+      },
+    },
+  });
+  console.log(displayPhoto, photos);
+
+  try {
+    if (displayPhoto) {
+      const fileName = displayPhoto.split("/event-banners/")[1];
+      const key = `event-banners/${fileName}`;
+      const { data, error } = await supabase.storage
+        .from("warrior-wives-test")
+        .remove([key]);
+    }
+
+    if (photos.length > 0) {
+      const keys = photos.map((photo) => {
+        const fileName = photo.photo.split("/event-photos/")[1];
+        return `event-photos/${fileName}`;
+      });
+      const { data, error } = await supabase.storage
+        .from("warrior-wives-test")
+        .remove(keys);
+    }
+  } catch (error) {
+    console.error(error);
+  }
+
+  return Response.json({ data: { success: true } });
+}
+
+export type DeleteEventResponseType = {
+  data: { success: boolean } | null;
+  error: string | null;
+};

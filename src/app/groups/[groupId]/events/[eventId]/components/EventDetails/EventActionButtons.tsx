@@ -4,6 +4,7 @@ import { SingleEventDataType } from "@/app/api/groups/[groupId]/events/[eventId]
 import JoinEventButton from "./JoinEventButton";
 import LeaveEventButton from "./LeaveEventButton";
 import EditEventModal from "@/components/EventModal/EditEvent";
+import DeleteEventButton from "./DeleteEventButton";
 
 interface EventActionButtonsProps {
   event: SingleEventDataType;
@@ -58,7 +59,13 @@ export default function EventActionButtons({
             disabled={isLoading}
           />
         )}
+        {/* super user can join or leave */}
         {!userIsAdmin && <JoinOrLeaveButton />}
+        <DeleteEventButton
+          groupId={groupId}
+          eventId={id}
+          disabled={isLoading}
+        />
       </div>
     );
   }

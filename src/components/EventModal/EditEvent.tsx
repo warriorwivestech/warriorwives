@@ -44,21 +44,14 @@ import {
 import { mutate } from "swr";
 import { v4 as uuidv4 } from "uuid";
 
-function getFormattedCurrentDateTime(date: Date) {
-  // Adjusting date to UTC can help with timezone differences if needed
-  const year = date.getFullYear();
-  const month = date.getMonth() + 1;
-  const day = date.getDate();
-  const hours = date.getHours();
-  const minutes = date.getMinutes();
+const getFormattedDateTime = (date: Date) => {
+  const formattedMonth = (date.getMonth() + 1).toString().padStart(2, "0");
+  const formattedDay = date.getDate().toString().padStart(2, "0");
+  const formattedHours = date.getHours().toString().padStart(2, "0");
+  const formattedMinutes = date.getMinutes().toString().padStart(2, "0");
 
-  const formattedMonth = month.toString().padStart(2, "0");
-  const formattedDay = day.toString().padStart(2, "0");
-  const formattedHours = hours.toString().padStart(2, "0");
-  const formattedMinutes = minutes.toString().padStart(2, "0");
-
-  return `${year}-${formattedMonth}-${formattedDay}T${formattedHours}:${formattedMinutes}`;
-}
+  return `${date.getFullYear()}-${formattedMonth}-${formattedDay}T${formattedHours}:${formattedMinutes}`;
+};
 
 const updateEventFormSchema = z.object({
   displayPhoto: z.string().min(1, {
@@ -161,8 +154,8 @@ function _EditEventModal({
     location: event.location || "",
     online: event.online,
     meetingLink: event.meetingLink || "",
-    startDateTime: getFormattedCurrentDateTime(new Date(event.startDateTime)),
-    endDateTime: getFormattedCurrentDateTime(new Date(event.endDateTime)),
+    startDateTime: getFormattedDateTime(new Date(event.startDateTime)),
+    endDateTime: getFormattedDateTime(new Date(event.endDateTime)),
     photos: event.photos.map((photo) => photo.photo),
   };
   const [input, setInput] = useState<EditEventType>(defaultFormValues);
@@ -454,7 +447,7 @@ function _EditEventModal({
                   type="datetime-local"
                   placeholder="Start time"
                   value={startDateTime ? startDateTime : ""}
-                  min={minDateTime.toISOString()}
+                  min={getFormattedDateTime(minDateTime)}
                   max={endDateTime ? endDateTime : ""}
                   onChange={(e) => {
                     console.log(e.target.value);
@@ -480,7 +473,9 @@ function _EditEventModal({
                   placeholder="End time"
                   value={endDateTime ? endDateTime : ""}
                   min={
-                    startDateTime ? startDateTime : minDateTime.toISOString()
+                    startDateTime
+                      ? startDateTime
+                      : getFormattedDateTime(minDateTime)
                   }
                   onChange={(e) => {
                     console.log(e.target.value);

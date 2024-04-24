@@ -171,7 +171,7 @@ model OrganizersOnEvents {
 
 model EventPhoto {
   id        Int      @id @default(autoincrement())
-  event     Event    @relation(fields: [eventId], references: [id])
+  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
   eventId   Int
   photo     String
   createdAt DateTime @default(now())
@@ -180,7 +180,7 @@ model EventPhoto {
 
 model EventMaterial {
   id        Int      @id @default(autoincrement())
-  event     Event    @relation(fields: [eventId], references: [id])
+  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
   eventId   Int
   material  String
   createdAt DateTime @default(now())
