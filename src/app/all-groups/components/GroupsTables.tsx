@@ -10,6 +10,7 @@ import { AllGroupsDataType } from "@/app/api/groups/all/route";
 import useSWR from "swr";
 import AllGroupsLoading from "./AllGroupsLoading";
 import CreateGroupModal from "@/components/GroupModal/AddGroup";
+import EditInterestsModal from "./EditInterestsModal";
 
 function _GroupsTables() {
   const { data, error, isLoading, mutate } = useSWR<AllGroupsDataType>([
@@ -23,13 +24,18 @@ function _GroupsTables() {
 
   return (
     <Tabs defaultValue="all-groups" className="w-full mt-4">
-      <div className="flex justify-between items-center">
-        <TabsList>
-          <TabsTrigger value="all-groups">All</TabsTrigger>
-          <TabsTrigger value="active">Active</TabsTrigger>
-          <TabsTrigger value="archived">Archived</TabsTrigger>
-        </TabsList>
-        <CreateGroupModal />
+      <div className="flex-col-reverse flex sm:flex-row sm:justify-between sm:items-center">
+        <div>
+          <TabsList>
+            <TabsTrigger value="all-groups">All</TabsTrigger>
+            <TabsTrigger value="active">Active</TabsTrigger>
+            <TabsTrigger value="archived">Archived</TabsTrigger>
+          </TabsList>
+        </div>
+        <div className="flex mb-2 sm:mb-0">
+          <EditInterestsModal />
+          <CreateGroupModal />
+        </div>
       </div>
       <TabsContent value="all-groups">
         <AllGroupsTable groups={groups} />
