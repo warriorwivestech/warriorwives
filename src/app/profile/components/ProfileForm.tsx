@@ -332,9 +332,11 @@ export default function ProfileForm({
             Add Interest
           </Button>
         </div>
-        <Button type="submit" className="w-24" disabled={isMutating}>
-          {isMutating ? <Spinner size="sm" /> : "Save"}
-        </Button>
+        <div className="flex justify-end">
+          <Button type="submit" className="w-24" disabled={isMutating}>
+            {isMutating ? <Spinner size="sm" /> : "Save"}
+          </Button>
+        </div>
       </form>
     </Form>
   );
