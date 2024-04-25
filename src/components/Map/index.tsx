@@ -237,7 +237,7 @@ const _Map = () => {
 
   const fetchOptions: RequestInit = {
     next: { tags: ["groups", queryString], revalidate: 60 * 5 },
-    cache: "force-cache",
+    // cache: "force-cache",
   };
   const {
     data: groups,

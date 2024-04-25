@@ -1,8 +1,16 @@
+import { auth } from "@/auth";
 import { parseBranchOfService } from "@/data/helpers";
+import { UnauthenticatedError } from "@/lib/errors";
 import prisma from "@/prisma";
 
 // get groups based on location
 export async function GET(request: Request) {
+  const session = await auth();
+  const user = session?.user;
+  if (!user) {
+    throw new UnauthenticatedError();
+  }
+
   const urlSearchParams = new URL(request.url).searchParams;
   const text = urlSearchParams.get("text");
   const textSearch = "%" + text + "%";
