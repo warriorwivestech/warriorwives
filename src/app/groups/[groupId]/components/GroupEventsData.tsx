@@ -2,6 +2,7 @@ import { Flex, Skeleton } from "@chakra-ui/react";
 import EventCard from "@/components/EventCard";
 import { SWRResponse } from "swr";
 import { GroupEvents } from "@/app/api/groups/[groupId]/events/route";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function GroupEventsData({
   events,
@@ -30,21 +31,45 @@ export default function GroupEventsData({
     );
   }
 
-  if (!eventsData || eventsData.length === 0)
-    return (
-      <div className="text-sm text-gray-600">
-        No events found for this group.
-      </div>
-    );
+  const upcomingEvents = eventsData?.filter(
+    (event) => new Date(event.startDateTime) > new Date()
+  );
+  const pastEvents = eventsData
+    ?.filter((event) => new Date(event.startDateTime) < new Date())
+    .reverse();
 
   return (
-    <Flex className="flex-col w-full md:w-[65%]" gap={6}>
-      {/* only upcoming events */}
-      {eventsData
-        .filter((event) => new Date(event.startDateTime) > new Date())
-        .map((event) => (
-          <EventCard key={event.id} event={event} />
-        ))}
-    </Flex>
+    <Tabs defaultValue="upcoming">
+      <TabsList>
+        <TabsTrigger value="upcoming">Upcoming</TabsTrigger>
+        <TabsTrigger value="past">Past</TabsTrigger>
+      </TabsList>
+      <TabsContent value="upcoming">
+        <Flex className="flex-col w-full md:w-[65%]" gap={4}>
+          {upcomingEvents && upcomingEvents.length > 0 ? (
+            upcomingEvents.map((event) => (
+              <EventCard key={event.id} event={event} />
+            ))
+          ) : (
+            <div className="text-sm text-gray-600 mt-2">
+              No upcoming events found for this group.
+            </div>
+          )}
+        </Flex>
+      </TabsContent>
+      <TabsContent value="past">
+        <Flex className="flex-col w-full md:w-[65%]" gap={4}>
+          {pastEvents && pastEvents.length > 0 ? (
+            pastEvents.map((event) => (
+              <EventCard key={event.id} event={event} />
+            ))
+          ) : (
+            <div className="text-sm text-gray-600 mt-2">
+              No past events found for this group.
+            </div>
+          )}
+        </Flex>
+      </TabsContent>
+    </Tabs>
   );
 }

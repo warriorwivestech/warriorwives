@@ -4,6 +4,7 @@ import { SWRProvider } from "@/providers/swrProvider";
 import useSWR from "swr";
 import EventCard from "../../../../../../../components/EventCard";
 import { GroupEvents } from "@/app/api/groups/[groupId]/events/route";
+import OtherEventsLoading from "./OtherEventsLoading";
 
 interface OtherEventsProps {
   groupId: number;
@@ -17,7 +18,7 @@ function _OtherEvents({ groupId, eventId }: OtherEventsProps) {
     isLoading,
   } = useSWR<GroupEvents>([`/groups/${groupId}/events?exclude=${eventId}`]);
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) return <OtherEventsLoading />;
   if (error)
     return <div className="text-gray-600 text-sm">Error loading events</div>;
   // @ts-ignore
@@ -28,12 +29,20 @@ function _OtherEvents({ groupId, eventId }: OtherEventsProps) {
       </div>
     );
   }
-  if (!otherEvents || otherEvents.length === 0)
-    return <div className="text-gray-600 text-sm">No other events</div>;
+  const upcomingEvents = otherEvents?.filter(
+    (event) => new Date(event.startDateTime) > new Date()
+  );
+
+  if (!upcomingEvents || upcomingEvents.length === 0)
+    return (
+      <div className="text-gray-600 text-sm">
+        No other upcoming events from this group
+      </div>
+    );
 
   return (
     <div className="flex flex-row gap-4 overflow-x-scroll pb-2 pl-1">
-      {otherEvents.map((event) => {
+      {upcomingEvents.map((event) => {
         return <EventCard key={event.id} shortCard event={event} />;
       })}
     </div>

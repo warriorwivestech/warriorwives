@@ -352,9 +352,10 @@ function _EditGroupModal({
   return (
     <>
       <Button
-        variant="outline"
+        variant="default"
         onClick={onOpen}
         disabled={interestsAreLoading || interestsError}
+        className="w-full"
       >
         Edit Group
       </Button>

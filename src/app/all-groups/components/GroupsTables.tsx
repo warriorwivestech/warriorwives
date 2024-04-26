@@ -18,7 +18,10 @@ function _GroupsTables() {
   ]);
 
   if (isLoading) return <AllGroupsLoading />;
-  if (error) return <div className="mt-4">Error loading groups</div>;
+  if (error)
+    return (
+      <div className="mt-4 text-gray-600 text-sm">Error loading groups</div>
+    );
 
   const groups = data || [];
 

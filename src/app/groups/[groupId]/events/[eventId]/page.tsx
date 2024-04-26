@@ -13,6 +13,7 @@ import { SWRProvider } from "@/providers/swrProvider";
 import { UserDataType } from "@/app/api/user/route";
 import { getUserRequestOptions } from "@/app/api/user/helper";
 import EventsLoading from "./loading";
+import Link from "next/link";
 
 interface EventDataProps {
   event: SingleEventDataType;
@@ -29,7 +30,9 @@ function EventData({ event, user }: EventDataProps) {
             <Avatar name="Host" src={""} />
             <div className="flex flex-col">
               <p className="text-gray-500 text-sm">Hosted by</p>
-              <p className="text-gray-700 font-semibold">{event.groupName}</p>
+              <Link href={`/groups/${event.groupId}`}>
+                <p className="text-gray-700 font-semibold">{event.groupName}</p>
+              </Link>
             </div>
           </div>
         </div>
@@ -54,7 +57,8 @@ function _EventPage({
   const user = useSWR<UserDataType>(["/user", getUserRequestOptions()]);
 
   if (isLoading) return <EventsLoading />;
-  if (error) return <div>Error loading group</div>;
+  if (error)
+    return <div className="text-gray-600 text-sm">Error loading event</div>;
 
   if (!event || !event.data) return notFound();
 

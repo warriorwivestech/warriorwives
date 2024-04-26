@@ -54,7 +54,7 @@ export default function DeleteEventModal({
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogTrigger asChild>
-        <Button disabled={disabled} variant="destructive">
+        <Button disabled={disabled} variant="destructive" className="w-full">
           Delete Event
         </Button>
       </AlertDialogTrigger>

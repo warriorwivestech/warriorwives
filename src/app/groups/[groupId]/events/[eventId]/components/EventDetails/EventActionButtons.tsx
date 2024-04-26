@@ -5,6 +5,12 @@ import JoinEventButton from "./JoinEventButton";
 import LeaveEventButton from "./LeaveEventButton";
 import EditEventModal from "@/components/EventModal/EditEvent";
 import DeleteEventButton from "./DeleteEventButton";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Button } from "@/components/ui/button";
 
 interface EventActionButtonsProps {
   event: SingleEventDataType;
@@ -44,11 +50,42 @@ export default function EventActionButtons({
   if (userIsAdmin || userIsSuperUser) {
     return (
       <div className="flex flex-col gap-2">
-        <EditEventModal
-          groupName={event.groupName}
-          groupId={groupId}
-          event={event}
-        />
+        <div className="flex gap-2">
+          <EditEventModal
+            groupName={event.groupName}
+            groupId={groupId}
+            event={event}
+          />
+          <Popover>
+            <PopoverTrigger>
+              <Button variant="outline" className="px-2">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  // class="lucide lucide-ellipsis-vertical"
+                >
+                  <circle cx="12" cy="12" r="1" />
+                  <circle cx="12" cy="5" r="1" />
+                  <circle cx="12" cy="19" r="1" />
+                </svg>
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent align="end">
+              <DeleteEventButton
+                groupId={groupId}
+                eventId={id}
+                disabled={isLoading}
+              />
+            </PopoverContent>
+          </Popover>
+        </div>
         {/* for organizers, if they have joined already, don't allow them to leave the event */}
         {/* any admin of the group who joins the event is an organizer */}
         {userIsAdmin && (
@@ -61,11 +98,6 @@ export default function EventActionButtons({
         )}
         {/* super user can join or leave */}
         {!userIsAdmin && <JoinOrLeaveButton />}
-        <DeleteEventButton
-          groupId={groupId}
-          eventId={id}
-          disabled={isLoading}
-        />
       </div>
     );
   }

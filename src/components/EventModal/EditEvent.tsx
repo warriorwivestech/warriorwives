@@ -338,7 +338,7 @@ function _EditEventModal({
 
   return (
     <>
-      <Button onClick={onOpen}>
+      <Button onClick={onOpen} className="w-full">
         <IconText icon={RiAdminFill}>Edit Event</IconText>
       </Button>
       <Modal closeOnOverlayClick={false} isOpen={isOpen} onClose={onClose}>

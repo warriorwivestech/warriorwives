@@ -133,7 +133,7 @@ export default function EventDetails({ event, user }: EventDetailsProps) {
             <TypographyH4>Other events by {groupName}</TypographyH4>
             <div className="flex flex-row gap-1 justify-center items-center">
               <Link href={`/groups/${groupId}`}>
-                <Button variant="link" size="default">
+                <Button variant="link" size="default" className="pt-0">
                   View All
                   <div className="ml-1">
                     <FaChevronRight />
@@ -169,7 +169,13 @@ export default function EventDetails({ event, user }: EventDetailsProps) {
                   This event is hosted online
                 </p>
                 <a
-                  href={meetingLink ? (/^(?:https?:\/\/)/i.test(meetingLink) ? meetingLink : `http://${meetingLink}`) : "#"}
+                  href={
+                    meetingLink
+                      ? /^(?:https?:\/\/)/i.test(meetingLink)
+                        ? meetingLink
+                        : `http://${meetingLink}`
+                      : "#"
+                  }
                   target="_blank"
                   rel="noopener noreferrer"
                   className="cursor-pointer text-blue-500 hover:underline"

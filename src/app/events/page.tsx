@@ -22,7 +22,10 @@ export default async function EventsPage() {
   const { data: events, error } = await getJoinedEvents();
 
   const EventsData = () => {
-    if (error) return <div className="mt-4">Error loading events</div>;
+    if (error)
+      return (
+        <div className="mt-4 text-gray-600 text-sm">Error loading events</div>
+      );
 
     const upcomingEvents = events
       ? events.filter((event) => new Date(event.startDateTime) > new Date())
