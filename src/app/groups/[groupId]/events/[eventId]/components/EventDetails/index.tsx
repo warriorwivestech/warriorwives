@@ -46,9 +46,69 @@ export default function EventDetails({ event, user }: EventDetailsProps) {
 
   const totalAttendeesAndOrganizers = attendeesCount + organizersCount;
 
+  function SideCard() {
+    // sticky tab
+    return (
+      <Card className="flex flex-col gap-4 w-full lg:sticky lg:top-10 p-4">
+        <div className="flex flex-col gap-4 w-full p-2">
+          <div className="flex flex-row gap-4 items-center">
+            <FaClock style={{ minHeight: "18px", minWidth: "18px" }} />
+            <p className="text-gray-700 tracking-tight">
+              {parseEventDateTimes(startDateTime, endDateTime)}
+            </p>
+          </div>
+
+          {online ? (
+            <div className="flex flex-row gap-4 items-center">
+              <FaVideo
+                style={{
+                  minHeight: "18px",
+                  minWidth: "18px",
+                }}
+              />
+              <div className="flex flex-col">
+                <p className="font-semibold text-sm text-gray-500">
+                  This event is hosted online
+                </p>
+                <a
+                  href={
+                    meetingLink
+                      ? /^(?:https?:\/\/)/i.test(meetingLink)
+                        ? meetingLink
+                        : `http://${meetingLink}`
+                      : "#"
+                  }
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="cursor-pointer text-blue-500 hover:underline"
+                >
+                  Online Meeting Link
+                </a>
+              </div>
+            </div>
+          ) : (
+            <div className="flex flex-row gap-4 items-center">
+              <FaLocationArrow
+                style={{
+                  minHeight: "18px",
+                  minWidth: "18px",
+                }}
+              />
+              <p className="text-gray-700">{location}</p>
+            </div>
+          )}
+        </div>
+        <EventActionButtons event={event} user={user} />
+      </Card>
+    );
+  }
+
   return (
-    <div className="w-full flex flex-col md:flex-row gap-8 justify-between">
-      <div className="flex flex-col gap-8 w-full md:w-[65%]">
+    <div className="w-full flex flex-col lg:flex-row-reverse gap-8 justify-between">
+      <div className="hidden w-[30%] lg:block">
+        <SideCard />
+      </div>
+      <div className="flex flex-col gap-8 w-full lg:w-[65%]">
         {displayPhoto && (
           <ChakraImage
             rounded={"md"}
@@ -60,6 +120,9 @@ export default function EventDetails({ event, user }: EventDetailsProps) {
             h={{ base: "100%", sm: "400px", lg: "500px" }}
           />
         )}
+        <div className="lg:hidden w-full">
+          <SideCard />
+        </div>
 
         <div className="flex flex-col gap-4">
           <TypographyH4>Description</TypographyH4>
@@ -145,59 +208,6 @@ export default function EventDetails({ event, user }: EventDetailsProps) {
           <OtherEvents groupId={groupId} eventId={id} />
         </div>
       </div>
-
-      {/* sticky tab */}
-      <Card className="flex flex-col gap-4 w-full h-full md:sticky md:top-10 md:w-[30%] p-4">
-        <div className="flex flex-col gap-4 w-full p-2">
-          <div className="flex flex-row gap-4 items-center">
-            <FaClock style={{ minHeight: "18px", minWidth: "18px" }} />
-            <p className="text-gray-700 tracking-tight">
-              {parseEventDateTimes(startDateTime, endDateTime)}
-            </p>
-          </div>
-
-          {online ? (
-            <div className="flex flex-row gap-4 items-center">
-              <FaVideo
-                style={{
-                  minHeight: "18px",
-                  minWidth: "18px",
-                }}
-              />
-              <div className="flex flex-col">
-                <p className="font-semibold text-sm text-gray-500">
-                  This event is hosted online
-                </p>
-                <a
-                  href={
-                    meetingLink
-                      ? /^(?:https?:\/\/)/i.test(meetingLink)
-                        ? meetingLink
-                        : `http://${meetingLink}`
-                      : "#"
-                  }
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="cursor-pointer text-blue-500 hover:underline"
-                >
-                  Online Meeting Link
-                </a>
-              </div>
-            </div>
-          ) : (
-            <div className="flex flex-row gap-4 items-center">
-              <FaLocationArrow
-                style={{
-                  minHeight: "18px",
-                  minWidth: "18px",
-                }}
-              />
-              <p className="text-gray-700">{location}</p>
-            </div>
-          )}
-        </div>
-        <EventActionButtons event={event} user={user} />
-      </Card>
     </div>
   );
 }
