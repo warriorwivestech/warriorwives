@@ -73,7 +73,12 @@ export default function GroupCard({
         <PopoverContent>
           <PopoverArrow />
           <PopoverBody>
-            <Flex justifyContent={"center"} alignItems={"center"} gap={2}>
+            <Flex
+              justifyContent={"center"}
+              alignItems={"center"}
+              gap={2}
+              fontSize={"sm"}
+            >
               <InfoOutlineIcon />
               This group is conducted online.
             </Flex>
@@ -96,8 +101,9 @@ export default function GroupCard({
           fetcher
         );
       }}
+      className="max-w-[33%]"
     >
-      <Card className="w-[100%] h-[100%] transition-all duration-300 ease-in-out hover:bg-gray-50 hover:shadow-lg">
+      <Card className="h-[100%] w-full transition-all duration-300 ease-in-out hover:bg-gray-50 hover:shadow-lg">
         <CardBody>
           <HStack justifyContent={"space-between"} marginBottom="0.75rem">
             <span>

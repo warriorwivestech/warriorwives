@@ -97,7 +97,7 @@ function InterestsForm({ interests, revalidateData }: InterestsFormProps) {
       "interests",
       interests.map((interest) => ({ id: interest.id, value: interest.name }))
     );
-  }, [interests]);
+  }, [interests, form]);
 
   const { trigger, isMutating } = useSWRMutation(
     `/interests`,

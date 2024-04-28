@@ -167,7 +167,9 @@ function GroupData({
                       iconClassName="text-blue-400"
                       textClassName="text-gray-500 text-sm"
                     >
-                      {`${membersCount} members`}
+                      {membersCount === 1
+                        ? "1 member"
+                        : `${membersCount} members`}
                     </IconText>
                     <IconText
                       icon={BsPersonRaisedHand}
