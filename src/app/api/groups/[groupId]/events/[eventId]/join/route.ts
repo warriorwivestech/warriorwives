@@ -1,12 +1,20 @@
 import { auth } from "@/auth";
 import prisma from "@/prisma";
 import { sendJoinEventEmail } from "@/resend";
+import { Event } from "@prisma/client";
 
 function queryEvent(groupId: string, eventId: string) {
   return prisma.event.findUnique({
     where: {
       id: Number(eventId),
       groupId: Number(groupId),
+    },
+    include: {
+      group: {
+        select: {
+          name: true,
+        },
+      },
     },
   });
 }
@@ -32,11 +40,11 @@ async function queryFirstOrganizerOfEvent(eventId: number) {
         select: {
           name: true,
           email: true,
-        }
-      }
-    }
+        },
+      },
+    },
   });
-  return { name: userData?.user.name, email: userData?.user.email }; 
+  return { name: userData?.user.name, email: userData?.user.email };
 }
 
 export type JoinEventResponseType = {
@@ -97,14 +105,23 @@ export async function POST(
     });
   }
 
-  if (user.email) {
-    const { name, email } = await queryFirstOrganizerOfEvent(event.id);
-    const error = await sendJoinEventEmail(user.name ?? "", user.email, name ?? undefined, email ?? undefined, event);
-    if (error) {
-      return Response.json({ data, error: error });
-    }
-    console.log("successfully sent email");
-  }
+  // async, don't block response
+  sendUserJoinedEventEmail(user.email as string, event, event.group.name);
 
   return Response.json({ data, error: null });
+}
+
+async function sendUserJoinedEventEmail(
+  email: string,
+  event: Event,
+  groupName: string
+) {
+  const user = await prisma.user.findUnique({
+    where: {
+      email,
+    },
+  });
+  if (!user) return;
+
+  sendJoinEventEmail(user, event, groupName);
 }

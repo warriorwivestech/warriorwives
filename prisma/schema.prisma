@@ -104,6 +104,7 @@ model Event {
   endDateTime   DateTime
   group         Group                @relation(fields: [groupId], references: [id])
   groupId       Int
+  sentEmail     Boolean              @default(false)
   photos        EventPhoto[]
   materials     EventMaterial[]
   meetingLink   String?

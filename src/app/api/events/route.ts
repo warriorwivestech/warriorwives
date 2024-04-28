@@ -14,7 +14,6 @@
 
 import prisma from "@/prisma";
 import { Event } from "./[eventId]/route";
-import { sendNewEventEmail } from "@/resend";
 
 async function queryGroupNameAndMembers(groupId: number) {
   const groupData = await prisma.group.findUnique({
@@ -42,7 +41,6 @@ async function queryUserEmail(userId: number) {
 
   return userData?.email;
 }
-
 
 export async function POST(request: Request) {
   const req: Event = await request.json();
@@ -93,23 +91,22 @@ export async function POST(request: Request) {
     },
   };
   const eventData = await prisma.event.create({ data: event });
-  console.log("event created", eventData);
 
-  const { groupName, members } = await queryGroupNameAndMembers(groupId);
-  if (members) {
-    const emails: string[] = [];
-    for (const member of members) {
-      const email = await queryUserEmail(member.userId);
-      email && emails.push(email);
-    }
-    if (emails.length) {
-      const error = sendNewEventEmail(emails, groupId, groupName ?? "", eventData.id, eventData.name);
-      if (error) {
-        return Response.json({ eventData, error: error });
-      }
-      console.log("successfully sent emails");
-    }
-  }
+  // const { groupName, members } = await queryGroupNameAndMembers(groupId);
+  // if (members) {
+  //   const emails: string[] = [];
+  //   for (const member of members) {
+  //     const email = await queryUserEmail(member.userId);
+  //     email && emails.push(email);
+  //   }
+  //   if (emails.length) {
+  //     const error = sendNewEventEmail(emails, groupId, groupName ?? "", eventData.id, eventData.name);
+  //     if (error) {
+  //       return Response.json({ eventData, error: error });
+  //     }
+  //     console.log("successfully sent emails");
+  //   }
+  // }
 
   return Response.json(eventData);
 }

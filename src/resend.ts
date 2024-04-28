@@ -1,8 +1,8 @@
-import { Event } from "@prisma/client";
+import { Event, User } from "@prisma/client";
 import { Resend } from "resend";
 import * as ics from "ics";
-import { JoinEventTemplate } from "./components/emails/join-event";
-import { NewEventTemplate } from "./components/emails/new-event";
+import { JoinedEventEmail } from "./components/emails/join-event";
+import { NewEventEmail } from "./components/emails/new-event";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -16,36 +16,36 @@ const convertToICSDatetime = (date: Date): ics.DateTime => {
   ];
 };
 
-const warriorwivesEmail = "Acme <onboarding@resend.dev>";
-
 export async function sendJoinEventEmail(
-  name: string,
-  email: string,
-  organizerName: string | undefined,
-  organizerEmail: string | undefined,
+  user: User,
   event: Event,
+  groupName: string
 ) {
   try {
     const { error, value } = ics.createEvent({
-      start: convertToICSDatetime(event.startDateTime as Date),
-      end: convertToICSDatetime(event.endDateTime as Date),
+      start: convertToICSDatetime(event.startDateTime),
+      end: convertToICSDatetime(event.endDateTime),
       title: event.name,
       description: event.description,
       location: event.location ?? undefined,
-      organizer: { name: organizerName ?? undefined, email: organizerEmail ?? undefined },
-      url: (!event.meetingLink || event.meetingLink === '') ? undefined : event.meetingLink,
+      organizer: {
+        name: groupName ?? undefined,
+        email: process.env.NOTIFICATIONS_EMAIL,
+      },
+      url: event.meetingLink ? event.meetingLink : undefined,
     });
     if (error) {
       throw error;
     }
-
     const data = await resend.emails.send({
-      react: JoinEventTemplate({ name, eventName: event.name }),
-      // TODO: replace with warriorwives email with domain
-      from: warriorwivesEmail,
-      // TODO: replace with user email
-      to: ["warriorwivestech@gmail.com"],
-      subject: `${event.name} - Calendar Invite`,
+      react: JoinedEventEmail({
+        name: user.name as string,
+        eventName: event.name,
+        eventUrl: `${process.env.NEXT_PUBLIC_BASE_URL}/groups/${event.groupId}/events/${event.id}`,
+      }),
+      from: `Warrior Wives <${process.env.NOTIFICATIONS_EMAIL}>`,
+      to: [user.email as string],
+      subject: `See you at ${event.name}!`,
       attachments: [
         {
           filename: "calendar.ics",
@@ -56,31 +56,32 @@ export async function sendJoinEventEmail(
     if (data.error) {
       throw data.error;
     }
+    return data;
   } catch (error) {
     return error;
   }
 }
 
-export async function sendNewEventEmail(
-  emails: string[],
-  groupId: number,
-  groupName: string,
-  eventId: number,
-  eventName: string,
-) {
-  try {
-    const data = await resend.emails.send({
-      react: NewEventTemplate({ groupId, groupName, eventId, eventName }),
-      // TODO: replace with warriorwives email with domain
-      from: warriorwivesEmail,
-      // TODO: replace with user emails
-      to: ["warriorwivestech@gmail.com"],
-      subject: `New Event from ${groupName}!`,
-    });
-    if (data.error) {
-      throw data.error;
-    }
-  } catch (error) {
-    return error;
-  }
-}
+// export async function sendNewEventEmail(
+//   emails: string[],
+//   groupId: number,
+//   groupName: string,
+//   eventId: number,
+//   eventName: string,
+// ) {
+//   try {
+//     const data = await resend.emails.send({
+//       react: NewEventTemplate({ groupId, groupName, eventId, eventName }),
+//       // TODO: replace with warriorwives email with domain
+//       from: warriorwivesEmail,
+//       // TODO: replace with user emails
+//       to: ["warriorwivestech@gmail.com"],
+//       subject: `New Event from ${groupName}!`,
+//     });
+//     if (data.error) {
+//       throw data.error;
+//     }
+//   } catch (error) {
+//     return error;
+//   }
+// }

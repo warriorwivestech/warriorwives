@@ -12,20 +12,22 @@ import {
 } from "@react-email/components";
 import * as React from "react";
 
-interface JoinedEventEmailProps {
+interface CancelledEventEmailProps {
   name: string;
+  groupName: string;
   eventName: string;
-  eventUrl: string;
+  groupUrl: string;
 }
 
-export const JoinedEventEmail = ({
+export const CancelledEventEmail = ({
   name,
+  groupName,
   eventName,
-  eventUrl,
-}: JoinedEventEmailProps) => (
+  groupUrl,
+}: CancelledEventEmailProps) => (
   <Html>
     <Head />
-    <Preview>We&apos;re excited to see you at {eventName}!</Preview>
+    <Preview>Unfortunately, {eventName} has been cancelled.</Preview>
     <Body style={main}>
       <Container style={container}>
         <Img
@@ -36,15 +38,17 @@ export const JoinedEventEmail = ({
         />
         <Text style={paragraph}>Hi {name},</Text>
         <Text style={paragraph}>
-          You&apos;ve signed up for <strong>{eventName}</strong>!
+          Unfortunately, <strong>{eventName}</strong> has been cancelled by{" "}
+          <strong>{groupName}</strong>.
         </Text>
         <Text style={paragraph}>
-          Attached is the calendar invite for this event. We can&apos;t wait to
-          see you there 🎉
+          We apologize for any inconvenience this may have caused. You can view
+          other events from <strong>{groupName}</strong> by clicking the button
+          below.
         </Text>
         <Section style={btnContainer}>
-          <Button style={button} href={eventUrl}>
-            View Event
+          <Button style={button} href={groupUrl}>
+            View Group
           </Button>
         </Section>
         <Hr style={hr} />
@@ -57,13 +61,14 @@ export const JoinedEventEmail = ({
   </Html>
 );
 
-JoinedEventEmail.PreviewProps = {
-  name: "Alan",
-  eventName: "Bible Study Week #1",
-  eventUrl: "https://localhost:3000/groups/1/events/1",
-} as JoinedEventEmailProps;
+CancelledEventEmail.PreviewProps = {
+  name: "Jane Doe",
+  groupName: "Warrior Wives",
+  eventName: "Warrior Wives Meeting",
+  groupUrl: "https://localhost:3000/groups/1",
+} as CancelledEventEmailProps;
 
-export default JoinedEventEmail;
+export default CancelledEventEmail;
 
 const main = {
   backgroundColor: "#ffffff",
