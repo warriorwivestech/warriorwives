@@ -4,6 +4,7 @@ import * as ics from "ics";
 import { JoinedEventEmail } from "./components/emails/join-event";
 import { NewEventEmail } from "./components/emails/new-event";
 import prisma from "./prisma";
+import CancelledEventEmail from "./components/emails/cancelled-event";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -109,6 +110,40 @@ export async function sendNewEventEmail(
       data: {
         sendEmailStatus: "SENT",
       },
+    });
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export async function sendCancelledEventEmail(
+  members: {
+    email: string;
+    name: string;
+  }[],
+  event: Event,
+  groupName: string
+) {
+  try {
+    members.forEach(async (member) => {
+      try {
+        const data = await resend.emails.send({
+          react: CancelledEventEmail({
+            name: member.name,
+            groupName,
+            eventName: event.name,
+            groupUrl: `${process.env.NEXT_PUBLIC_BASE_URL}/groups/${event.groupId}`,
+          }),
+          from: `Warrior Wives <${process.env.NOTIFICATIONS_EMAIL}>`,
+          to: [member.email],
+          subject: `📅 Event Cancelled: ${event.name}`,
+        });
+        if (data.error) {
+          console.log(data.error);
+        }
+      } catch (error) {
+        console.log(error);
+      }
     });
   } catch (error) {
     console.log(error);

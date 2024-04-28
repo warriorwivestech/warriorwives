@@ -7,6 +7,7 @@ import { Event, Prisma } from "@prisma/client";
 import { supabase } from "@/supabase";
 import { UpdateEventFormValues } from "@/components/EventModal/EditEvent";
 import { queryMemberJoined } from "../../helpers";
+import { sendCancelledEventEmail } from "@/resend";
 
 async function queryUserAuthorizedToViewGroupEvents(
   groupId: number,
@@ -305,21 +306,46 @@ export async function DELETE(
     );
   }
 
-  const { displayPhoto, photos } = await prisma.event.delete({
+  const event = await prisma.event.delete({
     where: {
       id: Number(params.eventId),
       groupId,
     },
-    select: {
-      displayPhoto: true,
+    include: {
+      // displayPhoto: true,
       photos: {
         select: {
           photo: true,
         },
       },
+      attendees: {
+        select: {
+          user: {
+            select: {
+              email: true,
+              name: true,
+            },
+          },
+        },
+      },
+      organizers: {
+        select: {
+          user: {
+            select: {
+              email: true,
+              name: true,
+            },
+          },
+        },
+      },
+      group: {
+        select: {
+          name: true,
+        },
+      },
     },
   });
-  console.log(displayPhoto, photos);
+  const { displayPhoto, photos, attendees, organizers } = event;
 
   try {
     if (displayPhoto) {
@@ -342,6 +368,24 @@ export async function DELETE(
   } catch (error) {
     console.error(error);
   }
+
+  const parsedAttendees = attendees.map((attendee) => {
+    return {
+      name: attendee.user.name as string,
+      email: attendee.user.email as string,
+    };
+  });
+  const parsedOrganizers = organizers.map((organizer) => {
+    return {
+      name: organizer.user.name as string,
+      email: organizer.user.email as string,
+    };
+  });
+  sendCancelledEventEmail(
+    [...parsedAttendees, ...parsedOrganizers],
+    event,
+    event.group.name
+  );
 
   return Response.json({ data: { success: true } });
 }
