@@ -136,7 +136,7 @@ export async function sendCancelledEventEmail(
           }),
           from: `Warrior Wives <${process.env.NOTIFICATIONS_EMAIL}>`,
           to: [member.email],
-          subject: `📅 Event Canceled: ${event.name}`,
+          subject: `❌ Event Canceled: ${event.name}`,
         });
         if (data.error) {
           console.log(data.error);
