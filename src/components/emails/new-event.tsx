@@ -32,7 +32,12 @@ export const NewEventEmail = ({
     </Preview>
     <Body style={main}>
       <Container style={container}>
-        <Img src="/logo.png" height="50" alt="Koala" style={logo} />
+        <Img
+          src="/logo.png"
+          height="50"
+          alt="Warrior Wives Logo"
+          style={logo}
+        />
         <Text style={paragraph}>Hi {name},</Text>
         <Text style={paragraph}>
           <strong>{groupName}</strong> has scheduled a new event:{" "}

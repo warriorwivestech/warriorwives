@@ -31,7 +31,7 @@ export const JoinedEventEmail = ({
         <Img
           src={`${process.env.NEXT_PUBLIC_BASE_URL}/logo.png`}
           height="50"
-          alt="Koala"
+          alt="Warrior Wives Logo"
           style={logo}
         />
         <Text style={paragraph}>Hi {name},</Text>

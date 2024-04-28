@@ -3,6 +3,7 @@ import { Resend } from "resend";
 import * as ics from "ics";
 import { JoinedEventEmail } from "./components/emails/join-event";
 import { NewEventEmail } from "./components/emails/new-event";
+import prisma from "./prisma";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -62,26 +63,54 @@ export async function sendJoinEventEmail(
   }
 }
 
-// export async function sendNewEventEmail(
-//   emails: string[],
-//   groupId: number,
-//   groupName: string,
-//   eventId: number,
-//   eventName: string,
-// ) {
-//   try {
-//     const data = await resend.emails.send({
-//       react: NewEventTemplate({ groupId, groupName, eventId, eventName }),
-//       // TODO: replace with warriorwives email with domain
-//       from: warriorwivesEmail,
-//       // TODO: replace with user emails
-//       to: ["warriorwivestech@gmail.com"],
-//       subject: `New Event from ${groupName}!`,
-//     });
-//     if (data.error) {
-//       throw data.error;
-//     }
-//   } catch (error) {
-//     return error;
-//   }
-// }
+export async function sendNewEventEmail(
+  members: {
+    email: string;
+    name: string;
+  }[],
+  event: Event,
+  groupName: string
+) {
+  try {
+    await prisma.event.update({
+      where: {
+        id: event.id,
+      },
+      data: {
+        sendEmailStatus: "IN_PROGRESS",
+      },
+    });
+
+    members.forEach(async (member) => {
+      try {
+        const data = await resend.emails.send({
+          react: NewEventEmail({
+            name: member.name,
+            groupName,
+            eventName: event.name,
+            eventUrl: `${process.env.NEXT_PUBLIC_BASE_URL}/groups/${event.groupId}/events/${event.id}`,
+          }),
+          from: `Warrior Wives <${process.env.NOTIFICATIONS_EMAIL}>`,
+          to: [member.email],
+          subject: `📅 Just scheduled: ${event.name}`,
+        });
+        if (data.error) {
+          console.log(data.error);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    });
+
+    await prisma.event.update({
+      where: {
+        id: event.id,
+      },
+      data: {
+        sendEmailStatus: "SENT",
+      },
+    });
+  } catch (error) {
+    console.log(error);
+  }
+}

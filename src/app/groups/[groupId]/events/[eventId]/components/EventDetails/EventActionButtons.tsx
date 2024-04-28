@@ -11,6 +11,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
+import NotifyMembersButton from "./NotifyMembersButton";
 
 interface EventActionButtonsProps {
   event: SingleEventDataType;
@@ -77,7 +78,13 @@ export default function EventActionButtons({
                 </svg>
               </Button>
             </PopoverTrigger>
-            <PopoverContent align="end">
+            <PopoverContent align="end" className="flex flex-col gap-2">
+              <NotifyMembersButton
+                groupId={groupId}
+                eventId={id}
+                sendEmailStatus={event.sendEmailStatus}
+                disabled={isLoading}
+              />
               <DeleteEventButton
                 groupId={groupId}
                 eventId={id}
