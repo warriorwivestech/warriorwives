@@ -8,7 +8,9 @@ export default auth((req) => {
     const url = new URL(req.url);
 
     if (protectedDirectories.some((dir) => url.pathname.startsWith(dir))) {
-      return NextResponse.redirect("http://localhost:3000/sign-in");
+      return NextResponse.redirect(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/sign-in`
+      );
     }
   }
 });
