@@ -286,11 +286,11 @@ const _Map = () => {
           Groups in {selectedCounty && `${selectedCounty}, `}
           {selectedState}
         </p>
-        <SimpleGrid minChildWidth="330px" columns={[1, 2, 3]} spacing={5}>
+        <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {groups.map((group) => {
             return <GroupCard key={group.id} {...group} />;
           })}
-        </SimpleGrid>
+        </div>
       </Flex>
     );
   };

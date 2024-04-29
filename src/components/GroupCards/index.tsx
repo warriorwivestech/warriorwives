@@ -101,7 +101,6 @@ export default function GroupCard({
           fetcher
         );
       }}
-      className="max-w-[33%]"
     >
       <Card className="h-[100%] w-full transition-all duration-300 ease-in-out hover:bg-gray-50 hover:shadow-lg">
         <CardBody>

@@ -27,11 +27,11 @@ export default async function GroupsPage() {
     if (!groups || groups.length === 0) return <ExploreGroups />;
 
     return (
-      <SimpleGrid minChildWidth="330px" columns={[1, 2, 3]} spacing={6}>
+      <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {groups.map((group) => {
           return <GroupCard key={group.id} {...group} />;
         })}
-      </SimpleGrid>
+      </div>
     );
   };
 
