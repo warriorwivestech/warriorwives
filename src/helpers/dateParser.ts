@@ -10,8 +10,8 @@ export function parseDate(date: string | Date) {
 }
 
 export function parseEventDateTimes(
-  startDateTime: string,
-  endDateTime: string
+  startDateTime: string | Date,
+  endDateTime: string | Date
 ) {
   const startDate = new Date(startDateTime);
   const endDate = new Date(endDateTime);
