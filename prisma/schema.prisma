@@ -105,6 +105,7 @@ model Event {
   group           Group                @relation(fields: [groupId], references: [id])
   groupId         Int
   sendEmailStatus sendEmailStatus      @default(NOT_QUEUED)
+  sendUpdateEmail Boolean              @default(false)
   photos          EventPhoto[]
   materials       EventMaterial[]
   meetingLink     String?

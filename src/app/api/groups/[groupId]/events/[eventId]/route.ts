@@ -6,7 +6,7 @@ import { Event, Prisma } from "@prisma/client";
 import { supabase } from "@/supabase";
 import { UpdateEventFormValues } from "@/components/EventModal/EditEvent";
 import { queryMemberJoined } from "../../helpers";
-import { sendCancelledEventEmail } from "@/resend";
+import { sendCancelledEventEmail, sendUpdatedEventEmail } from "@/resend";
 
 async function queryUserAuthorizedToViewGroupEvents(
   groupId: number,
@@ -195,7 +195,15 @@ export async function PUT(
     throw new UnauthorizedError();
   }
 
-  const { displayPhoto: oldDisplayPhoto, photos: oldPhotos } = eventData;
+  const {
+    displayPhoto: oldDisplayPhoto,
+    photos: oldPhotos,
+    startDateTime: oldStartDateTime,
+    endDateTime: oldEndDateTime,
+    location: oldLocation,
+    meetingLink: oldMeetingLink,
+    online: oldOnline,
+  } = eventData;
   const parsedOldPhotos = oldPhotos.map((photo) => photo.photo);
   const body: UpdateEventFormValues = await request.json();
   const {
@@ -218,6 +226,23 @@ export async function PUT(
     (photo) => !photos.includes(photo)
   );
 
+  // compare dates, location, meeting link, and online status
+  const startDateTimeChanged =
+    new Date(startDateTime).getTime() !== oldStartDateTime.getTime();
+  const endDateTimeChanged =
+    new Date(endDateTime).getTime() !== oldEndDateTime.getTime();
+  const onlineChanged = online !== oldOnline;
+  const locationChanged = onlineChanged ? false : location !== oldLocation;
+  const meetingLinkChanged = onlineChanged
+    ? false
+    : meetingLink !== oldMeetingLink;
+  const eventDataChanged =
+    startDateTimeChanged ||
+    endDateTimeChanged ||
+    locationChanged ||
+    meetingLinkChanged ||
+    onlineChanged;
+
   const updatedEventData = await prisma.event.update({
     where: {
       id: Number(params.eventId),
@@ -231,6 +256,7 @@ export async function PUT(
       location,
       startDateTime: startDateTime,
       endDateTime: endDateTime,
+      sendUpdateEmail: eventDataChanged || eventData.sendUpdateEmail,
       photos: {
         create: photosToCreate.map((photo) => {
           return {
@@ -249,6 +275,11 @@ export async function PUT(
         select: {
           id: true,
           photo: true,
+        },
+      },
+      group: {
+        select: {
+          name: true,
         },
       },
     },
@@ -270,6 +301,13 @@ export async function PUT(
     const { data, error } = await supabase.storage
       .from("warrior-wives-test")
       .remove(keys);
+  }
+
+  if (eventDataChanged) {
+    setTimeout(() => {
+      sendUpdatedEventEmail(updatedEventData, updatedEventData.group.name);
+      // send after 5 minutes
+    }, 30000);
   }
 
   return Response.json(updatedEventData);
