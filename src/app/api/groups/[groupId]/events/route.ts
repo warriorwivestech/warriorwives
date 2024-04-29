@@ -1,5 +1,4 @@
 import { auth } from "@/auth";
-import { parseDate } from "@/helpers/dateParser";
 import { UnauthenticatedError, UnauthorizedError } from "@/lib/errors";
 import prisma from "@/prisma";
 import { Event, Prisma } from "@prisma/client";
@@ -47,6 +46,7 @@ async function queryGroupEvents(groupId: number) {
       _count: {
         select: {
           attendees: true,
+          organizers: true,
         },
       },
     },
@@ -66,9 +66,8 @@ function parseGroupEvents(
   }
   const parsedEvents = events.map((event) => ({
     ...event,
-    startDateTime: parseDate(event.startDateTime),
-    endDateTime: parseDate(event.endDateTime),
-    attendeesCount: event._count.attendees,
+    attendeesCount:
+      (event._count.attendees || 0) + (event._count.organizers || 0),
   }));
 
   return parsedEvents;

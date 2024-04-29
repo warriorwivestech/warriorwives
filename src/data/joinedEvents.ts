@@ -2,7 +2,6 @@ import { Prisma } from "@prisma/client";
 import prisma from "../prisma";
 import { auth } from "@/auth";
 import { UnauthenticatedError } from "@/lib/errors";
-import { parseDate } from "@/helpers/dateParser";
 
 export async function queryJoinedEvents() {
   const session = await auth();
@@ -24,6 +23,7 @@ export async function queryJoinedEvents() {
           _count: {
             select: {
               attendees: true,
+              organizers: true,
             },
           },
         },
@@ -48,6 +48,7 @@ export async function queryJoinedEvents() {
           _count: {
             select: {
               attendees: true,
+              organizers: true,
             },
           },
         },
@@ -75,9 +76,9 @@ function parseJoinedEventsResponse(attendeesOnEvents: UnparsedJoinedEvents) {
   return attendeesOnEvents.map((attendeesOnEvent) => ({
     ...attendeesOnEvent.event,
     // "2024-02-08T12:00:00.000Z" convert this to "Feb 8, 2024, 12:00 PM"
-    startDateTime: parseDate(attendeesOnEvent.event.startDateTime),
-    endDateTime: parseDate(attendeesOnEvent.event.endDateTime),
-    attendeesCount: attendeesOnEvent.event._count.attendees,
+    attendeesCount:
+      (attendeesOnEvent.event._count.attendees || 0) +
+      (attendeesOnEvent.event._count.organizers || 0),
   }));
 }
 

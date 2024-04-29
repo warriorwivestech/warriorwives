@@ -1,6 +1,5 @@
 import { auth } from "@/auth";
 import { queryUserIsSuperUser } from "@/data/sharedQueries";
-import { parseDate } from "@/helpers/dateParser";
 import { UnauthenticatedError, UnauthorizedError } from "@/lib/errors";
 import prisma from "@/prisma";
 import { Event, Prisma } from "@prisma/client";
@@ -101,8 +100,6 @@ function parseEvent(
   const eventJoined = userIsOrganizer || userIsAttendee;
   const parsedEvent = {
     ...event,
-    startDateTime: parseDate(event.startDateTime),
-    endDateTime: parseDate(event.endDateTime),
     groupId: event.group.id,
     groupName: event.group.name,
     attendees: event.attendees.map((attendee) => ({

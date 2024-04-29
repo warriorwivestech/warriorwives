@@ -5,6 +5,7 @@ import Link from "next/link";
 import { FaLocationArrow } from "react-icons/fa";
 import { Button } from "../ui/button";
 import Image from "next/image";
+import { parseDate } from "@/helpers/dateParser";
 
 interface EventCardProps {
   event: JoinedEvents[0] | GroupEvents[0];
@@ -40,7 +41,7 @@ export default function EventCard({
           <div className="flex flex-col-reverse sm:flex-row justify-between gap-4 w-full">
             <div className="flex flex-col gap-2 w-full">
               <p className="font-semibold text-sm text-gray-500">
-                {startDateTime}
+                {parseDate(startDateTime)}
               </p>
               <Text
                 noOfLines={2}
