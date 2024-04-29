@@ -14,5 +14,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   pages: {
     signIn: "/sign-in",
   },
+  basePath: "/api/auth",
   debug: true,
 });
