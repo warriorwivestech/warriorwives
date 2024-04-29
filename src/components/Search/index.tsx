@@ -85,7 +85,7 @@ function _Search() {
     if (error)
       return (
         <Box className={boxClasses}>
-          <Box className="w-full px-3 py-2 font-semibold">
+          <Box className="w-full px-3 py-2 font-semibold text-sm">
             Error loading groups.
           </Box>
         </Box>
@@ -93,7 +93,9 @@ function _Search() {
     if (!groups || groups.length === 0)
       return (
         <Box className={boxClasses}>
-          <Box className="w-full px-3 py-2 font-semibold">No groups found.</Box>
+          <Box className="w-full px-3 py-2 font-semibold text-sm">
+            No groups found.
+          </Box>
         </Box>
       );
 
@@ -113,7 +115,7 @@ function _Search() {
               );
             }}
           >
-            <Box className="w-full px-3 py-2 hover:cursor-pointer hover:bg-gray-100 hover:font-semibold transition ease duration-300 flex justify-between">
+            <Box className="w-full px-3 py-2 text-sm text-gray-700 hover:cursor-pointer hover:bg-gray-100 hover:font-medium transition ease duration-300 flex justify-between items-center">
               <Box>
                 {group.name},{" "}
                 {group.county ? `${group.county}, ${group.state}` : group.state}
@@ -148,7 +150,7 @@ function _Search() {
         <Input
           className={`w-full mt-4 bg-white !z-20 ${
             showDropdown && !!searchInput ? "rounded-b-none border-b-0" : ""
-          }`}
+          } text-sm`}
           placeholder="Search for groups..."
           onChange={handleInputChange}
           value={searchInput}
