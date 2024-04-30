@@ -13,24 +13,14 @@ function queryEventAttendeesAndOrganizers(eventId: number) {
       group: {
         select: {
           name: true,
-        },
-      },
-      attendees: {
-        select: {
-          user: {
+          members: {
             select: {
-              name: true,
-              email: true,
-            },
-          },
-        },
-      },
-      organizers: {
-        select: {
-          user: {
-            select: {
-              name: true,
-              email: true,
+              user: {
+                select: {
+                  name: true,
+                  email: true,
+                },
+              },
             },
           },
         },
@@ -79,20 +69,14 @@ export async function PUT(
     );
   }
 
-  const attendees = event.attendees.map((attendee) => {
+  const members = event.group.members.map((member) => {
     return {
-      name: attendee.user.name as string,
-      email: attendee.user.email as string,
-    };
-  });
-  const organizers = event.organizers.map((organizer) => {
-    return {
-      name: organizer.user.name as string,
-      email: organizer.user.email as string,
+      email: member.user.email as string,
+      name: member.user.name as string,
     };
   });
 
-  sendNewEventEmail([...attendees, ...organizers], event, event.group.name);
+  sendNewEventEmail(members, event, event.group.name);
 
   await prisma.event.update({
     where: {
