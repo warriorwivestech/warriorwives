@@ -307,7 +307,7 @@ export async function PUT(
     setTimeout(() => {
       sendUpdatedEventEmail(updatedEventData, updatedEventData.group.name);
       // send after 5 minutes
-    }, 30000);
+    }, 300000);
   }
 
   return Response.json(updatedEventData);

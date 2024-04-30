@@ -633,6 +633,12 @@ function _EditEventModal({
                 )}
               </FormControl>
             )}
+            <p className="text-sm text-gray-500">
+              <strong>Note:</strong> Updating the timing, online status,
+              location, or meeting link will trigger an email to be sent to all
+              attendees and organizers after 5 minutes. The email will contain a
+              calendar invite with the updated event details.
+            </p>
           </ModalBody>
 
           <ModalFooter>
