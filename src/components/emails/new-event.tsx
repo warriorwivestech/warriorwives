@@ -33,7 +33,7 @@ export const NewEventEmail = ({
     <Body style={main}>
       <Container style={container}>
         <Img
-          src="/logo.png"
+          src={`${process.env.NEXT_PUBLIC_BASE_URL}/logo.png`}
           height="50"
           alt="Warrior Wives Logo"
           style={logo}
