@@ -209,7 +209,7 @@ function GroupData({
           </Flex>
         </Stack>
         <Tabs defaultValue="events" className="w-full">
-          <TabsList className="grid w-full grid-cols-2 mb-4 lg:w-1/2 h-auto">
+          <TabsList className="grid w-full grid-cols-2 mb-4 lg:w-[65%] h-auto">
             <TabsTrigger value="events" className="text-md font-semibold">
               Events
             </TabsTrigger>

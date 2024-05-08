@@ -13,7 +13,7 @@ export default function GroupEventsData({
 
   if (isLoading)
     return (
-      <div className="w-full md:w-[65%] flex flex-col gap-8">
+      <div className="w-full lg:w-[65%] flex flex-col gap-8">
         <Skeleton height="150px" className="rounded-xl" />
         <Skeleton height="150px" className="rounded-xl" />
         <Skeleton height="150px" className="rounded-xl" />
@@ -45,7 +45,7 @@ export default function GroupEventsData({
         <TabsTrigger value="past">Past</TabsTrigger>
       </TabsList>
       <TabsContent value="upcoming">
-        <Flex className="flex-col w-full md:w-[65%]" gap={4}>
+        <Flex className="flex-col w-full lg:w-[65%]" gap={4}>
           {upcomingEvents && upcomingEvents.length > 0 ? (
             upcomingEvents.map((event) => (
               <EventCard key={event.id} event={event} />
@@ -58,7 +58,7 @@ export default function GroupEventsData({
         </Flex>
       </TabsContent>
       <TabsContent value="past">
-        <Flex className="flex-col w-full md:w-[65%]" gap={4}>
+        <Flex className="flex-col w-full lg:w-[65%]" gap={4}>
           {pastEvents && pastEvents.length > 0 ? (
             pastEvents.map((event) => (
               <EventCard key={event.id} event={event} />

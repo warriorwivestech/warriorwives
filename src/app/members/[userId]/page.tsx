@@ -135,8 +135,12 @@ function _UserProfilePage({ params }: { params: { userId: string } }) {
         {user.groups.length > 0 ? (
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-2">
             {user.groups.map((group) => (
-              <Link key={group.id} href={`/groups/${group.id}`}>
-                <Card>
+              <Link
+                key={group.id}
+                href={`/groups/${group.id}`}
+                className="h-full"
+              >
+                <Card className="h-full">
                   <CardHeader className="p-4">
                     <Image
                       alt={group.name}

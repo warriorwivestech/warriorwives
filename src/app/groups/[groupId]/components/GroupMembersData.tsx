@@ -14,14 +14,14 @@ export default function GroupMembersData({
 
   if (isLoading)
     return (
-      <div className="w-full md:w-[65%] flex flex-col gap-2">
-        <Skeleton height="40px" className="rounded-xl" />
-        <Skeleton height="40px" className="rounded-xl" />
-        <Skeleton height="40px" className="rounded-xl" />
+      <div className="w-full lg:w-[65%] flex flex-col gap-2">
+        <Skeleton height="60px" className="rounded-sm" />
+        <Skeleton height="60px" className="rounded-sm" />
+        <Skeleton height="60px" className="rounded-sm" />
       </div>
     );
   if (error)
-    return <div className="text-sm text-gray-600">Error members events</div>;
+    return <div className="text-sm text-gray-600">Error loading members</div>;
 
   const sortedMembers = data
     ? data.sort((a, b) => {
@@ -35,7 +35,7 @@ export default function GroupMembersData({
     : [];
 
   return (
-    <Flex className="flex-col w-full md:w-[65%] pt-4" gap={4}>
+    <Flex className="flex-col w-full lg:w-[65%] pt-4" gap={4}>
       {sortedMembers.length > 0 ? (
         sortedMembers.map((member) => {
           const { name } = member;
@@ -44,7 +44,7 @@ export default function GroupMembersData({
             <Link
               href={`/members/${member.id}`}
               key={member.id}
-              className="space-y-4 w-full transition-colors hover:bg-muted/50"
+              className="w-full transition-colors hover:bg-muted/50"
             >
               <div className="flex items-center justify-between border-b border-gray-200 p-4 dark:border-gray-800">
                 <div className="flex items-center space-x-4">
