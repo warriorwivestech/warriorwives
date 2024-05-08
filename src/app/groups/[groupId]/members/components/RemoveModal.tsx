@@ -40,6 +40,11 @@ interface RemoveModalProps {
       email: string | null;
       name: string | null;
       superUser: boolean;
+      about: string | null;
+      facebook: string | null;
+      twitter: string | null;
+      instagram: string | null;
+      linkedin: string | null;
       emailVerified: Date | null;
       image: string | null;
       createdAt: Date;

@@ -79,7 +79,17 @@ export async function PUT(request: Request) {
     throw new Error("User not authenticated");
   }
 
-  const { name, branch, email, interests } = body;
+  const {
+    name,
+    branch,
+    email,
+    interests,
+    about,
+    facebook,
+    instagram,
+    twitter,
+    linkedin,
+  } = body;
   const parsedBranch = parseReverseBranchOfService(branch, false) as
     | "ARMY"
     | "NAVY"
@@ -120,6 +130,11 @@ export async function PUT(request: Request) {
       name,
       branch: parsedBranch,
       email,
+      about,
+      facebook,
+      instagram,
+      twitter,
+      linkedin,
       interests: {
         deleteMany: interestsToDelete,
         create: [

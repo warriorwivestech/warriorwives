@@ -44,6 +44,7 @@ import { UserDataType } from "@/app/api/user/route";
 import useSWRMutation from "swr/mutation";
 import { apiClient } from "@/apiClient";
 import { Spinner } from "@chakra-ui/react";
+import { Textarea } from "@/components/ui/textarea";
 
 const profileFormSchema = z.object({
   name: z
@@ -62,6 +63,16 @@ const profileFormSchema = z.object({
   branch: z.string({
     required_error: "Please select a branch of service.",
   }),
+  about: z
+    .string()
+    .max(500, {
+      message: "About section must not be longer than 500 characters.",
+    })
+    .optional(),
+  facebook: z.string().optional(),
+  instagram: z.string().optional(),
+  twitter: z.string().optional(),
+  linkedin: z.string().optional(),
   interests: z
     .array(
       z.object({
@@ -118,12 +129,27 @@ export default function ProfileForm({
       label: interest.name,
     }))
     .sort((a, b) => a.label.localeCompare(b.label));
-  const { name, email, branch, interests: userInterests } = user;
+  const {
+    name,
+    email,
+    branch,
+    interests: userInterests,
+    about,
+    facebook,
+    instagram,
+    twitter,
+    linkedin,
+  } = user;
 
   const defaultValues: Partial<ProfileFormValues> = {
     name: name || "",
     branch,
     email: email || "",
+    about: about || "",
+    facebook: facebook || "",
+    instagram: instagram || "",
+    twitter: twitter || "",
+    linkedin: linkedin || "",
     interests:
       userInterests
         .sort((a, b) => a.name.localeCompare(b.name))
@@ -228,6 +254,100 @@ export default function ProfileForm({
             </FormItem>
           )}
         />
+        <FormField
+          control={form.control}
+          name="about"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>About Me</FormLabel>
+              <FormControl>
+                <Textarea
+                  placeholder="Hi, I'm Jane Doe, a passionate photographer, avid reader, and outdoor enthusiast..."
+                  {...field}
+                  className="bg-white"
+                />
+              </FormControl>
+              <FormDescription>
+                A short description about yourself for other members to see.
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <div>
+          <FormItem>
+            <FormLabel>Social Media</FormLabel>
+            <FormField
+              control={form.control}
+              name="facebook"
+              render={({ field }) => (
+                <>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      className="bg-white"
+                      startAdornment="facebook.com/"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="instagram"
+              render={({ field }) => (
+                <>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      className="bg-white"
+                      startAdornment="instagram.com/"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="twitter"
+              render={({ field }) => (
+                <>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      className="bg-white"
+                      startAdornment="twitter.com/"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="linkedin"
+              render={({ field }) => (
+                <>
+                  <FormControl>
+                    <Input
+                      {...field}
+                      className="bg-white"
+                      startAdornment="linkedin.com/"
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </>
+              )}
+            />
+            <FormDescription>
+              Add your social media handles to connect with other members.
+              Leaving a field blank for a social media platform will hide the
+              respective social media link from your profile.
+            </FormDescription>
+          </FormItem>
+        </div>
         <div>
           {fields.map((field, index) => (
             <FormField

@@ -15,6 +15,7 @@ import { SWRProvider } from "@/providers/swrProvider";
 import useSWR from "swr";
 import NotFound from "@/app/not-found";
 import { PublicUserResponse } from "@/app/api/users/[userId]/public/route";
+import UserLoading from "./components/UserLoading";
 
 function FacebookIcon(
   props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>
@@ -57,13 +58,13 @@ function _UserProfilePage({ params }: { params: { userId: string } }) {
     `/users/${params.userId}/public`,
   ]);
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) return <UserLoading />;
   if (error)
     return <div className="text-sm text-gray-600">Error loading user</div>;
   if (!data || data.error || !data.data) return <NotFound />;
 
   const user = data.data;
-  const { name, image } = user;
+  const { name, image, about, facebook, instagram, twitter, linkedin } = user;
 
   return (
     <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 px-4 md:px-6 lg:px-8 items-start">
@@ -91,33 +92,53 @@ function _UserProfilePage({ params }: { params: { userId: string } }) {
           ))}
         </div>
         <div className="mb-8 max-w-2xl text-center text-gray-500">
-          <p>
-            Hi, I'm John Doe, a passionate photographer, avid reader, and
-            outdoor enthusiast. I love capturing the beauty of the world around
-            me through my lens and exploring new places. In my free time, you
-            can find me experimenting in the kitchen, hiking through scenic
-            trails, or immersed in a captivating book. I'm always eager to learn
-            and grow, and I'm excited to connect with like-minded individuals
-            who share my interests.
-          </p>
+          <p>{about ? about : `Hi, I'm ${name}! Nice to meet you!`}</p>
         </div>
         <div className="flex flex-wrap items-center justify-center gap-4 md:gap-6 lg:gap-8">
-          <Link className="inline-flex items-center gap-1" href="#">
-            <FacebookIcon className="h-5 w-5" />
-            <span className="text-sm">Facebook</span>
-          </Link>
-          <Link className="inline-flex items-center gap-1" href="#">
-            <InstagramLogoIcon className="h-5 w-5" />
-            <span className="text-sm">Instagram</span>
-          </Link>
-          <Link className="inline-flex items-center gap-1" href="#">
-            <XIcon className="h-4 w-4" />
-            <span className="text-sm">X / Twitter</span>
-          </Link>
-          <Link className="inline-flex items-center gap-1" href="#">
-            <LinkedInLogoIcon className="h-5 w-5" />
-            <span className="text-sm">LinkedIn</span>
-          </Link>
+          {facebook && (
+            <Link
+              className="inline-flex items-center gap-1"
+              href={`https://facebook.com/${facebook}`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <FacebookIcon className="h-5 w-5" />
+              <span className="text-sm">{facebook}</span>
+            </Link>
+          )}
+          {instagram && (
+            <Link
+              className="inline-flex items-center gap-1"
+              href={`https://instagram.com/${instagram}`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <InstagramLogoIcon className="h-5 w-5" />
+              <span className="text-sm">{instagram}</span>
+            </Link>
+          )}
+          {twitter && (
+            <Link
+              className="inline-flex items-center gap-1"
+              href={`https://twitter.com/${twitter}`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <XIcon className="h-4 w-4" />
+              <span className="text-sm">{twitter}</span>
+            </Link>
+          )}
+          {linkedin && (
+            <Link
+              className="inline-flex items-center gap-1"
+              href={`https://linkedin.com/in/${linkedin}`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <LinkedInLogoIcon className="h-5 w-5" />
+              <span className="text-sm">{linkedin}</span>
+            </Link>
+          )}
         </div>
         <p className="mt-8 text-sm text-gray-700">
           A Warrior Wife since{" "}
