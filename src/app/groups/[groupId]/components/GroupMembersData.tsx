@@ -35,7 +35,7 @@ export default function GroupMembersData({
     : [];
 
   return (
-    <Flex className="flex-col w-full lg:w-[65%] pt-4" gap={4}>
+    <Flex className="flex-col w-full lg:w-[65%] pt-4">
       {sortedMembers.length > 0 ? (
         sortedMembers.map((member) => {
           const { name } = member;
