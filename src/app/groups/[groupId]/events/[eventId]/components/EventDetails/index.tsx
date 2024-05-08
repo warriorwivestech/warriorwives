@@ -138,6 +138,7 @@ export default function EventDetails({ event, user }: EventDetailsProps) {
               {organizers.map((organizer) => {
                 return (
                   <AttendeeCard
+                    id={organizer.id}
                     src={organizer.image as string}
                     name={organizer.name as string}
                     alt={organizer.name as string}
@@ -150,6 +151,7 @@ export default function EventDetails({ event, user }: EventDetailsProps) {
               {attendees.map((attendee) => {
                 return (
                   <AttendeeCard
+                    id={attendee.id}
                     src={attendee.image as string}
                     name={attendee.name as string}
                     alt={attendee.name as string}
