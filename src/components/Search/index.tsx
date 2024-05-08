@@ -151,7 +151,7 @@ function _Search() {
           className={`w-full mt-4 bg-white !z-20 ${
             showDropdown && !!searchInput ? "rounded-b-none border-b-0" : ""
           } text-sm`}
-          placeholder="Search for groups..."
+          placeholder="Search by name, tags, or location"
           onChange={handleInputChange}
           value={searchInput}
           ref={inputRef}

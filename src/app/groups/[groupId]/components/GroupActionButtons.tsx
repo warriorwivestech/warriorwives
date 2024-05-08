@@ -6,7 +6,7 @@ import EditGroup from "@/components/GroupModal/EditGroup";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@chakra-ui/react";
 import { useState } from "react";
-import { KeyedMutator, SWRResponse } from "swr";
+import { KeyedMutator, SWRResponse, mutate } from "swr";
 import useSWRMutation from "swr/mutation";
 import GroupPasswordModal from "./GroupPasswordModal";
 import { useToast } from "@/components/ui/use-toast";
@@ -17,6 +17,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { getGroupEventsRequestOptions } from "@/app/api/events/helper";
 
 async function joinGroup(
   url: string,
@@ -51,10 +52,13 @@ function JoinGroupButton({
     joinGroup,
     {
       onSuccess(data) {
-        console.log("DATAAA", data?.data);
         if (data?.data) {
           setJustJoined(true);
           setPasswordModalOpen(false);
+          mutate([
+            `/groups/${groupId}/events`,
+            getGroupEventsRequestOptions(`${groupId}`),
+          ]);
           toast({
             title: `Joined Group`,
             description: `You have successfully joined this group.`,

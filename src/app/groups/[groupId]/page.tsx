@@ -33,17 +33,21 @@ import { notFound } from "next/navigation";
 import { getGroupEventsRequestOptions } from "@/app/api/events/helper";
 import { getSingleGroupRequestOptions } from "@/app/api/groups/helper";
 import { TypographyH4 } from "@/components/ui/typography/h4";
-import { TypographyH3 } from "@/components/ui/typography/h3";
+import { PublicGroupMembers } from "@/app/api/groups/[groupId]/members/public/route";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import GroupMembersData from "./components/GroupMembersData";
 
 function GroupData({
   group,
   events,
   user,
+  members,
   revalidateData,
 }: {
   group: GroupDataType;
   events: SWRResponse<GroupEvents, any, any>;
   user: SWRResponse<UserDataType, any, any>;
+  members: SWRResponse<PublicGroupMembers, any, any>;
   revalidateData: KeyedMutator<GroupDataType>;
 }) {
   const [isSticky, setIsSticky] = useState(false);
@@ -204,10 +208,22 @@ function GroupData({
             </Text>
           </Flex>
         </Stack>
-        <Stack gap={4}>
-          <TypographyH3>Events from {name}</TypographyH3>
-          <GroupEventsData events={events} />
-        </Stack>
+        <Tabs defaultValue="events" className="w-full">
+          <TabsList className="grid w-full grid-cols-2 mb-4 lg:w-1/2 h-auto">
+            <TabsTrigger value="events" className="text-md font-semibold">
+              Events
+            </TabsTrigger>
+            <TabsTrigger value="members" className="text-md font-semibold">
+              Members
+            </TabsTrigger>
+          </TabsList>
+          <TabsContent value="events">
+            <GroupEventsData events={events} />
+          </TabsContent>
+          <TabsContent value="members">
+            <GroupMembersData members={members} />
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );
@@ -229,6 +245,9 @@ function _GroupPage({ params }: { params: { groupId: string } }) {
     getGroupEventsRequestOptions(groupId),
   ]);
   const user = useSWR<UserDataType>(["/user", getUserRequestOptions()]);
+  const members = useSWR<PublicGroupMembers>([
+    `/groups/${groupId}/members/public`,
+  ]);
 
   if (isLoading) return <GroupLoading />;
   if (error) return <div>Error loading group</div>;
@@ -239,6 +258,7 @@ function _GroupPage({ params }: { params: { groupId: string } }) {
       group={group}
       events={events}
       user={user}
+      members={members}
       revalidateData={mutate}
     />
   );
