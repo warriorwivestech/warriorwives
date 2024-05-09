@@ -45,6 +45,7 @@ import useSWRMutation from "swr/mutation";
 import { apiClient } from "@/apiClient";
 import { Spinner } from "@chakra-ui/react";
 import { Textarea } from "@/components/ui/textarea";
+import Link from "next/link";
 
 const profileFormSchema = z.object({
   name: z
@@ -334,7 +335,7 @@ export default function ProfileForm({
                     <Input
                       {...field}
                       className="bg-white"
-                      startAdornment="linkedin.com/"
+                      startAdornment="linkedin.com/in/"
                     />
                   </FormControl>
                   <FormMessage />
@@ -452,7 +453,10 @@ export default function ProfileForm({
             Add Interest
           </Button>
         </div>
-        <div className="flex justify-end">
+        <div className="flex justify-between">
+          <Link href={`/members/${user.id}`} className="mr-2">
+            <Button variant="outline">View Public Profile</Button>
+          </Link>
           <Button type="submit" className="w-24" disabled={isMutating}>
             {isMutating ? <Spinner size="sm" /> : "Save"}
           </Button>
