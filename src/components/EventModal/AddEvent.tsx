@@ -22,6 +22,7 @@ import {
   Divider,
   SimpleGrid,
   Spinner,
+  FormHelperText,
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import { FileUploader } from "react-drag-drop-files";
@@ -56,7 +57,12 @@ const createEventFormSchema = z.object({
     message: "A description of the group is required",
   }),
   online: z.boolean(),
-  meetingLink: z.string(),
+  meetingLink: z
+    .string()
+    .url({
+      message: "Meeting link must be a valid URL",
+    })
+    .optional(),
   location: z.string(),
   startDateTime: z.string().min(1, {
     message: "Start time is required",
@@ -65,6 +71,12 @@ const createEventFormSchema = z.object({
     message: "End time is required",
   }),
   photos: z.array(z.string()),
+  resourceUrl: z
+    .string()
+    .url({
+      message: "Resource link must be a valid URL",
+    })
+    .optional(),
 });
 
 export type CreateEventFormValues = z.infer<typeof createEventFormSchema>;
@@ -79,6 +91,7 @@ interface CreateEventType {
   startDateTime: string;
   endDateTime: string;
   photos: string[];
+  resourceUrl: string;
 }
 
 const defaultFormValues: CreateEventType = {
@@ -91,6 +104,7 @@ const defaultFormValues: CreateEventType = {
   startDateTime: "",
   endDateTime: "",
   photos: [],
+  resourceUrl: "",
 };
 
 async function createEvent(
@@ -151,6 +165,7 @@ function _CreateEventModal({
     startDateTime,
     endDateTime,
     photos,
+    resourceUrl,
   } = input;
 
   useEffect(() => {
@@ -280,24 +295,6 @@ function _CreateEventModal({
     }
     setImagesAreUploading(false);
   };
-
-  // const getFormattedCurrentDateTime = () => {
-  //   const now = new Date();
-  //   // Adjusting date to UTC can help with timezone differences if needed
-  //   const year = now.getUTCFullYear();
-  //   const month = now.getUTCMonth() + 1;
-  //   const day = now.getUTCDate();
-  //   const hours = now.getUTCHours();
-  //   const minutes = now.getUTCMinutes();
-
-  //   const formattedMonth = month.toString().padStart(2, "0");
-  //   const formattedDay = day.toString().padStart(2, "0");
-  //   const formattedHours = hours.toString().padStart(2, "0");
-  //   const formattedMinutes = minutes.toString().padStart(2, "0");
-
-  //   return `${year}-${formattedMonth}-${formattedDay}T${formattedHours}:${formattedMinutes}`;
-  // };
-  // const minDateTime = getFormattedCurrentDateTime();
 
   const getFormattedDateTime = (date: Date) => {
     const formattedMonth = (date.getMonth() + 1).toString().padStart(2, "0");
@@ -616,6 +613,32 @@ function _CreateEventModal({
                 )}
               </FormControl>
             )}
+            <FormControl isInvalid={validationErrors["resourceUrl"]}>
+              <FormLabel fontSize="sm" textColor="gray.600">
+                Resources Link
+              </FormLabel>
+              <Input
+                fontSize={"sm"}
+                paddingX={3}
+                paddingY={1}
+                type="link"
+                placeholder="https://drive.google.com/my-event-resources"
+                value={resourceUrl}
+                onChange={(e) => {
+                  const newValue =
+                    e.target.value === "" ? undefined : e.target.value;
+                  handleInputChange("resourceUrl", newValue);
+                }}
+              />
+              {validationErrors["resourceUrl"] && (
+                <FormErrorMessage>
+                  {validationErrors["resourceUrl"]}
+                </FormErrorMessage>
+              )}
+              <FormHelperText className="text-[13px]">
+                Provide a link to resources for this event. Leave blank if none.
+              </FormHelperText>
+            </FormControl>
           </ModalBody>
 
           <ModalFooter>

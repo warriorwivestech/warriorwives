@@ -19,9 +19,9 @@ import {
   HStack,
   RadioGroup,
   Textarea,
-  Divider,
   SimpleGrid,
   Spinner,
+  FormHelperText,
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import { FileUploader } from "react-drag-drop-files";
@@ -69,7 +69,12 @@ const updateEventFormSchema = z.object({
     message: "A description of the group is required",
   }),
   online: z.boolean(),
-  meetingLink: z.string(),
+  meetingLink: z
+    .string()
+    .url({
+      message: "Meeting link must be a valid URL",
+    })
+    .optional(),
   location: z.string(),
   startDateTime: z.string().min(1, {
     message: "Start time is required",
@@ -78,6 +83,12 @@ const updateEventFormSchema = z.object({
     message: "End time is required",
   }),
   photos: z.array(z.string()),
+  resourceUrl: z
+    .string()
+    .url({
+      message: "Resource link must be a valid URL",
+    })
+    .optional(),
 });
 
 export type UpdateEventFormValues = z.infer<typeof updateEventFormSchema>;
@@ -92,6 +103,7 @@ interface EditEventType {
   startDateTime: string;
   endDateTime: string;
   photos: string[];
+  resourceUrl: string;
 }
 
 async function updateEvent(
@@ -157,6 +169,7 @@ function _EditEventModal({
     startDateTime: getFormattedDateTime(new Date(event.startDateTime)),
     endDateTime: getFormattedDateTime(new Date(event.endDateTime)),
     photos: event.photos.map((photo) => photo.photo),
+    resourceUrl: event.resourceUrl || "",
   };
   const [input, setInput] = useState<EditEventType>(defaultFormValues);
   const {
@@ -169,6 +182,7 @@ function _EditEventModal({
     startDateTime,
     endDateTime,
     photos,
+    resourceUrl,
   } = input;
 
   useEffect(() => {
@@ -633,6 +647,32 @@ function _EditEventModal({
                 )}
               </FormControl>
             )}
+            <FormControl isInvalid={validationErrors["resourceUrl"]}>
+              <FormLabel fontSize="sm" textColor="gray.600">
+                Resources Link
+              </FormLabel>
+              <Input
+                fontSize={"sm"}
+                paddingX={3}
+                paddingY={1}
+                type="link"
+                placeholder="https://drive.google.com/my-event-resources"
+                value={resourceUrl}
+                onChange={(e) => {
+                  const newValue =
+                    e.target.value === "" ? undefined : e.target.value;
+                  handleInputChange("resourceUrl", newValue);
+                }}
+              />
+              {validationErrors["resourceUrl"] && (
+                <FormErrorMessage>
+                  {validationErrors["resourceUrl"]}
+                </FormErrorMessage>
+              )}
+              <FormHelperText className="text-[13px]">
+                Provide a link to resources for this event. Leave blank if none.
+              </FormHelperText>
+            </FormControl>
             <p className="text-sm text-gray-500">
               <strong>Note:</strong> Updating the timing, online status,
               location, or meeting link will trigger an email to be sent to all

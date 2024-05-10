@@ -216,6 +216,7 @@ export async function PUT(
     startDateTime,
     endDateTime,
     photos,
+    resourceUrl,
   } = body;
 
   const displayPhotoChanged = displayPhoto !== oldDisplayPhoto;
@@ -254,6 +255,7 @@ export async function PUT(
       online,
       meetingLink,
       location,
+      resourceUrl: resourceUrl || "",
       startDateTime: startDateTime,
       endDateTime: endDateTime,
       sendUpdateEmail: eventDataChanged || eventData.sendUpdateEmail,

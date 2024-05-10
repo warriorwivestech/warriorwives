@@ -11,8 +11,6 @@ import {
   Box,
   useMediaQuery,
   Badge,
-  Spinner,
-  useDisclosure,
 } from "@chakra-ui/react";
 import { MdPeopleAlt } from "react-icons/md";
 import React, { useEffect, useState, useRef } from "react";
@@ -36,6 +34,9 @@ import { TypographyH4 } from "@/components/ui/typography/h4";
 import { PublicGroupMembers } from "@/app/api/groups/[groupId]/members/public/route";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import GroupMembersData from "./components/GroupMembersData";
+import { IoDocuments } from "react-icons/io5";
+import { LuExternalLink } from "react-icons/lu";
+import Link from "next/link";
 
 function GroupData({
   group,
@@ -86,6 +87,7 @@ function GroupData({
     state,
     online,
     membersCount,
+    resourceUrl,
     admins,
   } = group;
   const displayPhotoUrl = displayPhoto || "/defaultGroupImage.jpg";
@@ -182,6 +184,22 @@ function GroupData({
                     >
                       Organized by {parsedAdmins}
                     </IconText>
+                    {resourceUrl && (
+                      <IconText
+                        icon={IoDocuments}
+                        iconClassName="text-black"
+                        textClassName="text-blue-500 text-sm"
+                      >
+                        <Link
+                          href={resourceUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="hover:underline flex flex-row gap-1 items-center"
+                        >
+                          Group resources {<LuExternalLink />}
+                        </Link>
+                      </IconText>
+                    )}
                   </Stack>
                   <GroupActionButtons
                     group={group}

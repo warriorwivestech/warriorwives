@@ -320,7 +320,7 @@ const _Map = () => {
           onChange={(e) => setByCounty(e.target.checked)}
           disabled={loading}
         >
-          Search by county
+          <p className="text-sm text-gray-700">Search by county</p>
         </Checkbox>
       </Flex>
       <Flex className={`flex-col gap-2`}>

@@ -94,6 +94,7 @@ model Group {
   password        String?
   archived        Boolean           @default(false)
   archivedAt      DateTime?
+  resourceUrl     String?
   createdAt       DateTime          @default(now())
   updatedAt       DateTime          @updatedAt
 }
@@ -111,6 +112,7 @@ model Event {
   groupId         Int
   sendEmailStatus sendEmailStatus      @default(NOT_QUEUED)
   sendUpdateEmail Boolean              @default(false)
+  resourceUrl     String?
   photos          EventPhoto[]
   materials       EventMaterial[]
   meetingLink     String?

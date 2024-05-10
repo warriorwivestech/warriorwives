@@ -30,7 +30,7 @@ import { MdDelete } from "react-icons/md";
 import { supabase } from "@/supabase";
 import Image from "next/image";
 import { getBranchesOfService, getCounties, getStates } from "./helper/getData";
-import { set, z } from "zod";
+import { z } from "zod";
 import { Button } from "../ui/button";
 import { SWRProvider } from "@/providers/swrProvider";
 import useSWR from "swr";
@@ -73,6 +73,12 @@ const createGroupFormSchema = z.object({
     .string()
     .min(8, {
       message: "Password must be at least 8 characters.",
+    })
+    .optional(),
+  resourceUrl: z
+    .string()
+    .url({
+      message: "Resource link must be a valid URL.",
     })
     .optional(),
 });
@@ -157,6 +163,7 @@ interface CreateGroupType {
   branchOfService: string;
   tags: number[];
   password: string | undefined;
+  resourceUrl: string | undefined;
 }
 
 const defaultFormValues = {
@@ -169,6 +176,7 @@ const defaultFormValues = {
   branchOfService: "",
   tags: [],
   password: undefined,
+  resourceUrl: undefined,
 };
 
 async function createGroup(
@@ -223,8 +231,16 @@ function _CreateGroupModal() {
 
   const [validationErrors, setValidationErrors] = useState<any>([]);
   const [input, setInput] = useState<CreateGroupType>(defaultFormValues);
-  const { displayPhoto, name, description, online, state, tags, password } =
-    input;
+  const {
+    displayPhoto,
+    name,
+    description,
+    online,
+    state,
+    tags,
+    password,
+    resourceUrl,
+  } = input;
 
   const states = getStates();
   const [countyIsDisabled, setCountyIsDisabled] = useState(true);
@@ -580,7 +596,32 @@ function _CreateGroupModal() {
                 </FormControl>
               </div>
             </div>
-
+            <FormControl isInvalid={validationErrors["resourceUrl"]}>
+              <FormLabel fontSize="sm" textColor="gray.600">
+                Resources Link
+              </FormLabel>
+              <Input
+                fontSize={"sm"}
+                paddingX={3}
+                paddingY={1}
+                type="link"
+                placeholder="https://drive.google.com/my-event-resources"
+                value={resourceUrl}
+                onChange={(e) => {
+                  const newValue =
+                    e.target.value === "" ? undefined : e.target.value;
+                  handleInputChange("resourceUrl", newValue);
+                }}
+              />
+              {validationErrors["resourceUrl"] && (
+                <FormErrorMessage>
+                  {validationErrors["resourceUrl"]}
+                </FormErrorMessage>
+              )}
+              <FormHelperText className="text-[13px]">
+                Provide a link to resources for this group. Leave blank if none.
+              </FormHelperText>
+            </FormControl>
             <FormControl isInvalid={validationErrors["password"]}>
               <FormLabel fontSize="sm" textColor="gray.600">
                 Lock group with a password? (Optional)

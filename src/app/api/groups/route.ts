@@ -90,6 +90,7 @@ export async function POST(request: Request) {
     branchOfService,
     tags,
     password,
+    resourceUrl,
   } = body;
 
   const passwordEnabled = password ? true : false;
@@ -102,6 +103,7 @@ export async function POST(request: Request) {
       county,
       state,
       online,
+      resourceUrl: resourceUrl || "",
       tags: {
         create: tags.map((tag) => {
           return {

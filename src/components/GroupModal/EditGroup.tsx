@@ -30,7 +30,7 @@ import { MdDelete } from "react-icons/md";
 import { supabase } from "@/supabase";
 import Image from "next/image";
 import { getBranchesOfService, getCounties, getStates } from "./helper/getData";
-import { set, z } from "zod";
+import { z } from "zod";
 import { Button } from "../ui/button";
 import { SWRProvider } from "@/providers/swrProvider";
 import useSWR, { KeyedMutator } from "swr";
@@ -39,7 +39,6 @@ import { getInterestsRequestOptions } from "@/app/api/interests/helper";
 import useSWRMutation from "swr/mutation";
 import { apiClient } from "@/apiClient";
 import { useToast } from "../ui/use-toast";
-import { useRouter } from "next/navigation";
 import {
   GroupDataType,
   UpdateGroupResponseType,
@@ -77,6 +76,12 @@ const updateGroupFormSchema = z.object({
     .string()
     .min(8, {
       message: "Password must be at least 8 characters.",
+    })
+    .optional(),
+  resourceUrl: z
+    .string()
+    .url({
+      message: "Resource link must be a valid URL.",
     })
     .optional(),
 });
@@ -161,6 +166,7 @@ interface EditGroupType {
   branchOfService: string;
   tags: number[];
   password: string | undefined;
+  resourceUrl: string | undefined;
 }
 
 async function updateGroup(
@@ -235,11 +241,20 @@ function _EditGroupModal({
     branchOfService: parseReverseBranchOfService(group.branchOfService),
     tags: group.tagIds,
     password: group.password ? group.password : undefined,
+    resourceUrl: group.resourceUrl ? group.resourceUrl : undefined,
   };
   const [input, setInput] = useState<EditGroupType>(defaultFormValues);
   const [validationErrors, setValidationErrors] = useState<any>([]);
-  const { displayPhoto, name, description, online, state, tags, password } =
-    input;
+  const {
+    displayPhoto,
+    name,
+    description,
+    online,
+    state,
+    tags,
+    password,
+    resourceUrl,
+  } = input;
 
   const states = getStates();
   const [countyIsDisabled, setCountyIsDisabled] = useState(true);
@@ -616,7 +631,32 @@ function _EditGroupModal({
                 </FormControl>
               </div>
             </div>
-
+            <FormControl isInvalid={validationErrors["resourceUrl"]}>
+              <FormLabel fontSize="sm" textColor="gray.600">
+                Resources Link
+              </FormLabel>
+              <Input
+                fontSize={"sm"}
+                paddingX={3}
+                paddingY={1}
+                type="link"
+                placeholder="https://drive.google.com/my-event-resources"
+                value={resourceUrl}
+                onChange={(e) => {
+                  const newValue =
+                    e.target.value === "" ? undefined : e.target.value;
+                  handleInputChange("resourceUrl", newValue);
+                }}
+              />
+              {validationErrors["resourceUrl"] && (
+                <FormErrorMessage>
+                  {validationErrors["resourceUrl"]}
+                </FormErrorMessage>
+              )}
+              <FormHelperText className="text-[13px]">
+                Provide a link to resources for this group. Leave blank if none.
+              </FormHelperText>
+            </FormControl>
             <FormControl isInvalid={validationErrors["password"]}>
               <FormLabel fontSize="sm" textColor="gray.600">
                 Lock group with a password? (Optional)

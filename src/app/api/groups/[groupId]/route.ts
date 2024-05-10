@@ -150,6 +150,7 @@ export async function PUT(
     branchOfService,
     tags,
     password,
+    resourceUrl,
   } = body;
 
   const passwordEnabled = password ? true : false;
@@ -168,6 +169,7 @@ export async function PUT(
       online,
       state,
       county,
+      resourceUrl: resourceUrl || "",
       branchOfService: branchOfService as groupArmyBranch,
       tags: {
         create: tagsToCreate.map((tag) => {
@@ -186,7 +188,7 @@ export async function PUT(
         },
       },
       passwordEnabled,
-      password,
+      password: password || "",
     },
   });
 

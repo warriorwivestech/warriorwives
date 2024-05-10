@@ -18,6 +18,8 @@ import { parseEventDateTimes } from "@/helpers/dateParser";
 import { SWRResponse } from "swr";
 import { UserDataType } from "@/app/api/user/route";
 import EventActionButtons from "./EventActionButtons";
+import { IoDocuments } from "react-icons/io5";
+import { LuExternalLink } from "react-icons/lu";
 
 interface EventDetailsProps {
   event: SingleEventDataType;
@@ -42,6 +44,7 @@ export default function EventDetails({ event, user }: EventDetailsProps) {
     groupId,
     attendeesCount,
     organizersCount,
+    resourceUrl,
   } = event;
 
   const totalAttendeesAndOrganizers = attendeesCount + organizersCount;
@@ -75,7 +78,7 @@ export default function EventDetails({ event, user }: EventDetailsProps) {
                     meetingLink
                       ? /^(?:https?:\/\/)/i.test(meetingLink)
                         ? meetingLink
-                        : `http://${meetingLink}`
+                        : `https://${meetingLink}`
                       : "#"
                   }
                   target="_blank"
@@ -95,6 +98,24 @@ export default function EventDetails({ event, user }: EventDetailsProps) {
                 }}
               />
               <p className="text-gray-700">{location}</p>
+            </div>
+          )}
+          {resourceUrl && (
+            <div className="flex flex-row gap-4 items-center">
+              <IoDocuments
+                style={{
+                  minHeight: "18px",
+                  minWidth: "18px",
+                }}
+              />
+              <Link
+                href={resourceUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:underline flex flex-row gap-1 items-center text-blue-500"
+              >
+                Event resources {<LuExternalLink />}
+              </Link>
             </div>
           )}
         </div>

@@ -141,10 +141,8 @@ export async function POST(
     startDateTime,
     endDateTime,
     photos,
+    resourceUrl,
   } = body;
-  console.log("startDateTime", startDateTime);
-  console.log("endDateTime", endDateTime);
-
   const eventData = await prisma.event.create({
     data: {
       displayPhoto,
@@ -155,6 +153,7 @@ export async function POST(
       location,
       startDateTime: startDateTime,
       endDateTime: endDateTime,
+      resourceUrl: resourceUrl || "",
       photos: {
         create: photos.map((photo) => {
           return {
