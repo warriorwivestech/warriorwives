@@ -8,7 +8,7 @@ import {
 
 export default function MapLoading() {
   return (
-    <div className="flex flex-col gap-12">
+    <div className="flex flex-col gap-12 mt-4">
       <div className="flex flex-col gap-6">
         <SkeletonText noOfLines={1} skeletonHeight="3" width="25%" />
         <SimpleGrid columns={[1, 2, 3]} spacing={6}>

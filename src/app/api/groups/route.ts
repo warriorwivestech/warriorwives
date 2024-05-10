@@ -30,14 +30,7 @@ export async function GET(request: Request) {
   const groupsByLocation = await prisma.group.findMany({
     where: {
       archived: false,
-      OR: [
-        {
-          ...locationInfo,
-        },
-        {
-          state: "National",
-        },
-      ],
+      ...locationInfo,
     },
     include: {
       tags: {

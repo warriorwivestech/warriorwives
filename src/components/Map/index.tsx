@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useRef, useEffect, useState } from "react";
-import { Card, Flex, SimpleGrid } from "@chakra-ui/react";
+import { Card, Flex } from "@chakra-ui/react";
 import * as maptilersdk from "@maptiler/sdk";
 import "@maptiler/sdk/dist/maptiler-sdk.css";
 import axios from "axios";
@@ -14,6 +14,7 @@ import IconText from "../common/icontext";
 import { GroupData } from "@/app/api/groups/[groupId]/types";
 import { SWRProvider } from "@/providers/swrProvider";
 import useSWR from "swr";
+import { Toggle } from "../ui/toggle";
 
 const COUNTY_GEOJSON_URL =
   "https://gist.githubusercontent.com/sdwfrost/d1c73f91dd9d175998ed166eb216994a/raw/e89c35f308cee7e2e5a784e1d3afc5d449e9e4bb/counties.geojson";
@@ -59,6 +60,9 @@ const _Map = () => {
   const [selectedState, setSelectedState] = useState("");
   const [selectedCounty, setSelectedCounty] = useState("");
 
+  const [selectedNational, setSelectedNational] = useState(false);
+  const [selectedInternational, setSelectedInternational] = useState(false);
+
   const [loading, setLoading] = useState(true);
 
   const addStateGeoJsonDataToMap = (geoJsonData: any) => {
@@ -81,6 +85,8 @@ const _Map = () => {
 
       map.current!.on("click", `state-fill-${index}`, function (e) {
         setSelectedState(e.features![0].properties.name);
+        setSelectedNational(false);
+        setSelectedInternational(false);
       });
     });
   };
@@ -114,6 +120,8 @@ const _Map = () => {
 
     map.current!.on("click", `county-boundaries-fill`, function (e) {
       setSelectedCounty(e.features![0].properties.NAME);
+      setSelectedNational(false);
+      setSelectedInternational(false);
     });
   };
 
@@ -263,29 +271,35 @@ const _Map = () => {
   }, [selectedState, selectedCounty]);
 
   const GroupsBySelectedLocation = () => {
-    if (loading) return;
-    if (!selectedState)
+    if (loading || !selectedState) return;
+    if (isLoadingGroups) return <MapLoading />;
+    if (error)
       return (
-        <p className="text-sm font-normal text-gray-500">
-          Click on a state/county to get started.
+        <p className="text-sm font-normal text-gray-700 mt-4">
+          Uh oh! Error loading groups
         </p>
       );
-    if (isLoadingGroups) return <MapLoading />;
-    if (error) return <p>{error.message}</p>;
     if (!groups || groups.length === 0)
       return (
-        <p>
+        <p className="text-sm font-normal text-gray-700 mt-4">
           No groups found in {selectedCounty && `${selectedCounty}, `}
           {selectedState}.
         </p>
       );
 
+    function getGroupsText() {
+      if (selectedNational) {
+        return "National Groups";
+      }
+      if (selectedInternational) {
+        return "International Groups";
+      }
+      return `Groups in ${selectedCounty && `${selectedCounty}, `}${selectedState}`;
+    }
+
     return (
-      <Flex className="flex-col gap-4">
-        <p className="text-base font-semibold">
-          Groups in {selectedCounty && `${selectedCounty}, `}
-          {selectedState}
-        </p>
+      <Flex className="flex-col gap-4 pt-4">
+        <p className="text-base font-semibold">{getGroupsText()}</p>
         <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {groups.map((group) => {
             return <GroupCard key={group.id} {...group} />;
@@ -309,7 +323,7 @@ const _Map = () => {
           Search by county
         </Checkbox>
       </Flex>
-      <Flex className={`flex-col ${selectedState ? "gap-8" : "gap-2"}`}>
+      <Flex className={`flex-col gap-2`}>
         <Box className="relative w-full h-[60vh] min-h-[500px]">
           <Card ref={mapContainer} className="absolute w-full h-full">
             {loading && (
@@ -319,6 +333,40 @@ const _Map = () => {
             )}
           </Card>
         </Box>
+        <div className="flex flex-row gap-2 justify-between align-middle items-center">
+          <p className="text-sm font-normal text-gray-500 text-center">
+            Click on a state/county or National/International status to filter
+            groups by location.
+          </p>
+          <div className="flex flex-row gap-2">
+            <Toggle
+              variant="outline"
+              className="bg-white data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
+              pressed={selectedNational}
+              onPressedChange={() => {
+                setSelectedNational(true);
+                setSelectedInternational(false);
+                setSelectedState("National");
+                setSelectedCounty("");
+              }}
+            >
+              National
+            </Toggle>
+            <Toggle
+              variant="outline"
+              className="bg-white data-[state=on]:bg-primary data-[state=on]:text-primary-foreground"
+              pressed={selectedInternational}
+              onPressedChange={() => {
+                setSelectedNational(false);
+                setSelectedInternational(true);
+                setSelectedState("International");
+                setSelectedCounty("");
+              }}
+            >
+              International (OCONUS)
+            </Toggle>
+          </div>
+        </div>
         <GroupsBySelectedLocation />
       </Flex>
     </Flex>
