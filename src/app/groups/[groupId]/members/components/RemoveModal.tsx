@@ -1,6 +1,7 @@
 "use client";
 
 import { apiClient } from "@/apiClient";
+import { GroupMembers } from "@/app/api/groups/[groupId]/members/route";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -32,25 +33,7 @@ interface RemoveModalProps {
     updatedAt: Date;
   };
   groupId: number;
-  revalidateData: KeyedMutator<
-    {
-      branch: string;
-      admin: boolean;
-      id: number;
-      email: string | null;
-      name: string | null;
-      superUser: boolean;
-      about: string | null;
-      facebook: string | null;
-      twitter: string | null;
-      instagram: string | null;
-      linkedin: string | null;
-      emailVerified: Date | null;
-      image: string | null;
-      createdAt: Date;
-      updatedAt: Date;
-    }[]
-  >;
+  revalidateData: KeyedMutator<GroupMembers>;
 }
 
 async function removeMember(url: string) {
