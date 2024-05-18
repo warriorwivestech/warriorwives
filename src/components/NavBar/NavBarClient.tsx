@@ -29,6 +29,10 @@ const NAV_ITEMS = [
     label: "My Events",
     href: "/events",
   },
+  {
+    label: "Connect",
+    href: "/connect",
+  },
 ];
 
 const SUPER_USER_NAV_ITEMS = [

@@ -455,7 +455,9 @@ export default function ProfileForm({
         </div>
         <div className="flex justify-between">
           <Link href={`/members/${user.id}`} className="mr-2">
-            <Button variant="outline">View Public Profile</Button>
+            <Button variant="outline" type="button">
+              View Public Profile
+            </Button>
           </Link>
           <Button type="submit" className="w-24" disabled={isMutating}>
             {isMutating ? <Spinner size="sm" /> : "Save"}

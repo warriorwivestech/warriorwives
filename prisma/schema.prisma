@@ -24,6 +24,8 @@ model User {
   instagram       String?
   twitter         String?
   linkedin        String?
+  sheerIdVerified Boolean              @default(false)
+  manualVerified  Boolean              @default(false)
   accounts        Account[]
   sessions        Session[]
   interests       InterestsOnUsers[]
