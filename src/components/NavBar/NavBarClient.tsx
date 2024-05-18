@@ -30,8 +30,8 @@ const NAV_ITEMS = [
     href: "/events",
   },
   {
-    label: "Connect",
-    href: "/connect",
+    label: "Community",
+    href: "/community",
   },
 ];
 
@@ -39,6 +39,10 @@ const SUPER_USER_NAV_ITEMS = [
   {
     label: "All Groups",
     href: "/all-groups",
+  },
+  {
+    label: "All Members",
+    href: "/all-members",
   },
 ];
 

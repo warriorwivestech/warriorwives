@@ -3,9 +3,11 @@ import { NextResponse } from "next/server";
 
 const protectedDirectories = [
   "/groups",
+  "/members",
   "/all-groups",
+  "/all-members",
   "/verification",
-  "/connect",
+  "/community",
 ];
 
 export default auth((req) => {
@@ -26,8 +28,10 @@ export const config = {
     "/((?!api|_next/static|_next/image|favicon.ico).*)",
     "/",
     "/groups/:path*",
+    "/members/:path*",
     "/all-groups",
+    "/all-members",
     "/verification",
-    "/connect",
+    "/community",
   ],
 };
