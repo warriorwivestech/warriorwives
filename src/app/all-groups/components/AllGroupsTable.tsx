@@ -59,7 +59,7 @@ export default function AllGroupsTable({ groups }: AllGroupsTableProps) {
               <TableCell>{group.passwordEnabled ? "✅" : "❌"}</TableCell>
               <TableCell>
                 <Link href={`/groups/${group.id}`}>
-                  <Button>View</Button>
+                  <Button size="sm">View</Button>
                 </Link>
               </TableCell>
             </TableRow>

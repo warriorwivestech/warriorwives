@@ -6,16 +6,9 @@ import BranchBadge, {
 import { AllUsersDataType } from "@/app/api/users/route";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { ColumnDef } from "@tanstack/react-table";
-import { ArrowUpDown, MoreHorizontal } from "lucide-react";
-import Link from "next/link";
+import { ArrowUpDown } from "lucide-react";
+import ActionsMenu from "./ActionsMenu";
 
 export const columns: ColumnDef<AllUsersDataType[0]>[] = [
   {
@@ -62,7 +55,7 @@ export const columns: ColumnDef<AllUsersDataType[0]>[] = [
   },
   {
     accessorKey: "superUser",
-    header: "Super User",
+    header: "Super Admin",
     cell: ({ row }) => {
       const superUser = row.getValue("superUser");
 
@@ -106,18 +99,18 @@ export const columns: ColumnDef<AllUsersDataType[0]>[] = [
         );
       }
 
-      if (verificationStatus === "sheerIdVerified") {
+      if (verificationStatus === "manualVerificationRemoved") {
         return (
-          <Badge variant="default" className="bg-orange-500">
-            Awaiting Manual Verication
+          <Badge variant="default" className="bg-red-500">
+            Access Revoked
           </Badge>
         );
       }
 
-      if (verificationStatus === "manualVerified") {
+      if (verificationStatus === "pendingSheerIdVerification") {
         return (
           <Badge variant="default" className="bg-orange-500">
-            Awaiting SheerID Verification
+            Pending SheerID Verification
           </Badge>
         );
       }
@@ -156,28 +149,15 @@ export const columns: ColumnDef<AllUsersDataType[0]>[] = [
     header: "Actions",
     cell: ({ row }) => {
       const member = row.original;
+      const { id, superUser, manualVerified } = member;
 
       return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <Link
-              href={`members/${member.id}`}
-              target="blank"
-              rel="noopener noreferrer"
-            >
-              <DropdownMenuItem className="cursor-pointer">
-                View member
-              </DropdownMenuItem>
-            </Link>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <ActionsMenu
+          id={id}
+          superUser={superUser}
+          manualVerified={manualVerified}
+          name={member.name as string}
+        />
       );
     },
   },

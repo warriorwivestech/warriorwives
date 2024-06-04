@@ -134,7 +134,12 @@ function InterestsForm({ interests, revalidateData }: InterestsFormProps) {
   return (
     <AlertDialog open={modalOpen} onOpenChange={setModalOpen}>
       <AlertDialogTrigger asChild>
-        <Button variant="outline" className="mr-2" disabled={isMutating}>
+        <Button
+          variant="outline"
+          className="mr-2"
+          size="sm"
+          disabled={isMutating}
+        >
           Edit Interests
         </Button>
       </AlertDialogTrigger>

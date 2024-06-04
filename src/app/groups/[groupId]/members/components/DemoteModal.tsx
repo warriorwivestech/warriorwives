@@ -81,7 +81,12 @@ export default function DemoteModal({
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button variant="default" className="mr-2 w-24" disabled={disabled}>
+        <Button
+          variant="default"
+          className="mr-2 w-24"
+          disabled={disabled}
+          size="sm"
+        >
           {disabled ? "Demoting..." : "Demote"}
         </Button>
       </AlertDialogTrigger>

@@ -81,7 +81,12 @@ export default function PromoteModal({
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button variant="outline" className="mr-2 w-24" disabled={disabled}>
+        <Button
+          variant="outline"
+          className="mr-2 w-24"
+          disabled={disabled}
+          size="sm"
+        >
           {disabled ? "Promoting..." : "Promote"}
         </Button>
       </AlertDialogTrigger>

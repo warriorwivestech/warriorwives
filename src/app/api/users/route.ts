@@ -36,16 +36,13 @@ async function queryUsers() {
 type UnparsedUsers = Prisma.PromiseReturnType<typeof queryUsers>;
 
 function parseVerificationStatus(user: UnparsedUsers[0]) {
-  if (user.sheerIdVerified && user.manualVerified) {
+  if (user.manualVerified) {
     return "verified";
   }
   if (user.sheerIdVerified) {
-    return "sheerIdVerified";
+    return "manualVerificationRemoved";
   }
-  if (user.manualVerified) {
-    return "manualVerified";
-  }
-  return "unverified";
+  return "pendingSheerIdVerification";
 }
 
 function parseUsers(users: UnparsedUsers) {

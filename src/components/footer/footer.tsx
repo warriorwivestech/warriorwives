@@ -29,12 +29,16 @@ export default function Footer() {
             <div className="font-semibold text-sm">Warrior Wives</div>
             <a
               href="https://www.usawarriorwives.org/about_us"
+              target="_blank"
+              rel="noreferrer noopener"
               className="text-sm text-gray-600"
             >
               About Us
             </a>
             <a
               href="https://www.usawarriorwives.org/contact-us"
+              target="_blank"
+              rel="noreferrer noopener"
               className="text-sm text-gray-600"
             >
               Contact Us

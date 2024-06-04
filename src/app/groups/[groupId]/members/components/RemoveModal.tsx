@@ -77,7 +77,12 @@ export default function RemoveModal({
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button variant="destructive" className="mr-2 w-24" disabled={disabled}>
+        <Button
+          variant="destructive"
+          className="mr-2 w-24"
+          disabled={disabled}
+          size="sm"
+        >
           {disabled ? "Removing..." : "Remove"}
         </Button>
       </AlertDialogTrigger>

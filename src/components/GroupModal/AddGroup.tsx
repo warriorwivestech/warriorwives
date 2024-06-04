@@ -351,6 +351,7 @@ function _CreateGroupModal() {
         variant="outline"
         onClick={onOpen}
         disabled={interestsAreLoading || interestsError}
+        size="sm"
       >
         Create Group
       </Button>
