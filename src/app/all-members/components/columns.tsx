@@ -119,6 +119,10 @@ export const columns: ColumnDef<AllUsersDataType[0]>[] = [
     },
   },
   {
+    accessorKey: "sheerIdVerificationId",
+    header: "SheerID Verification ID",
+  },
+  {
     accessorKey: "sheerIdVerified",
     header: "SheerID Verified",
     cell: ({ row }) => {

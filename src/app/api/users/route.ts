@@ -16,6 +16,7 @@ async function queryUsers() {
       twitter: true,
       instagram: true,
       linkedin: true,
+      sheerIdVerificationId: true,
       sheerIdVerified: true,
       manualVerified: true,
       _count: {

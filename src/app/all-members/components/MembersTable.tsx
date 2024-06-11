@@ -36,6 +36,7 @@ function _MembersTable() {
     { key: "superUser", label: "Super Admin" },
     { key: "branch", label: "Branch of Service" },
     { key: "verificationStatus", label: "Verification Status" },
+    { key: "sheerIdVerificationId", label: "SheerID Verification ID" },
     { key: "sheerIdVerified", label: "SheerID Verified" },
     { key: "manualVerified", label: "Manual Verified" },
     { key: "facebook", label: "Facebook" },
