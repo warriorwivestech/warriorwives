@@ -25,7 +25,7 @@ export default async function SignUpPage() {
             Sign up for Warrior Wives
           </CardTitle>
           <CardDescription className="text-center">
-            Welcome! Please sign up using ID.me
+            Welcome! Please sign up using Google
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -35,8 +35,7 @@ export default async function SignUpPage() {
               await signIn("google");
             }}
           >
-            {/* TODO: UPDATE THIS TO ID.ME */}
-            <Button className="w-full">Sign up with ID.me</Button>
+            <Button className="w-full">Sign up with Google</Button>
           </form>
           <div className="mt-4 text-center text-sm">
             Already have an account?{" "}

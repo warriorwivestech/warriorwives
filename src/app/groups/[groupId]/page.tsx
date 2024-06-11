@@ -37,6 +37,7 @@ import GroupMembersData from "./components/GroupMembersData";
 import { IoDocuments } from "react-icons/io5";
 import { LuExternalLink } from "react-icons/lu";
 import Link from "next/link";
+import UserVerifiedRoute from "@/components/UserVerifiedRoute";
 
 function GroupData({
   group,
@@ -284,8 +285,10 @@ function _GroupPage({ params }: { params: { groupId: string } }) {
 
 export default function GroupPage({ params }: { params: { groupId: string } }) {
   return (
-    <SWRProvider>
-      <_GroupPage params={params} />
-    </SWRProvider>
+    <UserVerifiedRoute>
+      <SWRProvider>
+        <_GroupPage params={params} />
+      </SWRProvider>
+    </UserVerifiedRoute>
   );
 }

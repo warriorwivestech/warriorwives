@@ -8,6 +8,7 @@ import PurposeMissionCard from "@/components/Intro/PurposeMissionCard";
 import { TypographyH2 } from "@/components/ui/typography/h2";
 import SignInCard from "./sign-in/components/SignInCard";
 import { Button } from "@/components/ui/button";
+import UserVerifiedRoute from "@/components/UserVerifiedRoute";
 
 export default async function Home() {
   const session = await auth();
@@ -30,12 +31,14 @@ export default async function Home() {
   }
 
   return (
-    <Flex className="flex-col gap-10 mb-4">
-      <Intro />
-      <Divider />
-      <Search />
-      <Divider />
-      <Map />
-    </Flex>
+    <UserVerifiedRoute>
+      <Flex className="flex-col gap-10 mb-4">
+        <Intro />
+        <Divider />
+        <Search />
+        <Divider />
+        <Map />
+      </Flex>
+    </UserVerifiedRoute>
   );
 }

@@ -16,6 +16,7 @@ import useSWR from "swr";
 import NotFound from "@/app/not-found";
 import { PublicUserResponse } from "@/app/api/users/[userId]/public/route";
 import UserLoading from "./components/UserLoading";
+import UserVerifiedRoute from "@/components/UserVerifiedRoute";
 
 function FacebookIcon(
   props: JSX.IntrinsicAttributes & SVGProps<SVGSVGElement>
@@ -205,8 +206,10 @@ export default function UserProfilePage({
   params: { userId: string };
 }) {
   return (
-    <SWRProvider>
-      <_UserProfilePage params={params} />
-    </SWRProvider>
+    <UserVerifiedRoute>
+      <SWRProvider>
+        <_UserProfilePage params={params} />
+      </SWRProvider>
+    </UserVerifiedRoute>
   );
 }

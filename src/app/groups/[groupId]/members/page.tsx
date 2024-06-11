@@ -3,6 +3,7 @@ import { getUser } from "@/data/user";
 import MembersTable from "./components/MembersTable";
 import { checkIfUserIsGroupAdmin, getGroupName } from "@/data/groupMembers";
 import { TypographyH3 } from "@/components/ui/typography/h3";
+import UserVerifiedRoute from "@/components/UserVerifiedRoute";
 
 export default async function AllMembers({
   params,
@@ -28,13 +29,13 @@ export default async function AllMembers({
   const groupData = { id: parsedGroupId, name: groupName as string };
 
   return (
-    <>
+    <UserVerifiedRoute>
       <TypographyH3>All Members of {groupData.name}</TypographyH3>
       <MembersTable
         user={userData}
         userIsAdmin={userIsGroupAdmin}
         groupData={groupData}
       />
-    </>
+    </UserVerifiedRoute>
   );
 }

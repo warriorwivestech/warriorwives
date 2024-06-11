@@ -63,9 +63,11 @@ export default function NavBarClient({ user, signOut }: NavBarClientProps) {
     return <UnauthenticatedNavBar />;
   }
 
-  const allNavItems = user?.superUser
-    ? [...NAV_ITEMS, ...SUPER_USER_NAV_ITEMS]
-    : NAV_ITEMS;
+  const allNavItems = user?.manualVerified
+    ? user?.superUser
+      ? [...NAV_ITEMS, ...SUPER_USER_NAV_ITEMS]
+      : NAV_ITEMS
+    : [];
 
   return (
     <Box>

@@ -15,6 +15,7 @@ import { getInterestsRequestOptions } from "../api/interests/helper";
 import { UserDataType } from "../api/user/route";
 import LoadingProfileForm from "./components/LoadingProfileForm";
 import { TypographyH3 } from "@/components/ui/typography/h3";
+import UserVerifiedRoute from "@/components/UserVerifiedRoute";
 
 const sidebarNavItems = [
   {
@@ -100,8 +101,10 @@ function _ProfilePage() {
 
 export default function ProfilePage() {
   return (
-    <SWRProvider>
-      <_ProfilePage />
-    </SWRProvider>
+    <UserVerifiedRoute>
+      <SWRProvider>
+        <_ProfilePage />
+      </SWRProvider>
+    </UserVerifiedRoute>
   );
 }

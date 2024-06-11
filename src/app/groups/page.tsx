@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { TypographyH3 } from "@/components/ui/typography/h3";
 import { TypographyMuted } from "@/components/ui/typography/muted";
+import UserVerifiedRoute from "@/components/UserVerifiedRoute";
 
 export default async function GroupsPage() {
   const { data: groups, error } = await getJoinedGroups();
@@ -36,16 +37,18 @@ export default async function GroupsPage() {
   };
 
   return (
-    <div className="flex flex-col gap-12">
-      <div className="flex flex-col gap-6">
-        <TypographyH3>My Groups</TypographyH3>
-        <GroupsData />
+    <UserVerifiedRoute>
+      <div className="flex flex-col gap-12">
+        <div className="flex flex-col gap-6">
+          <TypographyH3>My Groups</TypographyH3>
+          <GroupsData />
+        </div>
+        <Divider />
+        <div className="flex flex-col gap-6">
+          <TypographyH3>Recommended Groups</TypographyH3>
+          <RecommendedGroups />
+        </div>
       </div>
-      <Divider />
-      <div className="flex flex-col gap-6">
-        <TypographyH3>Recommended Groups</TypographyH3>
-        <RecommendedGroups />
-      </div>
-    </div>
+    </UserVerifiedRoute>
   );
 }

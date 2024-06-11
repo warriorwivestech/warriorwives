@@ -28,8 +28,7 @@ export default function SignInCard() {
               await signIn("google");
             }}
           >
-            {/* TODO: UPDATE THIS TO ID.ME */}
-            <Button className="w-full">Sign in with ID.me</Button>
+            <Button className="w-full">Sign in with Google</Button>
           </form>
           <div className="mt-4 text-center text-sm">
             Don&apos;t have an account?{" "}

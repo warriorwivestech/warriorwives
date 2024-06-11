@@ -12,28 +12,29 @@ datasource db {
 }
 
 model User {
-  id              Int                  @id @default(autoincrement())
-  email           String?              @unique
-  name            String?
-  superUser       Boolean              @default(false)
-  branch          userArmyBranch       @default(ARMY)
-  emailVerified   DateTime?
-  image           String?
-  about           String?
-  facebook        String?
-  instagram       String?
-  twitter         String?
-  linkedin        String?
-  sheerIdVerified Boolean              @default(false)
-  manualVerified  Boolean              @default(false)
-  accounts        Account[]
-  sessions        Session[]
-  interests       InterestsOnUsers[]
-  groups          MembersOnGroups[]
-  eventsJoined    AttendeesOnEvents[]
-  eventsOrganized OrganizersOnEvents[]
-  createdAt       DateTime             @default(now())
-  updatedAt       DateTime             @updatedAt
+  id                    Int                  @id @default(autoincrement())
+  email                 String?              @unique
+  name                  String?
+  superUser             Boolean              @default(false)
+  branch                userArmyBranch       @default(ARMY)
+  emailVerified         DateTime?
+  image                 String?
+  about                 String?
+  facebook              String?
+  instagram             String?
+  twitter               String?
+  linkedin              String?
+  sheerIdVerified       Boolean              @default(false)
+  manualVerified        Boolean              @default(false)
+  sheerIdVerificationId String?
+  accounts              Account[]
+  sessions              Session[]
+  interests             InterestsOnUsers[]
+  groups                MembersOnGroups[]
+  eventsJoined          AttendeesOnEvents[]
+  eventsOrganized       OrganizersOnEvents[]
+  createdAt             DateTime             @default(now())
+  updatedAt             DateTime             @updatedAt
 }
 
 model Account {

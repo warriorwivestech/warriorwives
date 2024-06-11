@@ -9,6 +9,7 @@ import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import UserVerifiedRoute from "@/components/UserVerifiedRoute";
 
 function UsersLoading() {
   return (
@@ -117,10 +118,12 @@ function _ConnectPage() {
 
 export default function ConnectPage() {
   return (
-    <SWRProvider>
-      <TypographyH3>Members with Similar Interests</TypographyH3>
-      <_ConnectPage />
-    </SWRProvider>
+    <UserVerifiedRoute>
+      <SWRProvider>
+        <TypographyH3>Members with Similar Interests</TypographyH3>
+        <_ConnectPage />
+      </SWRProvider>
+    </UserVerifiedRoute>
   );
 }
 

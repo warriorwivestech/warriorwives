@@ -14,6 +14,7 @@ import { UserDataType } from "@/app/api/user/route";
 import { getUserRequestOptions } from "@/app/api/user/helper";
 import EventsLoading from "./loading";
 import Link from "next/link";
+import UserVerifiedRoute from "@/components/UserVerifiedRoute";
 
 interface EventDataProps {
   event: SingleEventDataType;
@@ -71,8 +72,10 @@ export default function EventPage({
   params: { groupId: string; eventId: string };
 }) {
   return (
-    <SWRProvider>
-      <_EventPage params={params} />
-    </SWRProvider>
+    <UserVerifiedRoute>
+      <SWRProvider>
+        <_EventPage params={params} />
+      </SWRProvider>
+    </UserVerifiedRoute>
   );
 }
