@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 
 export async function GET(request: Request) {
   const url = request.url;
-  const searchParams = new URLSearchParams(url);
+  const searchParams = new URL(url).searchParams;
   const userId = searchParams.get("userId");
   const verificationId = searchParams.get("verificationId");
 
@@ -21,6 +21,7 @@ export async function GET(request: Request) {
     }
   );
   const verificationData = await verificationResponse.json();
+  console.log("verificationData:", verificationData);
   const currentStep = verificationData.currentStep;
 
   const user = await prisma.user.findUnique({
