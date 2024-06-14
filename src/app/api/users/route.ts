@@ -19,6 +19,7 @@ async function queryUsers() {
       sheerIdVerificationId: true,
       sheerIdVerified: true,
       manualVerified: true,
+      createdAt: true,
       _count: {
         select: {
           interests: true,

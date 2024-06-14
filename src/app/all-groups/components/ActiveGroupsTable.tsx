@@ -54,7 +54,7 @@ export default function ActiveGroupsTable({ groups }: ActiveGroupsTableProps) {
               <TableCell>{group.passwordEnabled ? "✅" : "❌"}</TableCell>
               <TableCell>
                 <Link href={`/groups/${group.id}`} className="mr-2">
-                  <Button>View</Button>
+                  <Button size="sm">View</Button>
                 </Link>
                 <ArchiveGroupModal group={group} revalidateData={mutate} />
               </TableCell>

@@ -68,7 +68,12 @@ export default function ArchiveGroupModal({
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button variant="destructive" className="mr-2 w-20" disabled={disabled}>
+        <Button
+          variant="destructive"
+          className="mr-2 w-20"
+          disabled={disabled}
+          size="sm"
+        >
           {disabled ? "Archiving" : "Archive"}
         </Button>
       </AlertDialogTrigger>

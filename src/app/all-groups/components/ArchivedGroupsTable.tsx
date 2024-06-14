@@ -72,7 +72,7 @@ export default function ArchivedGroupsTable({
               <TableCell>{parsedArchivedAt}</TableCell>
               <TableCell>
                 <Link href={`/groups/${group.id}`} className="mr-2">
-                  <Button>View</Button>
+                  <Button size="sm">View</Button>
                 </Link>
                 <ActivateGroupModal
                   group={group}

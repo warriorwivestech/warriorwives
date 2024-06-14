@@ -68,7 +68,7 @@ export const columns: ColumnDef<AllUsersDataType[0]>[] = [
   },
   {
     accessorKey: "branch",
-    header: "Branch",
+    header: "Branch of Service",
     cell: ({ row }) => {
       const branch = row.getValue("branch");
 
@@ -146,6 +146,27 @@ export const columns: ColumnDef<AllUsersDataType[0]>[] = [
           {manualVerified ? "Yes" : "No"}
         </Badge>
       );
+    },
+  },
+  {
+    accessorKey: "createdAt",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Joined On
+          <ArrowUpDown className="ml-2 h-3 w-3" />
+        </Button>
+      );
+    },
+    cell: ({ row }) => {
+      const createdAt = row.getValue("createdAt");
+
+      // date with time
+      // @ts-ignore
+      return new Date(createdAt).toLocaleString("en-US");
     },
   },
   {

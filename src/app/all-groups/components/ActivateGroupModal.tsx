@@ -68,7 +68,12 @@ export default function ActivateGroupModal({
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button variant="outline" className="mr-2 w-20" disabled={disabled}>
+        <Button
+          variant="outline"
+          className="mr-2 w-20"
+          disabled={disabled}
+          size="sm"
+        >
           {disabled ? "Activating" : "Activate"}
         </Button>
       </AlertDialogTrigger>
