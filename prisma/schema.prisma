@@ -111,7 +111,7 @@ model Event {
   online          Boolean              @default(false)
   startDateTime   DateTime             @default(now())
   endDateTime     DateTime
-  group           Group                @relation(fields: [groupId], references: [id])
+  group           Group                @relation(fields: [groupId], references: [id], onDelete: Cascade)
   groupId         Int
   sendEmailStatus sendEmailStatus      @default(NOT_QUEUED)
   sendUpdateEmail Boolean              @default(false)
@@ -126,7 +126,7 @@ model Event {
 }
 
 model InterestsOnUsers {
-  user       User     @relation(fields: [userId], references: [id])
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId     Int
   interest   Interest @relation(fields: [interestId], references: [id], onDelete: Cascade)
   interestId Int
@@ -137,7 +137,7 @@ model InterestsOnUsers {
 }
 
 model TagsOnGroups {
-  group      Group    @relation(fields: [groupId], references: [id])
+  group      Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
   groupId    Int
   interest   Interest @relation(fields: [interestId], references: [id], onDelete: Cascade)
   interestId Int
@@ -148,9 +148,9 @@ model TagsOnGroups {
 }
 
 model MembersOnGroups {
-  group     Group    @relation(fields: [groupId], references: [id])
+  group     Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
   groupId   Int
-  user      User     @relation(fields: [userId], references: [id])
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    Int
   admin     Boolean  @default(false)
   createdAt DateTime @default(now())
@@ -162,7 +162,7 @@ model MembersOnGroups {
 model AttendeesOnEvents {
   event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
   eventId   Int
-  user      User     @relation(fields: [userId], references: [id])
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -173,7 +173,7 @@ model AttendeesOnEvents {
 model OrganizersOnEvents {
   event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
   eventId   Int
-  user      User     @relation(fields: [userId], references: [id])
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
