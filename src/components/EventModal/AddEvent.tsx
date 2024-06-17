@@ -183,6 +183,7 @@ function _CreateEventModal({
       [inputType]: null,
     }));
   };
+  const bucketName = process.env.NEXT_PUBLIC_BUCKET_NAME as string;
 
   // single image change
   const handleSingleChange = async (file: File) => {
@@ -191,7 +192,7 @@ function _CreateEventModal({
       // generate random filepath using a hash
       const filePath = `event-banners/${Math.floor(Math.random() * 100000000)}-${uuidv4()}`;
       const { data, error } = await supabase.storage
-        .from("warrior-wives-test")
+        .from(bucketName)
         .upload(filePath, file);
 
       if (error) {
@@ -203,7 +204,7 @@ function _CreateEventModal({
       } else {
         handleInputChange(
           "displayPhoto",
-          `${process.env.NEXT_PUBLIC_SUPABASE_BLOB_URL}/warrior-wives-test/${data.path}`
+          `${process.env.NEXT_PUBLIC_SUPABASE_BLOB_URL}/${bucketName}/${data.path}`
         );
       }
       setImageIsUploading(false);
@@ -218,7 +219,7 @@ function _CreateEventModal({
       const fileName = input.displayPhoto.split("/event-banners/")[1];
       const key = `event-banners/${fileName}`;
       const { data, error } = await supabase.storage
-        .from("warrior-wives-test")
+        .from(bucketName)
         .remove([key]);
 
       if (error) {
@@ -250,7 +251,7 @@ function _CreateEventModal({
       newFilesWithUrls.map(async (file) => {
         const filePath = `event-photos/${Math.floor(Math.random() * 100000000)}-${uuidv4()}`;
         const { data, error } = await supabase.storage
-          .from("warrior-wives-test")
+          .from(bucketName)
           .upload(filePath, file.file);
 
         if (error) {
@@ -261,7 +262,7 @@ function _CreateEventModal({
           }));
         } else {
           uploadedFilesToDisplay.push(
-            `${process.env.NEXT_PUBLIC_SUPABASE_BLOB_URL}/warrior-wives-test/${data.path}`
+            `${process.env.NEXT_PUBLIC_SUPABASE_BLOB_URL}/${bucketName}/${data.path}`
           );
         }
       })
@@ -278,7 +279,7 @@ function _CreateEventModal({
     const fileName = photoToDelete.split("/event-photos/")[1];
     const key = `event-photos/${fileName}`;
     const { data, error } = await supabase.storage
-      .from("warrior-wives-test")
+      .from(bucketName)
       .remove([key]);
 
     if (error) {

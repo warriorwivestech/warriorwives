@@ -287,11 +287,12 @@ export async function PUT(
     },
   });
 
+  const bucketName = process.env.NEXT_PUBLIC_BUCKET_NAME as string;
   if (displayPhotoChanged && oldDisplayPhoto) {
     const fileName = oldDisplayPhoto.split("/event-banners/")[1];
     const key = `group-banners/${fileName}`;
     const { data, error } = await supabase.storage
-      .from("warrior-wives-test")
+      .from(bucketName)
       .remove([key]);
   }
 
@@ -301,7 +302,7 @@ export async function PUT(
       return `event-photos/${fileName}`;
     });
     const { data, error } = await supabase.storage
-      .from("warrior-wives-test")
+      .from(bucketName)
       .remove(keys);
   }
 
@@ -384,12 +385,13 @@ export async function DELETE(
   });
   const { displayPhoto, photos, attendees, organizers } = event;
 
+  const bucketName = process.env.NEXT_PUBLIC_BUCKET_NAME as string;
   try {
     if (displayPhoto) {
       const fileName = displayPhoto.split("/event-banners/")[1];
       const key = `event-banners/${fileName}`;
       const { data, error } = await supabase.storage
-        .from("warrior-wives-test")
+        .from(bucketName)
         .remove([key]);
     }
 
@@ -399,7 +401,7 @@ export async function DELETE(
         return `event-photos/${fileName}`;
       });
       const { data, error } = await supabase.storage
-        .from("warrior-wives-test")
+        .from(bucketName)
         .remove(keys);
     }
   } catch (error) {

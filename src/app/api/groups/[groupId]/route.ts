@@ -196,7 +196,7 @@ export async function PUT(
     const fileName = oldDisplayPhoto.split("/group-banners/")[1];
     const key = `group-banners/${fileName}`;
     const { data, error } = await supabase.storage
-      .from("warrior-wives-test")
+      .from(process.env.NEXT_PUBLIC_BUCKET_NAME as string)
       .remove([key]);
   }
 

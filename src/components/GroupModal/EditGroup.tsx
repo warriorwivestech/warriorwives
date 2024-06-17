@@ -280,13 +280,14 @@ function _EditGroupModal({
     setValidationErrors([]);
   }, [isOpen]);
 
+  const bucketName = process.env.NEXT_PUBLIC_BUCKET_NAME as string;
   const handleSingleChange = async (file: File) => {
     if (file) {
       setImageIsUploading(true);
       // generate random filepath using a hash
       const filePath = `group-banners/${Math.floor(Math.random() * 100000000)}-${uuidv4()}`;
       const { data, error } = await supabase.storage
-        .from("warrior-wives-test")
+        .from(bucketName)
         .upload(filePath, file);
 
       if (error) {
@@ -298,7 +299,7 @@ function _EditGroupModal({
       } else {
         handleInputChange(
           "displayPhoto",
-          `${process.env.NEXT_PUBLIC_SUPABASE_BLOB_URL}/warrior-wives-test/${data.path}`
+          `${process.env.NEXT_PUBLIC_SUPABASE_BLOB_URL}/${bucketName}/${data.path}`
         );
       }
       setImageIsUploading(false);
@@ -317,7 +318,7 @@ function _EditGroupModal({
         const fileName = input.displayPhoto.split("/group-banners/")[1];
         const key = `group-banners/${fileName}`;
         const { data, error } = await supabase.storage
-          .from("warrior-wives-test")
+          .from(bucketName)
           .remove([key]);
 
         if (error) {
