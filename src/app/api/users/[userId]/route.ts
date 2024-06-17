@@ -9,6 +9,14 @@ function queryUser(email: string) {
   });
 }
 
+function querySelectedUser(userId: string) {
+  return prisma.user.findUnique({
+    where: {
+      id: Number(userId),
+    },
+  });
+}
+
 export async function PUT(
   request: Request,
   { params }: { params: { userId: string } }
@@ -30,6 +38,11 @@ export async function PUT(
     throw new Error("Unauthorized");
   }
 
+  const selectedUser = await querySelectedUser(params.userId);
+  if (!selectedUser) {
+    throw new Error("User not found");
+  }
+
   const action = body.action;
   if (!["verify", "unverify", "promote", "demote"].includes(action)) {
     throw new Error("Invalid action");
@@ -40,13 +53,13 @@ export async function PUT(
       ? true
       : action === "unverify"
         ? false
-        : userData.manualVerified;
+        : selectedUser.manualVerified;
   const newSuperUserStatus =
     action === "promote"
       ? true
       : action === "demote"
         ? false
-        : userData.superUser;
+        : selectedUser.superUser;
 
   const updatedUser = await prisma.user.update({
     where: {
