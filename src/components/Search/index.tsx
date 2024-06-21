@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { Badge, Box, Flex, HStack, Input, Spinner } from "@chakra-ui/react";
+import { Badge, Box, Flex, HStack, Spinner } from "@chakra-ui/react";
 import { MdOutlineSearch } from "react-icons/md";
 import IconText from "../common/icontext";
 import { GroupData } from "@/app/api/groups/[groupId]/types";
@@ -10,6 +10,7 @@ import Tags from "../common/tags";
 import { SWRProvider, fetcher } from "@/providers/swrProvider";
 import useSWR, { preload } from "swr";
 import { getSingleGroupRequestOptions } from "@/app/api/groups/helper";
+import { Input } from "../ui/input";
 
 function _Search() {
   const [searchInput, setSearchInput] = useState("");
@@ -69,7 +70,7 @@ function _Search() {
   }, []);
 
   const SearchResults = () => {
-    const boxClasses = `w-full bg-white rounded-b-lg border absolute top-20 max-h-[15rem] overflow-y-scroll z-10`;
+    const boxClasses = `w-full bg-white rounded-lg border absolute top-20 max-h-[15rem] overflow-y-scroll z-10`;
     const searchIsLoading = debounceLoading || groupsAreLoading;
     const loadingBoxClasses = searchIsLoading
       ? "min-h-[5rem] flex justify-center items-center"
@@ -148,9 +149,7 @@ function _Search() {
       </IconText>
       <div>
         <Input
-          className={`w-full mt-4 bg-white !z-20 ${
-            showDropdown && !!searchInput ? "rounded-b-none border-b-0" : ""
-          } text-sm`}
+          className="w-full mt-4 bg-white !z-20"
           placeholder="Search by name, tags, or location"
           onChange={handleInputChange}
           value={searchInput}
