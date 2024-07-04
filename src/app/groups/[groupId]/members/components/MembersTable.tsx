@@ -122,7 +122,7 @@ function _MembersTables({ user, userIsAdmin, groupData }: MembersTableProps) {
               <TableRow key={member.id}>
                 <TableCell>{member.name}</TableCell>
                 <TableCell>{member.email}</TableCell>
-                <TableCell>{member.admin ? "Admin" : "Member"}</TableCell>
+                <TableCell>{member.admin ? "Leader" : "Member"}</TableCell>
                 <TableCell>{member.branch}</TableCell>
                 <TableCell>{parseDate(member.createdAt)}</TableCell>
                 <TableCell>
