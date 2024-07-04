@@ -343,9 +343,10 @@ export default function ProfileForm({
               )}
             />
             <FormDescription>
-              Add your social media handles to connect with other members.
-              Leaving a field blank for a social media platform will hide the
-              respective social media link from your profile.
+              Add your social media usernames to connect with other members.
+              Only include the username, not the entire URL. Leaving a field
+              blank for a social media platform will hide the respective social
+              media link from your profile.
             </FormDescription>
           </FormItem>
         </div>
