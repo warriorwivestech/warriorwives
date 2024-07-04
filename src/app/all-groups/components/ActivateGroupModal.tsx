@@ -49,8 +49,8 @@ export default function ActivateGroupModal({
       onSuccess: () => {
         revalidateData();
         toast({
-          title: `Group Activated`,
-          description: `${groupName} group has been successfully activated.`,
+          title: `Troop Activated`,
+          description: `${groupName} troop has been successfully activated.`,
         });
       },
       onError: (error) => {
@@ -81,8 +81,8 @@ export default function ActivateGroupModal({
         <AlertDialogHeader>
           <AlertDialogTitle>Activate {groupName}?</AlertDialogTitle>
           <AlertDialogDescription>
-            This will activate the {groupName} group and existing members will
-            be able to access the group.
+            This will activate the {groupName} troop and existing members will
+            be able to access the troop.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

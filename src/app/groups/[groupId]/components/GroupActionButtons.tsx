@@ -60,8 +60,8 @@ function JoinGroupButton({
             getGroupEventsRequestOptions(`${groupId}`),
           ]);
           toast({
-            title: `Joined Group`,
-            description: `You have successfully joined this group.`,
+            title: `Troop Joined`,
+            description: `You have successfully joined this troop.`,
           });
         }
       },
@@ -100,7 +100,7 @@ function JoinGroupButton({
       disabled={isMutating || disabled}
       className="w-full"
     >
-      {isMutating ? <Spinner size="sm" /> : "Join Group"}
+      {isMutating ? <Spinner size="sm" /> : "Join Troop"}
     </Button>
   );
 }

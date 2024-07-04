@@ -94,7 +94,7 @@ export default function DemoteModal({
         <AlertDialogHeader>
           <AlertDialogTitle>Demote {memberName}?</AlertDialogTitle>
           <AlertDialogDescription>
-            This will remove all admin privileges from {memberName}.
+            This will remove all leader privileges from {memberName}.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

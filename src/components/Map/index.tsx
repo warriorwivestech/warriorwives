@@ -276,25 +276,25 @@ const _Map = () => {
     if (error)
       return (
         <p className="text-sm font-normal text-gray-700 mt-4">
-          Uh oh! Error loading groups
+          Uh oh! Error loading troops
         </p>
       );
     if (!groups || groups.length === 0)
       return (
         <p className="text-sm font-normal text-gray-700 mt-4">
-          No groups found in {selectedCounty && `${selectedCounty}, `}
+          No troops found in {selectedCounty && `${selectedCounty}, `}
           {selectedState}.
         </p>
       );
 
     function getGroupsText() {
       if (selectedNational) {
-        return "National Groups";
+        return "National Troops";
       }
       if (selectedInternational) {
-        return "International Groups";
+        return "International Troops";
       }
-      return `Groups in ${selectedCounty && `${selectedCounty}, `}${selectedState}`;
+      return `Troops in ${selectedCounty && `${selectedCounty}, `}${selectedState}`;
     }
 
     return (
@@ -313,7 +313,7 @@ const _Map = () => {
     <Flex className="flex-col gap-2">
       <Flex className="items-end justify-between">
         <IconText icon={FaMapMarkedAlt} textClassName="text-heading5">
-          Search groups by location
+          Search troops by location
         </IconText>
         <Checkbox
           isChecked={byCounty}
@@ -336,7 +336,7 @@ const _Map = () => {
         <div className="flex flex-row gap-2 justify-between align-middle items-center">
           <p className="text-sm font-normal text-gray-500 text-center">
             Click on a state/county or National/International status to filter
-            groups by location.
+            troops by location.
           </p>
           <div className="flex flex-row gap-2">
             <Toggle

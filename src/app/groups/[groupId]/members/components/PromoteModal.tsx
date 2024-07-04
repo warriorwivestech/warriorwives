@@ -63,7 +63,7 @@ export default function PromoteModal({
         revalidateData();
         toast({
           title: `Member Promoted`,
-          description: `${memberName} has been successfully promoted to group admin!`,
+          description: `${memberName} has been successfully promoted to troop leader!`,
         });
       },
       onError: (error) => {
@@ -94,7 +94,7 @@ export default function PromoteModal({
         <AlertDialogHeader>
           <AlertDialogTitle>Promote {memberName}?</AlertDialogTitle>
           <AlertDialogDescription>
-            This will grant all admin privileges to {memberName}.
+            This will grant all leader privileges to {memberName}.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

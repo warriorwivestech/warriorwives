@@ -66,7 +66,7 @@ const updateEventFormSchema = z.object({
       message: "Name must be at most 100 characters.",
     }),
   description: z.string().min(1, {
-    message: "A description of the group is required",
+    message: "A description of the event is required",
   }),
   online: z.boolean(),
   meetingLink: z
@@ -507,7 +507,7 @@ function _EditEventModal({
 
             <FormControl isInvalid={validationErrors["description"]}>
               <FormLabel fontSize="sm" textColor="gray.600">
-                Group Description
+                Event Description
               </FormLabel>
               <Textarea
                 fontSize={"sm"}

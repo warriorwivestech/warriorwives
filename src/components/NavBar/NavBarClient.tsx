@@ -22,7 +22,7 @@ import UserAvatar from "./UserAvatar";
 
 const NAV_ITEMS = [
   {
-    label: "My Groups",
+    label: "My Troops",
     href: "/groups",
   },
   {
@@ -37,7 +37,7 @@ const NAV_ITEMS = [
 
 const SUPER_USER_NAV_ITEMS = [
   {
-    label: "All Groups",
+    label: "All Troops",
     href: "/all-groups",
   },
   {

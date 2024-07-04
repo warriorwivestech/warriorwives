@@ -6,10 +6,10 @@ export default function ExploreEvents() {
   return (
     <div className="mt-8">
       <TypographyMuted>
-        No events joined. Explore events from your groups.
+        No events joined. Explore events from your troops.
       </TypographyMuted>
       <Link href="/groups">
-        <Button className="mt-4">View Groups</Button>
+        <Button className="mt-4">View Troops</Button>
       </Link>
     </div>
   );

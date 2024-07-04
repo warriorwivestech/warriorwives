@@ -26,7 +26,7 @@ export default function ActiveGroupsTable({ groups }: ActiveGroupsTableProps) {
 
   return (
     <Table>
-      <TableCaption>All active groups.</TableCaption>
+      <TableCaption>All active troops.</TableCaption>
       <TableHeader>
         <TableRow>
           <TableHead>ID</TableHead>

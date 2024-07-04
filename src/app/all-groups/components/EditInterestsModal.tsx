@@ -210,7 +210,7 @@ function InterestsForm({ interests, revalidateData }: InterestsFormProps) {
                   </Button>
                 </div>
                 <FormDescription className="text-orange-500 mt-2">
-                  Warning: Editing an interest will update it in all groups and
+                  Warning: Editing an interest will update it in all troops and
                   users. If you want to edit an interest to become a completely
                   new unrelated interest, you should delete the old interest and
                   create a new one.
@@ -219,7 +219,7 @@ function InterestsForm({ interests, revalidateData }: InterestsFormProps) {
                   <FormDescription className="text-red-500 mt-2">
                     {deletedInterestsWarning}
                     <br />
-                    Deleting an interest will remove it from all groups and
+                    Deleting an interest will remove it from all troops and
                     users.
                   </FormDescription>
                 )}

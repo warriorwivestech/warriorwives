@@ -44,7 +44,7 @@ function _MembersTable() {
     { key: "twitter", label: "Twitter" },
     { key: "linkedin", label: "LinkedIn" },
     { key: "interestsCount", label: "Interests Count" },
-    { key: "groupsCount", label: "Groups Joined" },
+    { key: "groupsCount", label: "Troops Joined" },
     { key: "eventsJoinedCount", label: "Events Joined" },
     { key: "eventsOrganizedCount", label: "Events Organized" },
   ];

@@ -26,7 +26,7 @@ export default function Carousel({ groups }: { groups: GroupTypes[] }) {
     <Flex className="flex-col gap-2">
       <p className="flex gap-2 items-center text-heading5">
         <StarIcon boxSize={3} />
-        Recommended Groups
+        Recommended Troops
       </p>
       <Card overflow={"hidden"} ref={emblaRef}>
         <Flex h={"30rem"}>
@@ -60,7 +60,7 @@ export default function Carousel({ groups }: { groups: GroupTypes[] }) {
                 <Text className="text-white mt-4">{`${group.description}`}</Text>
                 <Box className="mt-4" as={"a"} href={`/groups/${group.id}`}>
                   <Button className="mt-4 bg-slate-200" size="sm">
-                    View Group
+                    View Troop
                   </Button>
                 </Box>
               </Box>

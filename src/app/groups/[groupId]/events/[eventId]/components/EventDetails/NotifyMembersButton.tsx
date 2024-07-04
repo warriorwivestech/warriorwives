@@ -71,7 +71,7 @@ export default function NotifyMembersButton({
           setNotifyMembersModalOpen(false);
           toast({
             title: `Notifications Queued`,
-            description: `All members of this group will be notified of this event soon.`,
+            description: `All members of this troop will be notified of this event soon.`,
           });
         }
       },

@@ -195,7 +195,7 @@ function GroupData({
                           rel="noopener noreferrer"
                           className="hover:underline flex flex-row gap-1 items-center"
                         >
-                          Group resources {<LuExternalLink />}
+                          Troop resources {<LuExternalLink />}
                         </Link>
                       </IconText>
                     )}
@@ -271,7 +271,7 @@ export default function GroupPageClient({
   ]);
 
   if (isLoading) return <GroupLoading />;
-  if (error) return <div>Error loading group</div>;
+  if (error) return <div>Error loading troop</div>;
   if (!group) return notFound();
 
   return (

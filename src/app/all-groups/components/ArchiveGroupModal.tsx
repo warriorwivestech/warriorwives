@@ -49,8 +49,8 @@ export default function ArchiveGroupModal({
       onSuccess: () => {
         revalidateData();
         toast({
-          title: `Group Archived`,
-          description: `${groupName} group has been successfully archived.`,
+          title: `Troop Archived`,
+          description: `${groupName} troop has been successfully archived.`,
         });
       },
       onError: (error) => {
@@ -81,7 +81,7 @@ export default function ArchiveGroupModal({
         <AlertDialogHeader>
           <AlertDialogTitle>Archive {groupName}?</AlertDialogTitle>
           <AlertDialogDescription>
-            This will archive the {groupName} group and members will no longer
+            This will archive the {groupName} troop and members will no longer
             be able to access it.
           </AlertDialogDescription>
         </AlertDialogHeader>

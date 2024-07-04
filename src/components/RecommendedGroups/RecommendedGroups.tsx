@@ -20,13 +20,13 @@ function _RecommendedGroups() {
   if (error)
     return (
       <div className="text-gray-600 text-sm">
-        Error loading recommended groups
+        Error loading recommended troops
       </div>
     );
   if (!groups || groups.length === 0)
     return (
       <div className="text-sm text-gray-600">
-        You have joined all available groups based on your interests!
+        You have joined all available troops based on your interests!
       </div>
     );
 

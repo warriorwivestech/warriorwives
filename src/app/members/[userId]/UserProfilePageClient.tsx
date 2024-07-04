@@ -154,7 +154,7 @@ export default function UserProfilePageClient({
       </div>
       <div className="w-full xl:pt-8 flex flex-col items-center">
         <h2 className="mb-4 text-2xl font-bold">
-          Groups Joined ({user.groups.length})
+          Troops Joined ({user.groups.length})
         </h2>
         {user.groups.length > 0 ? (
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-2">
@@ -194,7 +194,7 @@ export default function UserProfilePageClient({
           </div>
         ) : (
           <div className="text-sm text-gray-600">
-            {name} has not joined any groups yet.
+            {name} has not joined any troops yet.
           </div>
         )}
       </div>

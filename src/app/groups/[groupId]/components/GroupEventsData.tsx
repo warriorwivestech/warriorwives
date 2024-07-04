@@ -26,7 +26,7 @@ export default function GroupEventsData({
   if (eventsData && eventsData.error) {
     return (
       <div className="text-sm text-gray-600">
-        Join this group to view events!
+        Join this troop to view events!
       </div>
     );
   }
@@ -52,7 +52,7 @@ export default function GroupEventsData({
             ))
           ) : (
             <div className="text-sm text-gray-600 mt-2">
-              No upcoming events found for this group.
+              No upcoming events found for this troop.
             </div>
           )}
         </Flex>
@@ -65,7 +65,7 @@ export default function GroupEventsData({
             ))
           ) : (
             <div className="text-sm text-gray-600 mt-2">
-              No past events found for this group.
+              No past events found for this troop.
             </div>
           )}
         </Flex>

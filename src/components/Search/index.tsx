@@ -87,7 +87,7 @@ function _Search() {
       return (
         <Box className={boxClasses}>
           <Box className="w-full px-3 py-2 font-semibold text-sm">
-            Error loading groups.
+            Error loading troops.
           </Box>
         </Box>
       );
@@ -95,7 +95,7 @@ function _Search() {
       return (
         <Box className={boxClasses}>
           <Box className="w-full px-3 py-2 font-semibold text-sm">
-            No groups found.
+            No troops found.
           </Box>
         </Box>
       );
@@ -145,7 +145,7 @@ function _Search() {
   return (
     <Flex gap={0} className="flex-col relative">
       <IconText icon={MdOutlineSearch} textClassName="text-heading5">
-        Search groups by text
+        Search troops by text
       </IconText>
       <div>
         <Input

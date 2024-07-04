@@ -81,14 +81,14 @@ export default function GroupPasswordModal({
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogTrigger asChild>
         <Button className="w-full" disabled={disabled}>
-          Join Group
+          Join Troop
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             <AlertDialogHeader>
-              <AlertDialogTitle>Enter Group Password</AlertDialogTitle>
+              <AlertDialogTitle>Enter Troop Password</AlertDialogTitle>
               <AlertDialogDescription>
                 <FormField
                   control={form.control}

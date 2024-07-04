@@ -30,7 +30,7 @@ export default function ArchivedGroupsTable({
 
   return (
     <Table>
-      <TableCaption>All archived groups.</TableCaption>
+      <TableCaption>All archived troops.</TableCaption>
       <TableHeader>
         <TableRow>
           <TableHead>ID</TableHead>

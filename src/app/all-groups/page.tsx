@@ -16,7 +16,7 @@ export default async function AllGroups() {
 
   return (
     <>
-      <TypographyH3>All Groups</TypographyH3>
+      <TypographyH3>All Troops</TypographyH3>
       <GroupsTables />
     </>
   );

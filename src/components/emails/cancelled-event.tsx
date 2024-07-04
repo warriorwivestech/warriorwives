@@ -48,7 +48,7 @@ export const CancelledEventEmail = ({
         </Text>
         <Section style={btnContainer}>
           <Button style={button} href={groupUrl}>
-            View Group
+            View Troop
           </Button>
         </Section>
         <Hr style={hr} />

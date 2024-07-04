@@ -362,7 +362,7 @@ export default function ProfileForm({
                   </FormLabel>
                   <FormDescription className={cn(index !== 0 && "sr-only")}>
                     Select any of these available interests. More interests will
-                    be added when more groups are created.
+                    be added when more troops are created.
                   </FormDescription>
                   <Popover>
                     <PopoverTrigger asChild>

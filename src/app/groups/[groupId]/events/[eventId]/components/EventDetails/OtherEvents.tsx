@@ -25,7 +25,7 @@ function _OtherEvents({ groupId, eventId }: OtherEventsProps) {
   if (otherEvents && otherEvents.error) {
     return (
       <div className="text-sm text-gray-600">
-        Join this group to view events!
+        Join this troop to view events!
       </div>
     );
   }
@@ -36,7 +36,7 @@ function _OtherEvents({ groupId, eventId }: OtherEventsProps) {
   if (!upcomingEvents || upcomingEvents.length === 0)
     return (
       <div className="text-gray-600 text-sm">
-        No other upcoming events from this group
+        No other upcoming events from this troop
       </div>
     );
 

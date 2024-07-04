@@ -59,7 +59,7 @@ export default function RemoveModal({
         revalidateData();
         toast({
           title: `Member Removed`,
-          description: `${memberName} has been removed from the group.`,
+          description: `${memberName} has been removed from the troop.`,
         });
       },
       onError: (error) => {
@@ -90,7 +90,7 @@ export default function RemoveModal({
         <AlertDialogHeader>
           <AlertDialogTitle>Remove {memberName}?</AlertDialogTitle>
           <AlertDialogDescription>
-            {`This action will remove ${memberName} from the group. They will be permanently removed until they re-join the group.`}
+            {`This action will remove ${memberName} from the troop. They will be permanently removed until they re-join the troop.`}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

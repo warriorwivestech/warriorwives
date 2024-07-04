@@ -62,7 +62,7 @@ export default function NotifyMembersModal({
         <AlertDialogHeader>
           <AlertDialogTitle>Notify Members</AlertDialogTitle>
           <AlertDialogDescription>
-            An email will be sent to all members of this group to notify them of
+            An email will be sent to all members of this troop to notify them of
             this event.
           </AlertDialogDescription>
         </AlertDialogHeader>

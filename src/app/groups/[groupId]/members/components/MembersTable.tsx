@@ -56,7 +56,7 @@ function _MembersTables({ user, userIsAdmin, groupData }: MembersTableProps) {
       id: member.id,
       name: member.name,
       email: member.email,
-      role: member.admin ? "Admin" : "Member",
+      role: member.admin ? "Leader" : "Member",
       branch: member.branch,
       joinedOn: parseDate(member.createdAt),
       facebook: member.facebook,

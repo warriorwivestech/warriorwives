@@ -53,13 +53,13 @@ const updateGroupFormSchema = z.object({
   name: z
     .string()
     .min(1, {
-      message: "Group name is required",
+      message: "Troop name is required",
     })
     .max(100, {
       message: "Name must be at most 100 characters.",
     }),
   description: z.string().min(1, {
-    message: "A description of the group is required",
+    message: "A description of the troop is required",
   }),
   online: z.boolean(),
   state: z.string().min(1, {
@@ -200,8 +200,8 @@ function _EditGroupModal({
     {
       onSuccess: (data) => {
         toast({
-          title: `Group Updated!`,
-          description: `${data.name} group has been successfully updated!`,
+          title: `Troop Updated!`,
+          description: `${data.name} troop has been successfully updated!`,
         });
         revalidateData();
         onClose();
@@ -373,12 +373,12 @@ function _EditGroupModal({
         disabled={interestsAreLoading || interestsError}
         className="w-full"
       >
-        Edit Group
+        Edit Troop
       </Button>
       <Modal closeOnOverlayClick={false} isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent minW="700px">
-          <ModalHeader fontSize="lg">Edit Group</ModalHeader>
+          <ModalHeader fontSize="lg">Edit Troop</ModalHeader>
           <ModalCloseButton />
           <ModalBody pb={6} gap={6} display={"flex"} flexDirection={"column"}>
             <FormControl isInvalid={validationErrors["displayImage"]}>
@@ -453,14 +453,14 @@ function _EditGroupModal({
 
             <FormControl isInvalid={validationErrors["name"]}>
               <FormLabel fontSize="sm" textColor="gray.600">
-                Group Name
+                Troop Name
               </FormLabel>
               <Input
                 fontSize={"sm"}
                 paddingX={3}
                 paddingY={1}
                 type="name"
-                placeholder="Enter group name"
+                placeholder="Enter troop name"
                 value={name}
                 onChange={(e) => handleInputChange("name", e.target.value)}
               />
@@ -471,7 +471,7 @@ function _EditGroupModal({
 
             <FormControl isInvalid={validationErrors["description"]}>
               <FormLabel fontSize="sm" textColor="gray.600">
-                Group Description
+                Troop Description
               </FormLabel>
               <Textarea
                 fontSize={"sm"}
@@ -479,7 +479,7 @@ function _EditGroupModal({
                 paddingY={3}
                 height={200}
                 resize={"none"}
-                placeholder="Provide a description of the group"
+                placeholder="Provide a description of the troop"
                 value={description}
                 onChange={(e) =>
                   handleInputChange("description", e.target.value)
@@ -494,7 +494,7 @@ function _EditGroupModal({
 
             <FormControl as="fieldset">
               <FormLabel fontSize="sm" textColor="gray.600">
-                Is this an online group?
+                Is this an online troop?
               </FormLabel>
               <RadioGroup
                 defaultValue="No"
@@ -655,12 +655,12 @@ function _EditGroupModal({
                 </FormErrorMessage>
               )}
               <FormHelperText className="text-[13px]">
-                Provide a link to resources for this group. Leave blank if none.
+                Provide a link to resources for this troop. Leave blank if none.
               </FormHelperText>
             </FormControl>
             <FormControl isInvalid={validationErrors["password"]}>
               <FormLabel fontSize="sm" textColor="gray.600">
-                Lock group with a password? (Optional)
+                Lock troop with a password? (Optional)
               </FormLabel>
               <InputGroup size="md">
                 <Input
@@ -690,7 +690,7 @@ function _EditGroupModal({
               </InputGroup>
               <FormHelperText fontSize={"0.8rem"} lineHeight={"5"}>
                 Adding a password will require users to enter the password to
-                join the group. Leave blank if you do not want to add a
+                join the troop. Leave blank if you do not want to add a
                 password.
               </FormHelperText>
               {validationErrors["password"] && (

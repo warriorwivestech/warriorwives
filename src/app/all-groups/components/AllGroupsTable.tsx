@@ -22,7 +22,7 @@ export default function AllGroupsTable({ groups }: AllGroupsTableProps) {
 
   return (
     <Table>
-      <TableCaption>All created groups.</TableCaption>
+      <TableCaption>All created troops.</TableCaption>
       <TableHeader>
         <TableRow>
           <TableHead>ID</TableHead>

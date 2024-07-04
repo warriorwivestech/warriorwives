@@ -80,7 +80,7 @@ export default function GroupCard({
               fontSize={"sm"}
             >
               <InfoOutlineIcon />
-              This group is conducted online.
+              This troop is conducted online.
             </Flex>
           </PopoverBody>
         </PopoverContent>

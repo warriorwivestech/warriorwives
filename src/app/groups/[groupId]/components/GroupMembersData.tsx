@@ -63,7 +63,7 @@ export default function GroupMembersData({
                   <div className="space-y-1">
                     <h4 className="text-md font-medium">{name}</h4>
                     <p className="text-sm text-gray-500">
-                      {member.admin ? "Admin" : "Member"}
+                      {member.admin ? "Leader" : "Member"}
                     </p>
                   </div>
                 </div>
@@ -74,7 +74,7 @@ export default function GroupMembersData({
         })
       ) : (
         <div className="text-sm text-gray-600 mt-2">
-          No members found for this group.
+          No members found for this troop.
         </div>
       )}
     </Flex>

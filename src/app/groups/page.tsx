@@ -14,9 +14,9 @@ export default async function GroupsPage() {
   const ExploreGroups = () => {
     return (
       <div>
-        <TypographyMuted>No groups joined.</TypographyMuted>
+        <TypographyMuted>No troops joined.</TypographyMuted>
         <Link href="/">
-          <Button className="mt-4">Explore Groups</Button>
+          <Button className="mt-4">Explore Troops</Button>
         </Link>
       </div>
     );
@@ -24,7 +24,7 @@ export default async function GroupsPage() {
 
   const GroupsData = () => {
     if (error)
-      return <div className="text-gray-600 text-sm">Error loading groups</div>;
+      return <div className="text-gray-600 text-sm">Error loading troops</div>;
     if (!groups || groups.length === 0) return <ExploreGroups />;
 
     return (
@@ -40,12 +40,12 @@ export default async function GroupsPage() {
     <UserVerifiedRoute>
       <div className="flex flex-col gap-12">
         <div className="flex flex-col gap-6">
-          <TypographyH3>My Groups</TypographyH3>
+          <TypographyH3>My Troops</TypographyH3>
           <GroupsData />
         </div>
         <Divider />
         <div className="flex flex-col gap-6">
-          <TypographyH3>Recommended Groups</TypographyH3>
+          <TypographyH3>Recommended Troops</TypographyH3>
           <RecommendedGroups />
         </div>
       </div>
