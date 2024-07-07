@@ -103,7 +103,7 @@ interface EditEventType {
   startDateTime: string;
   endDateTime: string;
   photos: string[];
-  resourceUrl: string;
+  resourceUrl: string | undefined;
 }
 
 async function updateEvent(
@@ -169,7 +169,7 @@ function _EditEventModal({
     startDateTime: getFormattedDateTime(new Date(event.startDateTime)),
     endDateTime: getFormattedDateTime(new Date(event.endDateTime)),
     photos: event.photos.map((photo) => photo.photo),
-    resourceUrl: event.resourceUrl || "",
+    resourceUrl: event.resourceUrl || undefined,
   };
   const [input, setInput] = useState<EditEventType>(defaultFormValues);
   const {

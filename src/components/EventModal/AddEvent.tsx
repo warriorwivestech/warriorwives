@@ -91,7 +91,7 @@ interface CreateEventType {
   startDateTime: string;
   endDateTime: string;
   photos: string[];
-  resourceUrl: string;
+  resourceUrl: string | undefined;
 }
 
 const defaultFormValues: CreateEventType = {
@@ -104,7 +104,7 @@ const defaultFormValues: CreateEventType = {
   startDateTime: "",
   endDateTime: "",
   photos: [],
-  resourceUrl: "",
+  resourceUrl: undefined,
 };
 
 async function createEvent(
