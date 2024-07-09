@@ -101,7 +101,7 @@ export default function ConnectPageClient() {
                   {user.interests.length > 5 && (
                     <div className="flex items-center text-gray-500 dark:text-gray-400 text-sm">
                       <PlusIcon className="w-3 h-3" />
-                      <span>{`{user.interests.length - 5}`} more</span>
+                      <span>{`${user.interests.length - 5}`} more</span>
                     </div>
                   )}
                 </div>
