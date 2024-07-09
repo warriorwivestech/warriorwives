@@ -22,7 +22,7 @@ export default async function SignUpPage() {
       <Card className="w-[350px]">
         <CardHeader>
           <CardTitle className="text-center">
-            Sign up for Warrior Wives
+            Sign up for Warrior Wives Unite
           </CardTitle>
           <CardDescription className="text-center">
             Welcome! Please sign up using Google

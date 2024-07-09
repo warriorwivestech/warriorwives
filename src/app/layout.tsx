@@ -10,7 +10,7 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Warrior Wives",
+  title: "Warrior Wives Unite",
   icons: {
     icon: "/favicon.ico",
     shortcut: "/favicon.ico",

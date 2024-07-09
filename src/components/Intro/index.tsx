@@ -5,7 +5,7 @@ import PurposeMissionCard from "./PurposeMissionCard";
 const Intro = () => {
   return (
     <div>
-      <TypographyH1>Welcome back to WarriorWives!</TypographyH1>
+      <TypographyH1>Welcome back to Warrior Wives Unite!</TypographyH1>
       <PurposeMissionCard />
       <GettingStartedCard />
     </div>

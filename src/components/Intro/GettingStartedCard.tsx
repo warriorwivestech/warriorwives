@@ -14,10 +14,10 @@ export default function GettingStartedCard() {
           Platform Guide
         </CardTitle>
         <CardDescription className="text-gray-700 pt-2">
-          If you&apos;re new to WarriorWives or need a refresher on how to use
-          the platform, check out our guide to get started. This guide will walk
-          you through the features and functionality of our platform, and help
-          you get the most out of your experience!
+          If you&apos;re new to Warrior Wives Unite or need a refresher on how
+          to use the platform, check out our guide to get started. This guide
+          will walk you through the features and functionality of our platform,
+          and help you get the most out of your experience!
         </CardDescription>
         <Link href={link} target="_blank" rel="noopener noreferrer">
           <Button className="mt-2">Read Guide</Button>

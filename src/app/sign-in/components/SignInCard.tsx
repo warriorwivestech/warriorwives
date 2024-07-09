@@ -15,7 +15,7 @@ export default function SignInCard() {
       <Card className="w-[350px]">
         <CardHeader>
           <CardTitle className="text-center">
-            Sign in to Warrior Wives
+            Sign in to Warrior Wives Unite
           </CardTitle>
           <CardDescription className="text-center">
             Welcome back! Please sign in to continue

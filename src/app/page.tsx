@@ -17,7 +17,7 @@ export default async function Home() {
     return (
       <div className="flex">
         <div className="flex flex-col md:w-1/2 min-h-[60vh] justify-center items-center align-middle">
-          <TypographyH2>Welcome to WarriorWives!</TypographyH2>
+          <TypographyH2>Welcome to Warrior Wives Unite!</TypographyH2>
           <PurposeMissionCard />
           <a className="flex w-full justify-center md:hidden" href="/sign-in">
             <Button className="sm:w-28 w-full mt-4">Sign In</Button>
