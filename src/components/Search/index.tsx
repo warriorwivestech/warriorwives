@@ -117,7 +117,7 @@ function _Search() {
             }}
           >
             <Box className="w-full px-3 py-2 text-sm text-gray-700 hover:cursor-pointer hover:bg-gray-100 hover:font-medium transition ease duration-300 flex justify-between items-center">
-              <Box>
+              <Box className="mr-4">
                 {group.name},{" "}
                 {group.county ? `${group.county}, ${group.state}` : group.state}
               </Box>
