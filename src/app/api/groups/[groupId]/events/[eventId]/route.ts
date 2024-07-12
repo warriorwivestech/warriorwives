@@ -420,11 +420,17 @@ export async function DELETE(
       email: organizer.user.email as string,
     };
   });
-  sendCancelledEventEmail(
-    [...parsedAttendees, ...parsedOrganizers],
-    event,
-    event.group.name
-  );
+
+  const eventStartDateTime = new Date(event.startDateTime);
+  const currentDateTime = new Date();
+
+  if (eventStartDateTime > currentDateTime) {
+    sendCancelledEventEmail(
+      [...parsedAttendees, ...parsedOrganizers],
+      event,
+      event.group.name
+    );
+  }
 
   return Response.json({ data: { success: true } });
 }
