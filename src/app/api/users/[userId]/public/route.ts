@@ -20,6 +20,11 @@ async function queryUser(userId: number) {
         },
       },
       groups: {
+        where: {
+          group: {
+            archived: false,
+          },
+        },
         include: {
           group: {
             select: {
