@@ -89,7 +89,7 @@ export default function UserProfilePageClient({
         <div className="mb-5">
           <BranchBadge branch={user.branch as BranchType} />
         </div>
-        <div className="mb-8 max-w-xl flex flex-wrap items-center justify-center gap-2 md:gap-3 lg:gap-4">
+        <div className="mb-8 max-w-xl flex flex-wrap items-center justify-center gap-2">
           {user.interests.map((interest) => (
             <Badge key={interest.id}>{interest.name}</Badge>
           ))}
