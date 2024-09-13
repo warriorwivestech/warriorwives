@@ -2,9 +2,12 @@
 # Warrior Wives Unite
 
 ## About
-[Warrior Wives Unite](https://usawarriorwives.com/) is a platform built for [USA Warrior Wives](https://usawarriorwives.org/). It is designed to help military wives connect from anywhere in the world to build and join communities of shared interests, host and attend events, share resources, and support each other throughout the journey of being a warrior wife. 
 
-The platform is built with security in mind. It utilizes [SheerID](https://sheerid.com/) for verifying military wives and Google for authentication.
+[Warrior Wives Unite](https://usawarriorwives.com/) is a dedicated platform created for [USA Warrior Wives](https://usawarriorwives.org/), designed to help them connect and build meaningful communities no matter where they are in the world. The platform enables members to join and form groups based on shared interests, host and attend events, exchange valuable resources, and support one another through the unique journey of being a military spouse.
+
+Security is a top priority for Warrior Wives Unite. The platform leverages [SheerID](https://sheerid.com/) for military wife verification and uses Google Authentication to ensure a safe and secure user experience.
+
+**Note for recruiters**: Please be aware that for this project, the code quality, file organization, and naming conventions could definitely be improved. However, we prioritized speed to meet tight deadlines. This is not a reflection of our refactoring skills or our typical approach to maintaining high-quality code. These areas will be addressed in future iterations as we revisit and refine the project.
 
 ## Tech Stack
 - [Next.js](https://nextjs.org/) for the frontend
