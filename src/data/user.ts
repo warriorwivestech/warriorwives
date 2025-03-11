@@ -76,11 +76,11 @@ export async function getUser() {
     }
     data = parseUserData(userData);
   } catch (e) {
+    const errorMessage = e instanceof Error ? e.message : String(e);
     error = {
-      // @ts-ignore
-      message: e.message,
+      message: errorMessage,
       isOfflineError:
-        e.message?.includes("timeout") || e.message?.includes("network"),
+        errorMessage.includes("timeout") || errorMessage.includes("network"),
     };
     console.warn("Error fetching user data:", e);
   }
