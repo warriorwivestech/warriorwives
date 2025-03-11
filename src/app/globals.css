@@ -74,3 +74,14 @@
       @apply bg-background text-foreground;
     }
   }
+
+  /* Ensure toasts appear above all other content including modals */
+  .toaster-container {
+    position: fixed;
+    z-index: 9999 !important; /* Higher z-index than typical modals */
+    pointer-events: none;
+  }
+
+  .toaster-container > * {
+    pointer-events: auto;
+  }

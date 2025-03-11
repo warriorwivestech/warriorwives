@@ -59,7 +59,11 @@ export default function EventPageClient({
 
   if (isLoading) return <EventsLoading />;
   if (error)
-    return <div className="text-gray-600 text-sm">Error loading event</div>;
+    return (
+      <div className="text-gray-600 text-sm">
+        Error loading event, please reload the page and try again.
+      </div>
+    );
 
   if (!event || !event.data) return notFound();
 

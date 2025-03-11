@@ -276,7 +276,7 @@ const _Map = () => {
     if (error)
       return (
         <p className="text-sm font-normal text-gray-700 mt-4">
-          Uh oh! Error loading troops
+          Uh oh! Error 12: loading troops
         </p>
       );
     if (!groups || groups.length === 0)

@@ -271,7 +271,7 @@ export default function GroupPageClient({
   ]);
 
   if (isLoading) return <GroupLoading />;
-  if (error) return <div>Error loading troop</div>;
+  if (error) return <div>Error 11: loading troop</div>;
   if (!group) return notFound();
 
   return (

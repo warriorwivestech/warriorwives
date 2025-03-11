@@ -31,7 +31,9 @@ export default function EventsData({
 }) {
   if (error)
     return (
-      <div className="mt-4 text-gray-600 text-sm">Error loading events</div>
+      <div className="mt-4 text-gray-600 text-sm">
+        Error loading events, please reload the page and try again.
+      </div>
     );
 
   const upcomingEvents = events

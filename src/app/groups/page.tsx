@@ -24,7 +24,9 @@ export default async function GroupsPage() {
 
   const GroupsData = () => {
     if (error)
-      return <div className="text-gray-600 text-sm">Error loading troops</div>;
+      return (
+        <div className="text-gray-600 text-sm">Error 14: loading troops</div>
+      );
     if (!groups || groups.length === 0) return <ExploreGroups />;
 
     return (

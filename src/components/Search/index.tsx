@@ -87,7 +87,7 @@ function _Search() {
       return (
         <Box className={boxClasses}>
           <Box className="w-full px-3 py-2 font-semibold text-sm">
-            Error loading troops.
+            Error 13: loading troops.
           </Box>
         </Box>
       );

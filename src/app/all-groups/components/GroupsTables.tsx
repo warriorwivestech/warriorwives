@@ -20,7 +20,7 @@ function _GroupsTables() {
   if (isLoading) return <AllGroupsLoading />;
   if (error)
     return (
-      <div className="mt-4 text-gray-600 text-sm">Error loading troops</div>
+      <div className="mt-4 text-gray-600 text-sm">Error 10: loading troops</div>
     );
 
   const groups = data || [];

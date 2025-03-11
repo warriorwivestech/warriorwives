@@ -53,43 +53,50 @@ const getFormattedDateTime = (date: Date) => {
   return `${date.getFullYear()}-${formattedMonth}-${formattedDay}T${formattedHours}:${formattedMinutes}`;
 };
 
-const updateEventFormSchema = z.object({
-  displayPhoto: z.string().min(1, {
-    message: "Display photo is required",
-  }),
-  name: z
-    .string()
-    .min(1, {
-      message: "Event name is required",
-    })
-    .max(100, {
-      message: "Name must be at most 100 characters.",
+const updateEventFormSchema = z
+  .object({
+    displayPhoto: z.string().min(1, {
+      message: "Display photo is required",
     }),
-  description: z.string().min(1, {
-    message: "A description of the event is required",
-  }),
-  online: z.boolean(),
-  meetingLink: z
-    .string()
-    .url({
-      message: "Meeting link must be a valid URL",
-    })
-    .optional(),
-  location: z.string(),
-  startDateTime: z.string().min(1, {
-    message: "Start time is required",
-  }),
-  endDateTime: z.string().min(1, {
-    message: "End time is required",
-  }),
-  photos: z.array(z.string()),
-  resourceUrl: z
-    .string()
-    .url({
-      message: "Resource link must be a valid URL",
-    })
-    .optional(),
-});
+    name: z
+      .string()
+      .min(1, {
+        message: "Event name is required",
+      })
+      .max(100, {
+        message: "Name must be at most 100 characters.",
+      }),
+    description: z.string().min(1, {
+      message: "A description of the event is required",
+    }),
+    online: z.boolean(),
+    location: z.string(),
+    startDateTime: z.string().min(1, {
+      message: "Start time is required",
+    }),
+    endDateTime: z.string().min(1, {
+      message: "End time is required",
+    }),
+    meetingLink: z.string().optional(),
+    photos: z.array(z.string()),
+    resourceUrl: z
+      .string()
+      .url({
+        message: "Resource link must be a valid URL",
+      })
+      .optional(),
+  })
+  .refine(
+    (data) => data.online || (!data.online && data.location.trim().length > 0),
+    {
+      message: "Location is required for in-person events",
+      path: ["location"],
+    }
+  )
+  .refine((data) => !data.online || (data.online && data.meetingLink), {
+    message: "Meeting link is required for online events",
+    path: ["meetingLink"],
+  });
 
 export type UpdateEventFormValues = z.infer<typeof updateEventFormSchema>;
 
@@ -345,8 +352,20 @@ function _EditEventModal({
           errorMap[err.path[0]] = err.message;
         });
         setValidationErrors(errorMap);
+
+        // Display toast for user feedback
+        toast({
+          variant: "destructive",
+          title: "Form validation error",
+          description: error.errors.map((err) => err.message).join(". "),
+        });
       } else {
         console.error(error);
+        toast({
+          variant: "destructive",
+          title: "Something went wrong",
+          description: "Please check your form inputs and try again.",
+        });
       }
     }
   };
@@ -358,7 +377,7 @@ function _EditEventModal({
       </Button>
       <Modal closeOnOverlayClick={false} isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
-        <ModalContent minW="900px">
+        <ModalContent maxW={["95%", "95%", "90%", "900px"]} width="100%">
           <ModalHeader fontSize="lg">Edit {event.name}</ModalHeader>
           <ModalCloseButton />
           <ModalBody pb={6} gap={6} display={"flex"} flexDirection={"column"}>
@@ -450,8 +469,11 @@ function _EditEventModal({
               )}
             </FormControl>
 
-            <div className="flex flex-row gap-8">
-              <FormControl isInvalid={validationErrors["startDateTime"]}>
+            <div className="flex flex-col md:flex-row gap-4 md:gap-8 w-full">
+              <FormControl
+                isInvalid={validationErrors["startDateTime"]}
+                className="w-full"
+              >
                 <FormLabel fontSize="sm" textColor="gray.600">
                   Start Date and Time
                 </FormLabel>
@@ -476,7 +498,10 @@ function _EditEventModal({
                 )}
               </FormControl>
 
-              <FormControl isInvalid={validationErrors["endDateTime"]}>
+              <FormControl
+                isInvalid={validationErrors["endDateTime"]}
+                className="w-full"
+              >
                 <FormLabel fontSize="sm" textColor="gray.600">
                   End Date and Time
                 </FormLabel>
@@ -534,13 +559,13 @@ function _EditEventModal({
                 Images
               </FormLabel>
               {imagesAreUploading ? (
-                <div className="w-[100%] flex justify-center items-center h-[100px]">
+                <div className="w-full flex justify-center items-center h-[100px]">
                   <Spinner />
                 </div>
               ) : (
-                <div className="flex flex-col justify-center w-[100%] items-center gap-6">
+                <div className="flex flex-col justify-center w-full items-center gap-6">
                   {photos.length > 0 && (
-                    <SimpleGrid columns={3} spacing={10}>
+                    <SimpleGrid columns={[1, 2, 3]} spacing={[4, 6, 10]}>
                       {photos.map((photosObj, index) => (
                         <div
                           key={index}
@@ -552,7 +577,13 @@ function _EditEventModal({
                             alt={photosObj}
                             width={200}
                             height={100}
-                            style={{ objectFit: "cover", borderRadius: "4px" }}
+                            style={{
+                              width: "100%",
+                              maxWidth: "200px",
+                              height: "auto",
+                              objectFit: "cover",
+                              borderRadius: "4px",
+                            }}
                           />
                           <ChakraButton
                             onClick={() => handleMultipleDelete(index)}
@@ -573,6 +604,7 @@ function _EditEventModal({
                     handleChange={handleMultipleImageChange}
                     name="file"
                     types={fileTypes}
+                    className="w-full"
                   />
                 </div>
               )}
@@ -618,6 +650,7 @@ function _EditEventModal({
                   onChange={(e) =>
                     handleInputChange("meetingLink", e.target.value)
                   }
+                  isRequired={online}
                 />
                 {validationErrors["meetingLink"] && (
                   <FormErrorMessage>
@@ -634,18 +667,22 @@ function _EditEventModal({
                   fontSize={"sm"}
                   paddingX={3}
                   paddingY={1}
-                  type="link"
+                  type="text"
                   placeholder="9999 Main St, City, State, Zip"
                   value={location}
                   onChange={(e) =>
                     handleInputChange("location", e.target.value)
                   }
+                  isRequired={!online}
                 />
                 {validationErrors["location"] && (
                   <FormErrorMessage>
                     {validationErrors["location"]}
                   </FormErrorMessage>
                 )}
+                <FormHelperText className="text-[13px]">
+                  Please provide a physical address for in-person events
+                </FormHelperText>
               </FormControl>
             )}
             <FormControl isInvalid={validationErrors["resourceUrl"]}>
