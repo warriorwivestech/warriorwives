@@ -5,7 +5,6 @@ import Footer from "../components/footer/footer";
 import { ChakraProviders } from "../providers/chakraProvider";
 import PageLayout from "../components/pagelayout/pagelayout";
 import { Toaster } from "@/components/ui/toaster";
-import { OfflineNotification } from "@/components/common/OfflineNotification";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -31,9 +30,7 @@ export default function RootLayout({
           <NavBar />
           <Toaster />
           <PageLayout>{children}</PageLayout>
-
           <Footer />
-          <OfflineNotification />
         </ChakraProviders>
       </body>
     </html>
